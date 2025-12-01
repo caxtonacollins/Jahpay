@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import '@rainbow-me/rainbowkit/styles.css'
-import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { darkTheme, getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import { celo, celoAlfajores } from 'wagmi/chains'
 import { defineChain } from 'viem'
@@ -39,7 +39,7 @@ function getWagmiConfig() {
   if (!config) {
     config = getDefaultConfig({
       appName: 'seems',
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
+      projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
       chains: [celo, celoAlfajores, celoSepolia],
       transports: {
         [celo.id]: http(),
@@ -60,11 +60,19 @@ const queryClient = new QueryClient({
   },
 })
 
+const customDarkTheme = darkTheme({
+  accentColor: '#7b3fe4',
+  accentColorForeground: 'white',
+  borderRadius: 'medium',
+  fontStack: 'system',
+  overlayBlur: 'small',
+});
+
 function WalletProviderInner({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={getWagmiConfig()}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider theme={customDarkTheme}>
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>

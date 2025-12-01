@@ -68,7 +68,7 @@ export function WalletConnectButton() {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/20 transition-all px-6 py-3 text-white"
                   >
                     Connect Wallet
                   </button>
@@ -80,7 +80,7 @@ export function WalletConnectButton() {
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-semibold bg-destructive text-white hover:bg-destructive/90 shadow-lg hover:shadow-xl hover:shadow-destructive/20 transition-all px-6 py-3"
                   >
                     Wrong network
                   </button>
@@ -91,7 +91,7 @@ export function WalletConnectButton() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={openChainModal}
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-3 py-2"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/20 transition-all px-6 py-3 text-white"
                     type="button"
                   >
                     {chain.hasIcon && (

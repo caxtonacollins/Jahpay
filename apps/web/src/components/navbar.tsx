@@ -6,12 +6,8 @@ import { usePathname } from "next/navigation"
 import { Menu, ExternalLink } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { WalletConnectButton } from "@/components/connect-button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -22,9 +18,9 @@ export function Navbar() {
   const pathname = usePathname()
   
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
-        <div className="flex items-center gap-2">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent">
+      <div className="container flex h-20 items-center justify-between px-6 md:px-8">
+        <div className="flex items-center gap-4">
           {/* Mobile menu button */}
           <Sheet>
             <SheetTrigger asChild>
@@ -35,10 +31,19 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="left" className="w-80">
               <div className="flex items-center gap-2 mb-8">
-
-                <span className="font-bold text-lg">
-                  seems
-                </span>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/images/logo.png"
+                    alt="seems logo"
+                    width={28}
+                    height={28}
+                    className="rounded-lg"
+                    priority
+                  />
+                  <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+                    seems
+                  </span>
+                </div>
               </div>
               <nav className="flex flex-col gap-4">
                 {navLinks.map((link) => (
@@ -48,7 +53,9 @@ export function Navbar() {
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
                     className={`flex items-center gap-2 text-base font-medium transition-colors hover:text-primary ${
-                      pathname === link.href ? "text-foreground" : "text-foreground/70"
+                      pathname === link.href
+                        ? "text-foreground"
+                        : "text-foreground/70"
                     }`}
                   >
                     {link.name}
@@ -63,14 +70,23 @@ export function Navbar() {
           </Sheet>
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-
-            <span className="hidden font-bold text-xl sm:inline-block">
+          <Link
+            href="/"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/images/logo.png"
+              alt="seems logo"
+              width={180}
+              height={60}
+              className="rounded-lg"
+            />
+            {/* <span className="hidden font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 sm:inline-block">
               seems
-            </span>
+            </span> */}
           </Link>
         </div>
-        
+
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
@@ -79,22 +95,22 @@ export function Navbar() {
               href={link.href}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noopener noreferrer" : undefined}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+              className={`flex items-center gap-1.5 text-base font-medium transition-colors hover:text-primary ${
                 pathname === link.href
-                  ? "text-foreground"
-                  : "text-foreground/70"
+                ? "text-white"
+                : "text-white/80 hover:text-white"
               }`}
             >
               {link.name}
               {link.external && <ExternalLink className="h-4 w-4" />}
             </Link>
           ))}
-          
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-4">
             <WalletConnectButton />
           </div>
         </nav>
       </div>
     </header>
-  )
+  );
 }

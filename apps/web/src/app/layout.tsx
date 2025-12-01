@@ -4,6 +4,7 @@ import './globals.css';
 
 import { Navbar } from '@/components/navbar';
 import { WalletProvider } from "@/components/wallet-provider"
+import { Footer } from '@/components/layout/footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
+            <Footer />
           </WalletProvider>
         </div>
       </body>
