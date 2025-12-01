@@ -68,7 +68,7 @@ export function Navbar() {
               <div className="flex items-center gap-2 mb-8">
                 <div className="flex items-center gap-2">
                   <Image
-                    src="/images/logo.png"
+                    src="/images/logo_name.png"
                     alt="jahpay logo"
                     width={28}
                     height={28}
@@ -110,7 +110,7 @@ export function Navbar() {
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
             <Image
-              src="/images/logo.png"
+              src="/images/logo_name.png"
               alt="jahpay logo"
               width={180}
               height={60}
