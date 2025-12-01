@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { Replay } from "@sentry/replay";
 
 /**
  * Initialize Sentry for error tracking and monitoring
@@ -11,7 +12,7 @@ export function initializeSentry() {
       tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
       debug: process.env.NODE_ENV !== "production",
       integrations: [
-        new Sentry.Replay({
+        new Replay({
           maskAllText: true,
           blockAllMedia: true,
         }),
@@ -63,32 +64,28 @@ export function setSentryUser(userId: string, email?: string) {
 /**
  * Track a transaction
  */
-export function trackTransaction(
-  op: string,
-  description: string,
-  callback: () => Promise<void>
-) {
-  const transaction = Sentry.startTransaction({
-    op,
-    name: description,
-  });
-
-  const child = transaction.startChild({
-    op,
-    description,
-  });
-
-  try {
-    callback().finally(() => {
-      child.finish();
-      transaction.finish();
-    });
-  } catch (error) {
-    child.finish();
-    transaction.finish();
-    throw error;
-  }
-}
+// export async function trackTransaction(
+//   op: string,
+//   description: string,
+//   callback: () => Promise<void>
+// ) {
+//   return Sentry.startSpan(
+//     {
+//       op,
+//       name: description,
+//     },
+//     async (span) => {
+//       try {
+//         await callback();
+//         span?.setStatus("ok");
+//       } catch (error) {
+//         span?.setStatus("internal_error");
+//         captureException(error as Error);
+//         throw error;
+//       }
+//     }
+//   );
+// }
 
 /**
  * Add breadcrumb for tracking user actions

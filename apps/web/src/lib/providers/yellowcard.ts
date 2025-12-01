@@ -1,5 +1,5 @@
-import { BaseProvider, ProviderQuote, ExchangeRate } from './base-provider';
-import { ProviderQuoteRequest } from './types';
+import { BaseProvider } from './base-provider';
+import { ExchangeRate, ProviderQuote, ProviderQuoteRequest } from './types';
 
 export class YellowCardProvider extends BaseProvider {
   private readonly baseUrl = 'https://api.yellowcard.io/v1';

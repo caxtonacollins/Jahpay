@@ -11,7 +11,7 @@ export function Footer() {
           <div className="space-y-6">
             <Image
               src="/images/logo.png"
-              alt="seems logo"
+              alt="jahpay logo"
               width={150}
               height={40}
               className="rounded-lg"
@@ -40,7 +40,7 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="mailto:hello@seems.app"
+                href="mailto:hello@jahpay.app"
                 className="text-gray-400 hover:text-teal-400 transition-colors"
                 aria-label="Email"
               >

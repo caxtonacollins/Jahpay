@@ -38,7 +38,7 @@ let config: any = null
 function getWagmiConfig() {
   if (!config) {
     config = getDefaultConfig({
-      appName: 'seems',
+      appName: 'jahpay',
       projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
       chains: [celo, celoAlfajores, celoSepolia],
       transports: {

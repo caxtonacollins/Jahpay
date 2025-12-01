@@ -5,14 +5,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowDown, ArrowRight, Loader2, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import { Button } from 'components/ui/button';
 import { TokenOption, TokenSelector } from './token-selector';
 import { AmountInput } from './amount-input';
 import { TokenInfo, SwapDirection, SwapFormData, Currency, Crypto } from 'types/swap';
 import { CURRENCIES, CRYPTOS, PROVIDERS } from '@/config/site';
-import { cn } from 'lib/utils';
-import { useToast } from 'components/ui/use-toast';
+import { Button } from '../ui/button';
+import { toast } from '../ui/use-toast';
 
 // Mock tokens - in a real app, these would come from your token list or API
 const MOCK_TOKENS: Record<string, TokenInfo> = {
@@ -63,8 +63,7 @@ export function SwapInterface() {
   const [isTokenSelectorOpen, setIsTokenSelectorOpen] = useState<'from' | 'to' | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [availableTokens, setAvailableTokens] = useState<Record<string, TokenInfo>>(MOCK_TOKENS);
-  
-  const { toast } = useToast();
+
 
   const { control, watch, setValue, handleSubmit, formState: { errors } } = useForm<SwapFormValues>({
     resolver: zodResolver(swapFormSchema),
@@ -147,13 +146,28 @@ export function SwapInterface() {
 
   // Get token info by symbol
   const getTokenInfo = useCallback((symbol: string): TokenInfo => {
-    const token = availableTokens[symbol] || 
-      Object.values(CURRENCIES).find(c => c.code === symbol) ||
-      { symbol, name: symbol };
+    const currencyToken = Object.values(CURRENCIES).find(c => c.code === symbol);
+    const token = availableTokens[symbol];
     
+    if (token) return token;
+
+    if (currencyToken) {
+      return {
+        symbol: currencyToken.code,
+        name: currencyToken.name,
+        icon: '',
+        balance: '0.00',
+        usdValue: 0
+      };
+    }
+
+    // Fallback for unknown tokens
     return {
-      ...token,
-      balance: token.balance || '0.00',
+      symbol,
+      name: symbol,
+      icon: '',
+      balance: '0.00',
+      usdValue: 0
     };
   }, [availableTokens]);
 
@@ -178,7 +192,7 @@ export function SwapInterface() {
                     render={({ field }) => (
                       <AmountInput
                         token={getTokenInfo(fromToken)}
-                        value={field.value}
+                        value={field.value || ''}
                         onAmountChange={field.onChange}
                         onMaxClick={direction === 'sell' ? handleMaxClick : undefined}
                         error={errors.fromAmount?.message}
@@ -188,15 +202,18 @@ export function SwapInterface() {
                     )}
                   />
                   <Controller
-                    name="fromToken"
+                    name="toToken"
                     control={control}
-                    render={({ field }) => (
-                      <TokenSelector
-                        token={getTokenInfo(field.value)}
-                        onSelect={() => setIsTokenSelectorOpen('from')}
-                        className="w-40"
-                      />
-                    )}
+                    render={({ field: { value } }) => {
+                      const token = getTokenInfo(value || '');
+                      return (
+                        <TokenSelector
+                          token={token}
+                          onSelect={() => setIsTokenSelectorOpen('to')}
+                          className="w-40"
+                        />
+                      );
+                    }}
                   />
                 </div>
               </div>
@@ -229,11 +246,11 @@ export function SwapInterface() {
                 <Controller
                   name="toAmount"
                   control={control}
-                  render={({ field }) => (
+                    render={({ field: { value, onChange, onBlur } }) => (
                     <AmountInput
                       token={getTokenInfo(toToken)}
-                      value={field.value}
-                      onAmountChange={field.onChange}
+                        value={value || ''}
+                        onAmountChange={onChange}
                       onMaxClick={direction === 'buy' ? handleMaxClick : undefined}
                       error={errors.toAmount?.message}
                       className="flex-1"
@@ -244,13 +261,15 @@ export function SwapInterface() {
                 <Controller
                   name="toToken"
                   control={control}
-                  render={({ field }) => (
-                    <TokenSelector
-                      token={getTokenInfo(field.value)}
-                      onSelect={() => setIsTokenSelectorOpen('to')}
-                      className="w-40"
-                    />
-                  )}
+                    render={({ field: { value } }) => {
+                      return (
+                        <TokenSelector
+                          token={getTokenInfo(toToken)}
+                          onSelect={() => setIsTokenSelectorOpen('to')}
+                          className="w-40"
+                        />
+                      );
+                    }}
                 />
               </div>
             </div>

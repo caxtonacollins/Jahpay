@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Transaction } from "@/types/database";
+import type { Transaction } from "types/database";
 
 export function useTransactions(walletAddress?: string) {
   return useQuery({

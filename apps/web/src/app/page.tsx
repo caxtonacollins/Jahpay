@@ -201,7 +201,7 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-900 to-slate-950" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_70%)]" />
-          <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.1))]" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.1))]" />
         </div>
 
         {/* Animated floating elements */}
@@ -1031,7 +1031,7 @@ export default function Home() {
 //           className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
 //         >
 //           Welcome to{" "}
-//           <span className="text-primary">seems</span>
+//           <span className="text-primary">jahpay</span>
 //         </h1>
 
 //         {/* Subtitle */}

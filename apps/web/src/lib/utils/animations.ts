@@ -1,14 +1,15 @@
-import { cubicInOut } from 'framer-motion';
+import { circInOut } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 export const fadeIn = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.3, ease: cubicInOut }
+    transition: { duration: 0.3, ease: circInOut }
   },
   exit: { 
     opacity: 0,
-    transition: { duration: 0.2, ease: cubicInOut }
+    transition: { duration: 0.2, ease: circInOut }
   }
 };
 
@@ -26,12 +27,12 @@ export const slideIn = (direction: 'left' | 'right' | 'up' | 'down' = 'up') => {
       x: 0,
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5, ease: cubicInOut }
+      transition: { duration: 0.5, ease: circInOut }
     },
     exit: {
       ...directions[direction],
       opacity: 0,
-      transition: { duration: 0.3, ease: cubicInOut }
+      transition: { duration: 0.3, ease: circInOut }
     }
   };
 };
@@ -53,7 +54,7 @@ export const fadeInUp = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: cubicInOut,
+      ease: circInOut,
     },
   },
 };
@@ -65,7 +66,7 @@ export const scaleIn = {
     opacity: 1,
     transition: {
       duration: 0.3,
-      ease: cubicInOut,
+      ease: circInOut,
     },
   },
 };
@@ -84,10 +85,10 @@ export const rotate = {
 
 // Hook for scroll animations
 export const useScrollAnimation = (threshold = 0.1) => {
-  const [isInView, setIsInView] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

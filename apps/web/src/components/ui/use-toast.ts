@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+// Radix UI expects 'foreground' or 'background' for the type
+// We'll map our custom types to these in the toast component
 type ToastType = 'default' | 'success' | 'error' | 'warning' | 'info';
 
 type Toast = {
@@ -11,6 +13,8 @@ type Toast = {
     label: string;
     onClick: () => void;
   };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 type ToastOptions = Omit<Toast, 'id'>;

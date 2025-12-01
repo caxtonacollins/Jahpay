@@ -1,4 +1,4 @@
-import type { QuoteRequest, QuoteResponse } from "../../types/database";
+import { QuoteRequest, QuoteResponse } from "types/database";
 
 /**
  * Base provider interface

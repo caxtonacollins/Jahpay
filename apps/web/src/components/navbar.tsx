@@ -4,6 +4,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, ExternalLink } from "lucide-react"
+import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import { WalletConnectButton } from "@/components/connect-button"
@@ -16,9 +18,42 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const [prevScrollPos, setPrevScrollPos] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.pageYOffset
+      const isScrollingDown = currentScrollPos > prevScrollPos
+
+      // Always show navbar when scrolling to the top of the page
+      if (currentScrollPos < 10) {
+        setVisible(true)
+        setPrevScrollPos(currentScrollPos)
+        return
+      }
+
+      // Only set the navbar to visible if user is scrolling up
+      setVisible(!isScrollingDown)
+      setPrevScrollPos(currentScrollPos)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [prevScrollPos])
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent">
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 w-full bg-transparent transition-transform duration-300 ease-in-out",
+        visible ? 'translate-y-0' : '-translate-y-full'
+      )}
+      style={{
+        background: 'rgba(0, 0, 0, 0.2)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)'
+      }}
+    >
       <div className="container flex h-20 items-center justify-between px-6 md:px-8">
         <div className="flex items-center gap-4">
           {/* Mobile menu button */}
@@ -34,14 +69,14 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                   <Image
                     src="/images/logo.png"
-                    alt="seems logo"
+                    alt="jahpay logo"
                     width={28}
                     height={28}
                     className="rounded-lg"
                     priority
                   />
                   <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-                    seems
+                    jahpay
                   </span>
                 </div>
               </div>
@@ -76,13 +111,13 @@ export function Navbar() {
           >
             <Image
               src="/images/logo.png"
-              alt="seems logo"
+              alt="jahpay logo"
               width={180}
               height={60}
               className="rounded-lg"
             />
             {/* <span className="hidden font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 sm:inline-block">
-              seems
+              jahpay
             </span> */}
           </Link>
         </div>

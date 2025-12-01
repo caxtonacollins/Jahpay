@@ -4,7 +4,7 @@ import { Transaction, TransactionStatus, TransactionType, TransactionFilters, Tr
 export class TransactionService {
   private static instance: TransactionService;
   private transactions: Map<string, Transaction> = new Map();
-  private storageKey = 'seems_transactions';
+  private storageKey = 'jahpay_transactions';
   private maxRetries = 3;
   private retryDelays = [1000, 5000, 15000]; // 1s, 5s, 15s
 

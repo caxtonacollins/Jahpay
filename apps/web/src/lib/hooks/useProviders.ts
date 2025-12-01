@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { QuoteResponse } from "@/types/database";
+import type { QuoteResponse } from "types/database";
 
 export function useExchangeRate(
   fromCurrency: string,

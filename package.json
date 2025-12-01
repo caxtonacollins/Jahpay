@@ -1,5 +1,5 @@
 {
-  "name": "seems",
+  "name": "jahpay",
   "version": "0.1.0",
   "description": "A new Celo blockchain project",
   "private": true,
@@ -19,5 +19,12 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@sentry/replay": "^7.116.0",
+    "react-hook-form": "^7.67.0",
+    "zod": "^4.1.13"
   }
 }

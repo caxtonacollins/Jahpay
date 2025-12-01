@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { User } from "@/types/database";
+import { User } from "types/database";
 
 export function useUserProfile(walletAddress?: string) {
   return useQuery({

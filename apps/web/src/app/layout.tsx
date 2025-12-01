@@ -9,7 +9,7 @@ import { Footer } from '@/components/layout/footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'seems',
+  title: 'jahpay',
   description: 'A new Celo blockchain project',
 };
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ToastPrimitives from '@radix-ui/react-toast';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
@@ -98,6 +99,10 @@ ToastDescription.displayName = 'ToastDescription';
 
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
+// Re-export the Provider and Viewport from Radix UI
+export const ToastProvider = ToastPrimitives.Provider;
+export const ToastViewport = ToastPrimitives.Viewport;
 
 export {
   Toast,

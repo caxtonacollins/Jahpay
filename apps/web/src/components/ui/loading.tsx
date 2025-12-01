@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
-import { cn } from 'lib/utils';
+import { cn } from '@/lib/utils';
 
 const loadingVariants = cva(
   'flex items-center justify-center',

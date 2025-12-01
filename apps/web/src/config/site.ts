@@ -1,12 +1,12 @@
 export const SiteConfig = {
-  name: 'Seems DApp',
+  name: 'jahpay DApp',
   description:
     'Seamlessly convert between fiat and crypto with the best rates from multiple providers',
-  url: 'https://seems-app.vercel.app',
-  ogImage: 'https://seems-app.vercel.app/og.jpg',
+  url: 'https://jahpay.vercel.app',
+  ogImage: 'https://jahpay.vercel.app/og.jpg',
   links: {
-    twitter: 'https://twitter.com/seemsapp',
-    github: 'https://github.com/yourusername/seems-app',
+    twitter: 'https://twitter.com/jahpayapp',
+    github: 'https://github.com/yourusername/jahpay',
   },
   mainNav: [
     {
