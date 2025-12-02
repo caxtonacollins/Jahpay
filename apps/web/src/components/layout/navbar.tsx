@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button"
 import { WalletConnectButton } from "@/components/connect-button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
-const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Docs", href: "https://docs.celo.org", external: true },
-]
+// const navLinks = [
+//   { name: "Home", href: "/" },
+//   { name: "Docs", href: "https://docs.celo.org", external: true },
+// ]
 
 export function Navbar() {
   const pathname = usePathname()
@@ -81,7 +81,7 @@ export function Navbar() {
                 </div>
               </div>
               <nav className="flex flex-col gap-4">
-                {navLinks.map((link) => (
+                {/* {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -96,7 +96,7 @@ export function Navbar() {
                     {link.name}
                     {link.external && <ExternalLink className="h-4 w-4" />}
                   </Link>
-                ))}
+                ))} */}
                 <div className="mt-6 pt-6 border-t">
                   <WalletConnectButton />
                 </div>
@@ -124,7 +124,7 @@ export function Navbar() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {/* {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -139,7 +139,7 @@ export function Navbar() {
               {link.name}
               {link.external && <ExternalLink className="h-4 w-4" />}
             </Link>
-          ))}
+          ))} */}
 
           <div className="flex items-center gap-4">
             <WalletConnectButton />

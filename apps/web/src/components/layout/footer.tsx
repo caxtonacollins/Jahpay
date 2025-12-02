@@ -10,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-6">
             <Image
-              src="/images/logo.png"
+              src="/images/logo_name.png"
               alt="jahpay logo"
               width={150}
               height={40}

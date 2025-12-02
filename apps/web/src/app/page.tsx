@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 import type { Variants } from "framer-motion";
+import Image from "next/image";
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -58,9 +59,24 @@ const fadeInUp: Variants = {
 };
 
 const providers = [
-  { name: "Yellow Card", icon: "🟡", description: "20+ African countries" },
-  { name: "Cashramp", icon: "🔷", description: "Fast & reliable" },
-  { name: "Bitmama", icon: "🟣", description: "Multi-currency support" },
+  { 
+    name: "Yellow Card", 
+    icon: "/images/yellowcard1.png", 
+    description: "20+ African countries",
+    color: "from-yellow-400 to-yellow-600"
+  },
+  { 
+    name: "Cashramp", 
+    icon: "/images/cashramp.jpeg", 
+    description: "Fast & reliable",
+    color: "from-blue-500 to-blue-700"
+  },
+  { 
+    name: "Bitmama", 
+    icon: "/images/bitmama.png", 
+    description: "Multi-currency support",
+    color: "from-purple-500 to-pink-500"
+  },
 ];
 
 const features = [
@@ -850,8 +866,16 @@ export default function Home() {
                     <div className={`absolute -inset-1 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500`}></div>
 
                     <div className="relative z-10 text-center h-full flex flex-col items-center">
-                      <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${colors} flex items-center justify-center text-3xl mb-6 transform transition-transform duration-300 group-hover:scale-110`}>
-                        {provider.icon}
+                      <div className="relative w-20 h-20 mb-6 transform transition-transform duration-300 group-hover:scale-110">
+                          <Image 
+                            src={provider.icon}
+                            alt={provider.name}
+                            width={80}
+                            height={80}
+                            className="object-contain w-full h-full rounded-lg"
+     
+                            priority
+                          />
                       </div>
 
                       <h3 className="text-xl font-bold mb-3 text-white">
