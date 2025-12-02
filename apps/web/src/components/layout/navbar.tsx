@@ -100,7 +100,7 @@ export function Navbar() {
                 </div>
                 <nav className="flex-1 flex flex-col gap-4">
                   <div className="mt-6 pt-6 border-t border-slate-700">
-                    <WalletConnectButton className="w-full" />
+                    <WalletConnectButton />
                   </div>
                 </nav>
               </div>
