@@ -55,71 +55,57 @@ export function Navbar() {
       }}
     >
       <div className="container flex h-20 items-center justify-between px-6 md:px-8">
+        {/* Left side - Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+        >
+          <Image
+            src="/images/logo_name.png"
+            alt="jahpay logo"
+            width={120}
+            height={20}
+            className="rounded-lg"
+          />
+        </Link>
+
+        {/* Right side - Desktop nav and mobile menu button */}
         <div className="flex items-center gap-4">
-          {/* Mobile menu button */}
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <div className="flex items-center gap-4">
+              <WalletConnectButton />
+            </div>
+          </nav>
+
+          {/* Mobile Menu Button */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="default" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80">
-              <div className="flex items-center gap-2 mb-8">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-center gap-2 mb-8">
                   <Image
                     src="/images/logo_name.png"
                     alt="jahpay logo"
-                    width={28}
-                    height={28}
+                    width={200}
+                    height={20}
                     className="rounded-lg"
                     priority
                   />
-                  <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-                    jahpay
-                  </span>
                 </div>
+                <nav className="flex-1 flex flex-col gap-4">
+                  <div className="mt-6 pt-6 border-t border-slate-700">
+                    <WalletConnectButton className="w-full" />
+                  </div>
+                </nav>
               </div>
-              <nav className="flex flex-col gap-4">
-                {/* {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    className={`flex items-center gap-2 text-base font-medium transition-colors hover:text-primary ${
-                      pathname === link.href
-                        ? "text-foreground"
-                        : "text-foreground/70"
-                    }`}
-                  >
-                    {link.name}
-                    {link.external && <ExternalLink className="h-4 w-4" />}
-                  </Link>
-                ))} */}
-                <div className="mt-6 pt-6 border-t">
-                  <WalletConnectButton />
-                </div>
-              </nav>
             </SheetContent>
           </Sheet>
-
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <Image
-              src="/images/logo_name.png"
-              alt="jahpay logo"
-              width={180}
-              height={60}
-              className="rounded-lg"
-            />
-            {/* <span className="hidden font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 sm:inline-block">
-              jahpay
-            </span> */}
-          </Link>
         </div>
 
         {/* Desktop navigation */}
