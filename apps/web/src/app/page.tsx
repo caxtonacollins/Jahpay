@@ -752,6 +752,42 @@ export default function Home() {
         </div>
       </section>
 
+      {/* User Testimonial Section */}
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        <div className="container px-4 mx-auto max-w-7xl relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <img src="/images/banner.png" alt="Smiling user with Jahpay" className="rounded-2xl shadow-2xl shadow-blue-500/20" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">From Local Currency to Crypto, All in Your Hands</h2>
+              <p className="text-lg text-slate-300/90 mb-8 leading-relaxed">
+                Jahpay puts the power of seamless digital finance right in your pocket. With a user-friendly interface, you can effortlessly navigate the world of crypto, making transactions as simple as sending a text message. Experience the joy of financial freedom with a platform designed for you.
+              </p>
+              <Button
+                size="lg"
+                className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all transform hover:-translate-y-0.5"
+              >
+                <span className="relative z-10 flex items-center">
+                  Explore Features
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Providers Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-900/30 to-transparent">
         {/* Background elements */}
