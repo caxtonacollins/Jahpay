@@ -71,24 +71,17 @@ export function Navbar() {
 
         {/* Right side - Desktop nav and mobile menu button */}
         <div className="flex items-center gap-4">
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <div className="flex items-center gap-4">
-              <WalletConnectButton />
-            </div>
-          </nav>
-
           {/* Mobile Menu Button */}
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="default" size="icon" className="md:hidden">
+            <SheetTrigger asChild >
+              <Button variant="gradient" size="icon" className="md:hidden text-white hover:bg-gray-800">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80">
-              <div className="flex flex-col h-full">
-                <div className="flex items-center justify-center gap-2 mb-8">
+            <SheetContent side="left" className="w-72 bg-[#0A0E17] border-r border-gray-800">
+              <div className="flex flex-col h-full px-4 py-6">
+                <div className="flex items-center justify-start gap-3 mb-8">
                   <Image
                     src="/images/logo_name.png"
                     alt="jahpay logo"
@@ -99,7 +92,7 @@ export function Navbar() {
                   />
                 </div>
                 <nav className="flex-1 flex flex-col gap-4">
-                  <div className="mt-6 pt-6 border-t border-slate-700">
+                  <div className="mt-6 pt-6">
                     <WalletConnectButton />
                   </div>
                 </nav>
