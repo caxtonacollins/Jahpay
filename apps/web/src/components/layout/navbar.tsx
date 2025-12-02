@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Menu, ExternalLink } from "lucide-react"
-import { useEffect, useState } from "react"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Menu, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
-import { Button } from "@/components/ui/button"
-import { WalletConnectButton } from "@/components/connect-button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button";
+import { WalletConnectButton } from "@/components/connect-button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 // const navLinks = [
 //   { name: "Home", href: "/" },
@@ -17,41 +17,41 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 // ]
 
 export function Navbar() {
-  const pathname = usePathname()
-  const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const pathname = usePathname();
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset
-      const isScrollingDown = currentScrollPos > prevScrollPos
+      const currentScrollPos = window.pageYOffset;
+      const isScrollingDown = currentScrollPos > prevScrollPos;
 
       // Always show navbar when scrolling to the top of the page
       if (currentScrollPos < 10) {
-        setVisible(true)
-        setPrevScrollPos(currentScrollPos)
-        return
+        setVisible(true);
+        setPrevScrollPos(currentScrollPos);
+        return;
       }
 
       // Only set the navbar to visible if user is scrolling up
-      setVisible(!isScrollingDown)
-      setPrevScrollPos(currentScrollPos)
-    }
+      setVisible(!isScrollingDown);
+      setPrevScrollPos(currentScrollPos);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [prevScrollPos])
-  
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollPos]);
+
   return (
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 w-full bg-transparent transition-transform duration-300 ease-in-out",
-        visible ? 'translate-y-0' : '-translate-y-full'
+        visible ? "translate-y-0" : "-translate-y-full"
       )}
       style={{
-        background: 'rgba(0, 0, 0, 0.2)',
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)'
+        background: "rgba(0, 0, 0, 0.2)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
       }}
     >
       <div className="container flex h-20 items-center justify-between px-6 md:px-8">
