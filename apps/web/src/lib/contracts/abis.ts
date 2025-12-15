@@ -84,7 +84,7 @@ export const RAMP_AGGREGATOR_ABI = [
     ],
     name: "initiateOffRamp",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -214,7 +214,7 @@ export const FEE_COLLECTOR_ABI = [
     ],
     name: "collectFees",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
