@@ -56,8 +56,8 @@ contract DeployScript is Script {
         
         vm.stopBroadcast();
         
-        console.log("\n Deployment complete!");
-        console.log("\n Contract Addresses:");
+        console.log("Deployment complete!");
+        console.log("Contract Addresses:");
         console.log("RampAggregator:", rampAggregator);
         console.log("FeeCollector:  ", feeCollector);
         

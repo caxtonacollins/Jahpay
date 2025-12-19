@@ -19,9 +19,8 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
     // ============ State Variables ============
     address public backendSigner;
     address public feeCollector;
-    uint256 public feeBps; // Fee in basis points (1 bps = 0.01%)
+    uint256 public feeBps;
 
-    // Provider configuration
     struct ProviderConfig {
         bool isActive;
         uint256 minAmount;

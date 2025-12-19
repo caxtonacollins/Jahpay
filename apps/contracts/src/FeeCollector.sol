@@ -38,14 +38,14 @@ contract FeeCollector is Ownable {
     constructor() Ownable(msg.sender) {}
 
     // ============ Receive ============
-    receive() external payable {
         // Allow contract to receive native tokens (CELO)
+    receive() external payable {
         collectedFees[address(0)] += msg.value;
         emit FeesCollected(address(0), msg.value, msg.sender);
     }
 
+    // Allow contract to receive native tokens (CELO)
     fallback() external payable {
-        // Allow contract to receive native tokens (CELO)
         collectedFees[address(0)] += msg.value;
         emit FeesCollected(address(0), msg.value, msg.sender);
     }
