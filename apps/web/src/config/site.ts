@@ -6,7 +6,7 @@ export const SiteConfig = {
   ogImage: 'https://jahpay.vercel.app/og.jpg',
   links: {
     twitter: 'https://twitter.com/jahpayapp',
-    github: 'https://github.com/yourusername/jahpay',
+    github: 'https://github.com/caxtonacollins/jahpay',
   },
   mainNav: [
     {
