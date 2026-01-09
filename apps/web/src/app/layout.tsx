@@ -7,6 +7,7 @@ import { WalletProvider } from "@/components/wallet-provider"
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { TransactionsProvider } from '@/contexts/transactions-context';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,14 +26,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="relative flex min-h-screen flex-col">
           <WalletProvider>
-            <Toaster />
-            <TransactionsProvider>
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </TransactionsProvider>
+            <AuthProvider>
+              <TransactionsProvider>
+                <Navbar />
+                <main className="flex-1 pt-20">
+                  {children}
+                </main>
+                <Footer />
+                <Toaster />
+              </TransactionsProvider>
+            </AuthProvider>
           </WalletProvider>
         </div>
       </body>

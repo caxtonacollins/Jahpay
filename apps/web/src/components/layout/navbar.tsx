@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { WalletConnectButton } from "@/components/connect-button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-// const navLinks = [
-//   { name: "Home", href: "/" },
-//   { name: "Docs", href: "https://docs.celo.org", external: true },
-// ]
+const navLinks = [
+  { name: "Buy", href: "/buy" },
+  { name: "Sell", href: "/sell" },
+  { name: "History", href: "/history" },
+  { name: "Docs", href: "https://docs.celo.org", external: true },
+]
 
 export function Navbar() {
   const pathname = usePathname();
@@ -92,6 +94,23 @@ export function Navbar() {
                   />
                 </div>
                 <nav className="flex-1 flex flex-col gap-4">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      target={link.external ? "_blank" : undefined}
+                      rel={link.external ? "noopener noreferrer" : undefined}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-colors",
+                        pathname === link.href
+                          ? "bg-gray-800 text-white"
+                          : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                      )}
+                    >
+                      {link.name}
+                      {link.external && <ExternalLink className="h-4 w-4" />}
+                    </Link>
+                  ))}
                   <div className="mt-6 pt-6">
                     <WalletConnectButton />
                   </div>
@@ -103,7 +122,7 @@ export function Navbar() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {/* {navLinks.map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -118,7 +137,7 @@ export function Navbar() {
               {link.name}
               {link.external && <ExternalLink className="h-4 w-4" />}
             </Link>
-          ))} */}
+          ))}
 
           <div className="flex items-center gap-4">
             <WalletConnectButton />
