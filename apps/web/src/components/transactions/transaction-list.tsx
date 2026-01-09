@@ -142,11 +142,10 @@ export function TransactionList({
             <AlertCircle className="h-12 w-12 text-destructive" />
             <div>
               <h4 className="text-lg font-medium text-destructive">
-                Failed to load transactions
+                We couldn’t load your transactions
               </h4>
               <p className="text-sm text-muted-foreground">
-                {error.message ||
-                  "An error occurred while loading your transactions."}
+                Please refresh and try again.
               </p>
             </div>
             <Button

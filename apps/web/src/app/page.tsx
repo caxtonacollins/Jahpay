@@ -391,17 +391,18 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1 }}
             >
-              <Button
-                size="lg"
-                className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5"
-                disabled
-              >
-                <span className="relative z-10 flex items-center">
-                  Launch App
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Button>
+              <Link href="/buy">
+                <Button
+                  size="lg"
+                  className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Launch App
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Button>
+              </Link>
 
               <Button
                 variant="outline"
@@ -1065,55 +1066,3 @@ export default function Home() {
     </main>
   );
 }
-
-
-// import Link from "next/link";
-// import { Button } from "@/components/ui/button";
-// import { Zap } from "lucide-react";
-
-// export default function Home() {
-//   return (
-// <main className="flex-1">
-//   {/* Hero Section */}
-//   <section className="relative py-20 lg:py-32">
-//     <div className="container px-4 mx-auto max-w-7xl">
-//       <div className="text-center max-w-4xl mx-auto">
-//         {/* Badge */}
-//         <div
-//           className="inline-flex items-center gap-2 px-3 py-1 mb-8 text-sm font-medium bg-primary/10 text-primary rounded-full border border-primary/20"
-//         >
-//           <Zap className="h-4 w-4" />
-//           Built on Celo
-//         </div>
-
-//         {/* Main Heading */}
-//         <h1
-//           className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
-//         >
-//           Welcome to{" "}
-//           <span className="text-primary">jahpay</span>
-//         </h1>
-
-//         {/* Subtitle */}
-//         <p
-//           className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
-//         >
-//           Start building your decentralized application on Celo. Fast and secure blockchain for everyone.
-//         </p>
-
-
-//         {/* CTA Buttons */}
-//         <div
-//           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-//         >
-//           <Button size="lg" className="px-8 py-3 text-base font-medium">
-//             Get Started
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   </section>
-
-// </main>
-//   );
-// }

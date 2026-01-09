@@ -185,7 +185,7 @@ export function TransactionStatus({ transactionId }: TransactionStatusProps) {
           {transaction.status === "failed" && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 text-left">
               <p className="text-red-300 text-sm">
-                Your transaction failed. Please try again or contact support.
+                We couldn’t complete this one. You weren’t charged. Try again or contact support.
               </p>
             </div>
           )}
@@ -196,7 +196,7 @@ export function TransactionStatus({ transactionId }: TransactionStatusProps) {
               <Button
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    window.location.href = "/app/buy";
+                    window.location.href = "/buy";
                   }
                 }}
                 className="bg-blue-600 hover:bg-blue-700"
@@ -206,14 +206,14 @@ export function TransactionStatus({ transactionId }: TransactionStatusProps) {
             )}
             {["pending", "processing"].includes(transaction.status) && (
               <Button variant="secondary" disabled>
-                Processing...
+                Processing
               </Button>
             )}
             <Button
               variant="secondary"
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  window.location.href = "/app/history";
+                  window.location.href = "/history";
                 }
               }}
             >

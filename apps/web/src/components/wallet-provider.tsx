@@ -8,6 +8,7 @@ import { celo, celoAlfajores } from 'wagmi/chains'
 import { defineChain } from 'viem'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { http } from 'wagmi'
+import { AuthProvider } from '@/contexts/auth-context'
 
 // Define Celo Sepolia chain
 const celoSepolia = defineChain({
@@ -72,9 +73,11 @@ function WalletProviderInner({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={getWagmiConfig()}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={customDarkTheme}>
-          {children}
-        </RainbowKitProvider>
+        <AuthProvider>
+          <RainbowKitProvider theme={customDarkTheme}>
+            {children}
+          </RainbowKitProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
