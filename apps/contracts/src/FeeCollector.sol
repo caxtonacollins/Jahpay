@@ -15,8 +15,16 @@ contract FeeCollector is Ownable {
     mapping(address => uint256) public collectedFees; // token => amount
 
     // ============ Events ============
-    event FeesCollected(address indexed token, uint256 amount, address indexed collector);
-    event FeesWithdrawn(address indexed token, uint256 amount, address indexed to);
+    event FeesCollected(
+        address indexed token,
+        uint256 amount,
+        address indexed collector
+    );
+    event FeesWithdrawn(
+        address indexed token,
+        uint256 amount,
+        address indexed to
+    );
     event CollectorAuthorized(address indexed collector);
     event CollectorRevoked(address indexed collector);
 
@@ -28,10 +36,15 @@ contract FeeCollector is Ownable {
 
     // ============ Modifiers ============
     modifier onlyCollector() {
+        _onlyCollector();
+        _;
+    }
+
+    // ============ Internal Functions ============
+    function _onlyCollector() internal view {
         if (!authorizedCollectors[msg.sender] && msg.sender != owner()) {
             revert UnauthorizedCollector();
         }
-        _;
     }
 
     // ============ Constructor ============
@@ -57,7 +70,10 @@ contract FeeCollector is Ownable {
      * @param token Token address (address(0) for native CELO)
      * @param amount Amount to collect
      */
-    function collectFees(address token, uint256 amount) external payable onlyCollector {
+    function collectFees(
+        address token,
+        uint256 amount
+    ) external payable onlyCollector {
         if (amount == 0) revert InvalidAmount();
 
         if (token == address(0)) {
@@ -66,7 +82,12 @@ contract FeeCollector is Ownable {
             collectedFees[address(0)] += amount;
         } else {
             // ERC20 token - must be approved first
-            IERC20(token).transferFrom(msg.sender, address(this), amount);
+            bool success = IERC20(token).transferFrom(
+                msg.sender,
+                address(this),
+                amount
+            );
+            if (!success) revert TransferFailed();
             collectedFees[token] += amount;
         }
 
@@ -79,7 +100,10 @@ contract FeeCollector is Ownable {
      * @param feeBps Fee in basis points
      * @return fee Calculated fee amount
      */
-    function calculateFee(uint256 amount, uint256 feeBps) external pure returns (uint256) {
+    function calculateFee(
+        uint256 amount,
+        uint256 feeBps
+    ) external pure returns (uint256) {
         return (amount * feeBps) / 10000;
     }
 
@@ -89,7 +113,11 @@ contract FeeCollector is Ownable {
      * @param to Recipient address
      * @param amount Amount to withdraw
      */
-    function withdrawFees(address token, address to, uint256 amount) external onlyOwner {
+    function withdrawFees(
+        address token,
+        address to,
+        uint256 amount
+    ) external onlyOwner {
         if (to == address(0)) revert InvalidAddress();
         if (amount == 0) revert InvalidAmount();
         if (collectedFees[token] < amount) revert InvalidAmount();
@@ -138,4 +166,3 @@ contract FeeCollector is Ownable {
         emit CollectorRevoked(collector);
     }
 }
-
