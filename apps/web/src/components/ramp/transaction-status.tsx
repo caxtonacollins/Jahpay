@@ -15,7 +15,7 @@ export function TransactionStatus({ transactionId }: TransactionStatusProps) {
   const { address } = useAccount();
   const { data: transaction, isLoading } = useTransaction(
     transactionId,
-    address
+    address,
   );
   const [showDetails, setShowDetails] = useState(false);
 
@@ -176,8 +176,9 @@ export function TransactionStatus({ transactionId }: TransactionStatusProps) {
           {transaction.status === "processing" && (
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6 text-left">
               <p className="text-blue-300 text-sm">
-                Your transaction is being processed. This usually takes 30-60
-                minutes. We'll notify you when it's complete.
+                Your transaction is being processed. This usually takes
+                30&ndash;60 minutes. We&apos;ll notify you when it&apos;s
+                complete.
               </p>
             </div>
           )}
