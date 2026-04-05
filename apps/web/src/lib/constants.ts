@@ -1,7 +1,7 @@
 // Contract addresses (update these with your deployed contract addresses)
 export const RAMP_CONTRACT_ADDRESS = '0x...'; // Replace with your deployed contract address
 
-// Default chain configuration
+// Default chain configuration - MiniPay mainnet
 export const DEFAULT_CHAIN = {
   id: 42220,
   name: 'Celo Mainnet',
@@ -20,47 +20,50 @@ export const DEFAULT_CHAIN = {
   testnet: false,
 };
 
-// Testnet configuration
-export const ALFAJORES_CHAIN = {
-  id: 44787,
-  name: 'Celo Alfajores',
-  network: 'alfajores',
+// Testnet configuration - MiniPay uses Celo Sepolia (not Alfajores)
+export const CELO_SEPOLIA_CHAIN = {
+  id: 11142220,
+  name: 'Celo Sepolia',
+  network: 'celo-sepolia',
   nativeCurrency: {
     decimals: 18,
     name: 'CELO',
     symbol: 'CELO',
   },
   rpcUrls: {
-    default: 'https://alfajores-forno.celo-testnet.org',
+    default: 'https://forno.celo-sepolia.celo-testnet.org',
   },
   blockExplorers: {
-    default: { name: 'Alfajores Explorer', url: 'https://alfajores.celoscan.io' },
+    default: { name: 'Celo Sepolia Explorer', url: 'https://celo-sepolia.blockscout.com' },
   },
   testnet: true,
 };
 
-// Supported tokens
+// MiniPay supported stablecoins only
 export const SUPPORTED_TOKENS = [
   {
-    symbol: 'CELO',
-    name: 'Celo Native',
-    decimals: 18,
-    address: '0x471EcE3750Da237f93B8E339c536989b8978a438', // Celo mainnet
-    logo: '/tokens/celo.png',
-  },
-  {
-    symbol: 'cUSD',
+    symbol: 'USDm',
     name: 'Celo Dollar',
     decimals: 18,
     address: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // Celo mainnet
+    addressSepolia: '0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9', // Celo Sepolia
     logo: '/tokens/cusd.png',
   },
   {
-    symbol: 'cEUR',
-    name: 'Celo Euro',
-    decimals: 18,
-    address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73', // Celo mainnet
-    logo: '/tokens/ceur.png',
+    symbol: 'USDC',
+    name: 'USD Coin',
+    decimals: 6,
+    address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C', // Celo mainnet
+    addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', // Celo Sepolia
+    logo: '/tokens/usdc.png',
+  },
+  {
+    symbol: 'USDT',
+    name: 'Tether USD',
+    decimals: 6,
+    address: '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e', // Celo mainnet
+    addressSepolia: '0x617f3112bf5ad0E84e882D5142D04ae6C606cc89', // Celo Sepolia
+    logo: '/tokens/usdt.png',
   },
 ];
 
@@ -119,4 +122,15 @@ export const DEFAULT_FEES = {
     min: 100, // 1%
     max: 300, // 3%
   },
+};
+
+// MiniPay specific configuration
+export const MINIPAY_CONFIG = {
+  // Only USDm (cUSD) is supported for feeCurrency in MiniPay
+  SUPPORTED_FEE_CURRENCY: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // USDm mainnet
+  SUPPORTED_FEE_CURRENCY_SEPOLIA: '0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9', // USDm Sepolia
+  // MiniPay only accepts legacy transactions (no EIP-1559)
+  USE_LEGACY_TRANSACTIONS: true,
+  // Recommended for MiniPay apps
+  MOBILE_FIRST: true,
 };
