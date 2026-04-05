@@ -11,11 +11,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "jahpay",
-  description: "A new Celo blockchain project",
+  description:
+    "A dual-mode Web3 app for Celo stablecoin transfers. Works as both a website with multi-wallet support and a MiniPay Mini App for seamless mobile payments.",
   verification: {
     other: {
       "taleantapp:project_verification":
-        "a8b0d175b802dfcf1d187a8237f54de03cc8c154d3add084d0a8d7f8ef785b0f8b3c9d1cbe6c5b42d03b28c8f1c538f98f",
+        "abbab1750b2dfcffd187a0237f54de93ec08c154bf3addc0949d0087170ef785b16f8b3dd915cbe6c542d9d3b2826c87f1530790f361c7096b51cc4e8eb01f27",
     },
   },
 };
