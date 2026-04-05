@@ -1,55 +1,60 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import '@rainbow-me/rainbowkit/styles.css'
-import { darkTheme, getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
-import { WagmiProvider } from 'wagmi'
-import { celo, celoAlfajores } from 'wagmi/chains'
-import { defineChain } from 'viem'
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-import { http } from 'wagmi'
+import { useState, useEffect } from "react";
+import "@rainbow-me/rainbowkit/styles.css";
+import {
+  darkTheme,
+  getDefaultConfig,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+import { WagmiProvider } from "wagmi";
+import { celo } from "wagmi/chains";
+import { defineChain } from "viem";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { http } from "wagmi";
 
-// Define Celo Sepolia chain
+// Define Celo Sepolia chain (MiniPay testnet)
 const celoSepolia = defineChain({
   id: 11142220,
-  name: 'Celo Sepolia',
+  name: "Celo Sepolia",
   nativeCurrency: {
     decimals: 18,
-    name: 'CELO',
-    symbol: 'CELO',
+    name: "CELO",
+    symbol: "CELO",
   },
   rpcUrls: {
     default: {
-      http: ['https://forno.celo-sepolia.celo-testnet.org'],
+      http: ["https://forno.celo-sepolia.celo-testnet.org"],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Celo Sepolia Blockscout',
-      url: 'https://celo-sepolia.blockscout.com',
+      name: "Celo Sepolia Blockscout",
+      url: "https://celo-sepolia.blockscout.com",
     },
   },
   testnet: true,
-})
+});
 
 // Create config with proper SSR handling
-let config: any = null
+let config: any = null;
 
 function getWagmiConfig() {
   if (!config) {
     config = getDefaultConfig({
-      appName: 'jahpay',
-      projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
-      chains: [celo, celoAlfajores, celoSepolia],
+      appName: "jahpay",
+      projectId:
+        process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
+      // MiniPay only supports Celo mainnet and Celo Sepolia testnet
+      chains: [celo, celoSepolia],
       transports: {
         [celo.id]: http(),
-        [celoAlfajores.id]: http(),
         [celoSepolia.id]: http(),
       },
       ssr: true,
-    })
+    });
   }
-  return config
+  return config;
 }
 
 const queryClient = new QueryClient({
@@ -58,14 +63,14 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
     },
   },
-})
+});
 
 const customDarkTheme = darkTheme({
-  accentColor: '#7b3fe4',
-  accentColorForeground: 'white',
-  borderRadius: 'medium',
-  fontStack: 'system',
-  overlayBlur: 'small',
+  accentColor: "#7b3fe4",
+  accentColorForeground: "white",
+  borderRadius: "medium",
+  fontStack: "system",
+  overlayBlur: "small",
 });
 
 function WalletProviderInner({ children }: { children: React.ReactNode }) {
@@ -77,20 +82,20 @@ function WalletProviderInner({ children }: { children: React.ReactNode }) {
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  )
+  );
 }
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // Show children without wallet functionality during SSR
   if (!mounted) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
-  return <WalletProviderInner>{children}</WalletProviderInner>
+  return <WalletProviderInner>{children}</WalletProviderInner>;
 }

@@ -1,16 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-import { Navbar } from '@/components/layout/navbar';
-import { WalletProvider } from "@/components/wallet-provider"
-import { Footer } from '@/components/layout/footer';
+import { Navbar } from "@/components/layout/navbar";
+import { WalletProvider } from "@/components/wallet-provider";
+import { MiniPayProvider } from "@/contexts/minipay-context";
+import { Footer } from "@/components/layout/footer";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'jahpay',
-  description: 'A new Celo blockchain project',
+  title: "jahpay",
+  description: "A new Celo blockchain project",
 };
 
 export default function RootLayout({
@@ -23,13 +24,13 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* Navbar is included on all pages */}
         <div className="relative flex min-h-screen flex-col">
-          <WalletProvider>
-            <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </WalletProvider>
+          <MiniPayProvider>
+            <WalletProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </WalletProvider>
+          </MiniPayProvider>
         </div>
       </body>
     </html>
