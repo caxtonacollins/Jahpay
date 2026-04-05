@@ -12,6 +12,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "jahpay",
   description: "A new Celo blockchain project",
+  verification: {
+    other: {
+      "taleantapp:project_verification":
+        "a8b0d175b802dfcf1d187a8237f54de03cc8c154d3add084d0a8d7f8ef785b0f8b3c9d1cbe6c5b42d03b28c8f1c538f98f",
+    },
+  },
 };
 
 export default function RootLayout({
