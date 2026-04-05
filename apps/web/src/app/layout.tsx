@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "A dual-mode Web3 app for Celo stablecoin transfers. Works as both a website with multi-wallet support and a MiniPay Mini App for seamless mobile payments.",
   verification: {
     other: {
-      "taleantapp:project_verification":
+      "talentapp:project_verification":
         "abbab1750b2dfcffd187a0237f54de93ec08c154bf3addc0949d0087170ef785b16f8b3dd915cbe6c542d9d3b2826c87f1530790f361c7096b51cc4e8eb01f27",
     },
   },
