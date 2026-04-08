@@ -59,23 +59,23 @@ const fadeInUp: Variants = {
 };
 
 const providers = [
-  { 
-    name: "Yellow Card", 
-    icon: "/images/yellowcard1.png", 
+  {
+    name: "Yellow Card",
+    icon: "/images/yellowcard1.png",
     description: "20+ African countries",
-    color: "from-yellow-400 to-yellow-600"
+    color: "from-yellow-400 to-yellow-600",
   },
-  { 
-    name: "Cashramp", 
-    icon: "/images/cashramp.jpeg", 
+  {
+    name: "Cashramp",
+    icon: "/images/cashramp.jpeg",
     description: "Fast & reliable",
-    color: "from-blue-500 to-blue-700"
+    color: "from-blue-500 to-blue-700",
   },
-  { 
-    name: "Bitmama", 
-    icon: "/images/bitmama.png", 
+  {
+    name: "Bitmama",
+    icon: "/images/bitmama.png",
     description: "Multi-currency support",
-    color: "from-purple-500 to-pink-500"
+    color: "from-purple-500 to-pink-500",
   },
 ];
 
@@ -243,15 +243,15 @@ export default function Home() {
                 >
                   <Zap className="h-4 w-4 text-yellow-300" />
                 </motion.span>
-                <span className="group-hover:text-white transition-colors">Built on Celo • Production-Grade dApp</span>
+                <span className="group-hover:text-white transition-colors">
+                  Built on Celo • Production-Grade dApp
+                </span>
               </div>
             </motion.div>
 
             {/* Main Heading */}
             <motion.div variants={item} className="relative">
-              <motion.h1
-                className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6 leading-tight"
-              >
+              <motion.h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6 leading-tight">
                 <div className="flex items-center justify-center">
                   <motion.span
                     className="inline-block relative"
@@ -271,23 +271,25 @@ export default function Home() {
                     animate={{
                       opacity: 1,
                       scale: 1,
-                      x: [0, 5, -5, 0]
+                      x: [0, 5, -5, 0],
                     }}
                     transition={{
                       duration: 4,
                       repeat: Infinity,
-                      repeatType: "loop"
+                      repeatType: "loop",
                     }}
                   >
                     {/* Background glow */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 blur-md" />
 
                     {/* Main circle */}
-                    <div className="relative z-10 h-12 w-12 md:h-14 md:w-14 rounded-full 
+                    <div
+                      className="relative z-10 h-12 w-12 md:h-14 md:w-14 rounded-full 
                              bg-gradient-to-br from-blue-500/30 to-cyan-500/30 
                              border border-blue-400/30 
                              flex items-center justify-center 
-                             backdrop-blur-sm">
+                             backdrop-blur-sm"
+                    >
                       <svg
                         viewBox="0 0 24 24"
                         className="h-6 w-6 md:h-8 md:w-8 text-blue-300"
@@ -302,12 +304,12 @@ export default function Home() {
                           animate={{
                             pathLength: 1,
                             opacity: 1,
-                            x: [-2, 2, -2]
+                            x: [-2, 2, -2],
                           }}
                           transition={{
                             duration: 3,
                             repeat: Infinity,
-                            repeatType: "reverse"
+                            repeatType: "reverse",
                           }}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -320,13 +322,13 @@ export default function Home() {
                           animate={{
                             pathLength: 1,
                             opacity: 1,
-                            x: [2, -2, 2]
+                            x: [2, -2, 2],
                           }}
                           transition={{
                             duration: 3,
                             delay: 0.5,
                             repeat: Infinity,
-                            repeatType: "reverse"
+                            repeatType: "reverse",
                           }}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -391,22 +393,27 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1 }}
             >
-              <Button
-                size="lg"
-                className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5"
-                disabled
-              >
-                <span className="relative z-10 flex items-center">
-                  Launch App
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Button>
+              <Link href="/app">
+                <Button
+                  size="lg"
+                  className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Launch App
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Button>
+              </Link>
 
               <Button
                 variant="outline"
                 size="lg"
                 className="px-8 py-6 text-base font-medium border-slate-700 bg-slate-900/50 hover:bg-slate-800/50 text-white hover:text-white backdrop-blur-sm transition-all"
+                onClick={() => {
+                  const element = document.getElementById("learn-more-section");
+                  element?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
                 Learn More
               </Button>
@@ -565,7 +572,7 @@ export default function Home() {
           >
             {features.map((feature, idx) => {
               const Icon = feature.icon;
-              const gradient = feature.color.split(' ')[1]; // Extract gradient class
+              const gradient = feature.color.split(" ")[1]; // Extract gradient class
 
               return (
                 <motion.div
@@ -579,7 +586,9 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Glow effect */}
-                    <div className={`absolute -inset-1 bg-gradient-to-br ${feature.color} rounded-2xl opacity-0 group-hover:opacity-5 blur-xl transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute -inset-1 bg-gradient-to-br ${feature.color} rounded-2xl opacity-0 group-hover:opacity-5 blur-xl transition-opacity duration-500`}
+                    ></div>
 
                     <div className="relative">
                       <motion.div
@@ -622,7 +631,9 @@ export default function Home() {
                   <div className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-slate-400 font-medium">{stat.label}</div>
+                  <div className="text-sm text-slate-400 font-medium">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -680,7 +691,7 @@ export default function Home() {
                 "from-cyan-500 to-blue-500",
                 "from-blue-500 to-indigo-500",
                 "from-indigo-500 to-purple-500",
-                "from-purple-500 to-pink-500"
+                "from-purple-500 to-pink-500",
               ][idx % 4];
 
               return (
@@ -692,14 +703,16 @@ export default function Home() {
                     delay: idx * 0.1,
                     duration: 0.5,
                     type: "spring",
-                    stiffness: 100
+                    stiffness: 100,
                   }}
                   viewport={{ once: true, margin: "-50px" }}
                   className="relative group"
                 >
                   {/* Step number with gradient ring */}
                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-slate-900 border-2 border-slate-800 flex items-center justify-center z-10">
-                    <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                    <div
+                      className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                    ></div>
                     <span className="relative z-10 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-300">
                       {idx + 1}
                     </span>
@@ -708,10 +721,14 @@ export default function Home() {
                   {/* Card */}
                   <div className="relative h-full bg-gradient-to-br from-slate-800/30 to-slate-900/30 border border-slate-700/30 rounded-2xl p-6 pt-10 backdrop-blur-lg transition-all duration-300 group-hover:border-slate-600/50 group-hover:shadow-2xl group-hover:shadow-blue-500/10">
                     {/* Gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                    ></div>
 
                     <div className="relative z-10">
-                      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors} mb-6 transform transition-transform duration-300 group-hover:scale-110`}>
+                      <div
+                        className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors} mb-6 transform transition-transform duration-300 group-hover:scale-110`}
+                      >
                         <Icon className="h-6 w-6 text-white" />
                       </div>
 
@@ -742,7 +759,8 @@ export default function Home() {
               Ready to get started?
             </h3>
             <p className="text-lg text-slate-300/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of users enjoying seamless fiat-to-crypto conversions today.
+              Join thousands of users enjoying seamless fiat-to-crypto
+              conversions today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -778,7 +796,11 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <img src="/images/banner.png" alt="Smiling user with Jahpay" className="rounded-2xl shadow-2xl shadow-blue-500/20" />
+              <img
+                src="/images/banner.png"
+                alt="Smiling user with Jahpay"
+                className="rounded-2xl shadow-2xl shadow-blue-500/20"
+              />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -786,9 +808,15 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">From Local Currency to Crypto, All in Your Hands</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+                From Local Currency to Crypto, All in Your Hands
+              </h2>
               <p className="text-lg text-slate-300/90 mb-8 leading-relaxed">
-                Jahpay puts the power of seamless digital finance right in your pocket. With a user-friendly interface, you can effortlessly navigate the world of crypto, making transactions as simple as sending a text message. Experience the joy of financial freedom with a platform designed for you.
+                Jahpay puts the power of seamless digital finance right in your
+                pocket. With a user-friendly interface, you can effortlessly
+                navigate the world of crypto, making transactions as simple as
+                sending a text message. Experience the joy of financial freedom
+                with a platform designed for you.
               </p>
               <Button
                 size="lg"
@@ -833,7 +861,8 @@ export default function Home() {
               Trusted Providers
             </h2>
             <p className="text-lg text-slate-300/90 max-w-2xl mx-auto">
-              Multi-provider aggregator ensures best rates and maximum availability
+              Multi-provider aggregator ensures best rates and maximum
+              availability
             </p>
           </motion.div>
 
@@ -848,7 +877,7 @@ export default function Home() {
               const colors = [
                 "from-purple-500 to-blue-500",
                 "from-blue-500 to-cyan-500",
-                "from-cyan-500 to-emerald-500"
+                "from-cyan-500 to-emerald-500",
               ][idx % 3];
 
               return (
@@ -863,19 +892,20 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Glow effect */}
-                    <div className={`absolute -inset-1 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute -inset-1 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500`}
+                    ></div>
 
                     <div className="relative z-10 text-center h-full flex flex-col items-center">
                       <div className="relative w-20 h-20 mb-6 transform transition-transform duration-300 group-hover:scale-110">
-                          <Image 
-                            src={provider.icon}
-                            alt={provider.name}
-                            width={80}
-                            height={80}
-                            className="object-contain w-full h-full rounded-lg"
-     
-                            priority
-                          />
+                        <Image
+                          src={provider.icon}
+                          alt={provider.name}
+                          width={80}
+                          height={80}
+                          className="object-contain w-full h-full rounded-lg"
+                          priority
+                        />
                       </div>
 
                       <h3 className="text-xl font-bold mb-3 text-white">
@@ -896,6 +926,137 @@ export default function Home() {
                 </motion.div>
               );
             })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Learn More Section */}
+      <section
+        id="learn-more-section"
+        className="relative py-20 lg:py-32 overflow-hidden"
+      >
+        {/* Background elements */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-1/4 -right-1/4 w-[600px] h-[600px] bg-gradient-to-tl from-cyan-500/5 to-purple-500/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container px-4 mx-auto max-w-7xl relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <motion.span
+              className="inline-block px-4 py-2 mb-4 text-sm font-medium bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-300 rounded-full border border-purple-500/30 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              Learn More
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+              Why Choose jahpay?
+            </h2>
+            <p className="text-lg text-slate-300/90 max-w-2xl mx-auto">
+              Discover what makes jahpay the best choice for fiat-to-crypto
+              conversions
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid md:grid-cols-2 gap-8 mb-12"
+          >
+            {[
+              {
+                title: "Best Rates Guaranteed",
+                description:
+                  "Our multi-provider aggregator compares rates across Yellow Card, Cashramp, and Bitmama to ensure you always get the best deal. No hidden markups.",
+                icon: TrendingUp,
+              },
+              {
+                title: "Lightning Fast",
+                description:
+                  "Most transactions complete in under 5 minutes. Real-time rate updates and instant confirmations keep you in control.",
+                icon: Zap,
+              },
+              {
+                title: "Secure & Audited",
+                description:
+                  "All smart contracts have undergone professional security audits. Your funds are protected with multi-sig wallets and 24/7 monitoring.",
+                icon: Lock,
+              },
+              {
+                title: "20+ African Countries",
+                description:
+                  "Support for NGN, GHS, KES, ZAR, and more. Send and receive from any African country with local payment methods.",
+                icon: Globe,
+              },
+            ].map((learnItem, idx) => {
+              const Icon = learnItem.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  variants={item}
+                  className="group relative"
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                >
+                  <div className="relative h-full bg-gradient-to-br from-slate-800/30 to-slate-900/30 border border-slate-700/30 rounded-2xl p-8 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:border-slate-600/50 hover:shadow-2xl hover:shadow-purple-500/10">
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    <div className="relative">
+                      <motion.div
+                        className="inline-flex p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 mb-6 transform transition-transform duration-300 group-hover:scale-110"
+                        initial={{ scale: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        <Icon className="h-6 w-6 text-white" />
+                      </motion.div>
+
+                      <h3 className="text-xl font-bold mb-3 text-white">
+                        {learnItem.title}
+                      </h3>
+                      <p className="text-slate-300/90 leading-relaxed">
+                        {learnItem.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* CTA for Learn More */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <p className="text-lg text-slate-300/90 mb-6">
+              Ready to get started? Launch the app and make your first
+              conversion today.
+            </p>
+            <Link href="/app">
+              <Button
+                size="lg"
+                className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all transform hover:-translate-y-0.5"
+              >
+                <span className="relative z-10 flex items-center">
+                  Get Started Now
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -942,18 +1103,19 @@ export default function Home() {
             {faqs.map((faq, idx) => {
               const isOpen = expandedFaq === idx;
               return (
-                <motion.div
-                  key={idx}
-                  variants={item}
-                  className="group"
-                >
+                <motion.div key={idx} variants={item} className="group">
                   <motion.button
                     onClick={() => setExpandedFaq(isOpen ? -1 : idx)}
-                    className={`w-full text-left bg-gradient-to-br from-slate-800/30 to-slate-900/30 border ${isOpen ? 'border-blue-500/30' : 'border-slate-700/30 hover:border-slate-600/50'
-                      } rounded-xl p-6 transition-all duration-300 backdrop-blur-lg`}
+                    className={`w-full text-left bg-gradient-to-br from-slate-800/30 to-slate-900/30 border ${
+                      isOpen
+                        ? "border-blue-500/30"
+                        : "border-slate-700/30 hover:border-slate-600/50"
+                    } rounded-xl p-6 transition-all duration-300 backdrop-blur-lg`}
                     whileHover={{
                       scale: 1.01,
-                      boxShadow: isOpen ? 'none' : '0 10px 30px -10px rgba(0, 0, 0, 0.2)'
+                      boxShadow: isOpen
+                        ? "none"
+                        : "0 10px 30px -10px rgba(0, 0, 0, 0.2)",
                     }}
                   >
                     <div className="flex items-start justify-between">
@@ -962,23 +1124,29 @@ export default function Home() {
                       </h3>
                       <motion.div
                         animate={{ rotate: isOpen ? 180 : 0 }}
-                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isOpen ? 'bg-blue-500/10' : 'bg-slate-700/50 group-hover:bg-slate-600/50'
-                          } transition-colors`}
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          isOpen
+                            ? "bg-blue-500/10"
+                            : "bg-slate-700/50 group-hover:bg-slate-600/50"
+                        } transition-colors`}
                       >
-                        <ChevronDown className={`h-4 w-4 ${isOpen ? 'text-blue-400' : 'text-slate-400'
-                          } transition-colors`} />
+                        <ChevronDown
+                          className={`h-4 w-4 ${
+                            isOpen ? "text-blue-400" : "text-slate-400"
+                          } transition-colors`}
+                        />
                       </motion.div>
                     </div>
 
                     <motion.div
                       initial={false}
                       animate={{
-                        height: isOpen ? 'auto' : 0,
+                        height: isOpen ? "auto" : 0,
                         opacity: isOpen ? 1 : 0,
-                        marginTop: isOpen ? '1rem' : 0,
-                        paddingTop: isOpen ? '1rem' : 0,
+                        marginTop: isOpen ? "1rem" : 0,
+                        paddingTop: isOpen ? "1rem" : 0,
                       }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden border-t border-slate-700/30"
                     >
                       <p className="text-slate-300/90 leading-relaxed">
@@ -1066,7 +1234,6 @@ export default function Home() {
   );
 }
 
-
 // import Link from "next/link";
 // import { Button } from "@/components/ui/button";
 // import { Zap } from "lucide-react";
@@ -1100,7 +1267,6 @@ export default function Home() {
 //         >
 //           Start building your decentralized application on Celo. Fast and secure blockchain for everyone.
 //         </p>
-
 
 //         {/* CTA Buttons */}
 //         <div
