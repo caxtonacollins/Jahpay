@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Info } from "lucide-react";
+import { Zap } from "lucide-react";
 
 interface RateInfoProps {
   fromToken: string;
@@ -12,25 +12,25 @@ interface RateInfoProps {
 
 export function RateInfo({ fromToken, toToken, rate, fee }: RateInfoProps) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-white/60">Exchange Rate</span>
-        <span className="text-sm font-mono text-white">
-          1 {fromToken} = {rate.toFixed(6)} {toToken}
+    <div className="flex items-center justify-between px-1 py-1">
+      {/* Live rate */}
+      <div className="flex items-center gap-2">
+        <span
+          className="w-2 h-2 rounded-full bg-celo-green shrink-0"
+          style={{ animation: "live-pulse 2s ease-in-out infinite" }}
+        />
+        <span className="text-xs text-white/50">1 {fromToken}</span>
+        <span className="text-xs text-white/30">=</span>
+        <span className="text-xs font-mono font-medium text-white/80">
+          {rate.toFixed(4)} {toToken}
         </span>
       </div>
 
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-white/60">Platform Fee</span>
-        <span className="text-sm font-medium text-white">{fee}</span>
-      </div>
-
-      <div className="flex items-start gap-2 pt-2 border-t border-white/10">
-        <Info className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-white/50">
-          Rates are updated in real-time. Final amount may vary based on network
-          conditions.
-        </p>
+      {/* Fee */}
+      <div className="flex items-center gap-1.5">
+        <Zap className="w-3 h-3 text-celo-gold/70" />
+        <span className="text-xs text-white/40">Fee</span>
+        <span className="text-xs font-medium text-celo-gold/80">{fee}</span>
       </div>
     </div>
   );
