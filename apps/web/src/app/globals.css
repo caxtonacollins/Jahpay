@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,6 +39,16 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Premium design tokens */
+    --celo-green: 167 100% 42%;
+    --celo-gold: 43 100% 57%;
+    --surface-0: 222 47% 4%;
+    --surface-1: 222 40% 7%;
+    --surface-2: 222 33% 11%;
+    --surface-3: 222 28% 16%;
+    --glow-green: rgba(0, 215, 155, 0.15);
+    --glow-gold: rgba(255, 196, 57, 0.12);
   }
 
   .dark {
@@ -76,5 +88,111 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
+
+@layer utilities {
+  .glow-green {
+    box-shadow: 0 0 20px rgba(0, 215, 155, 0.25), 0 0 60px rgba(0, 215, 155, 0.08);
+  }
+  .glow-green-sm {
+    box-shadow: 0 0 12px rgba(0, 215, 155, 0.3);
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(255, 196, 57, 0.2), 0 0 60px rgba(255, 196, 57, 0.06);
+  }
+  .text-gradient-green-gold {
+    background: linear-gradient(135deg, #00d79b 0%, #ffc439 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .surface-glass {
+    background: rgba(13, 17, 30, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .input-surface {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .input-surface:focus-within {
+    border-color: rgba(0, 215, 155, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 215, 155, 0.08);
+  }
+  .noise-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.4;
+  }
+
+  /* === Shared dot-grid background === */
+  .jahpay-grid {
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* === Global page base === */
+  .jahpay-bg {
+    background-color: #060b14;
+  }
+
+  /* === Section overlays for blending sections over grid === */
+  .section-overlay-hero {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 215, 155, 0.12) 0%, transparent 70%);
+  }
+  .section-overlay-features {
+    background: linear-gradient(to bottom, transparent 0%, rgba(6, 11, 20, 0.85) 30%, rgba(6, 11, 20, 0.85) 70%, transparent 100%);
+  }
+  .section-overlay-howit {
+    background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(255, 196, 57, 0.06) 0%, transparent 70%);
+  }
+  .section-overlay-providers {
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 30, 20, 0.6) 30%, rgba(0, 30, 20, 0.6) 70%, transparent 100%);
+  }
+  .section-overlay-cta {
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 215, 155, 0.10) 0%, transparent 70%);
+  }
+  .section-overlay-faq {
+    background: linear-gradient(to bottom, transparent 0%, rgba(6, 11, 20, 0.7) 20%, rgba(6, 11, 20, 0.7) 80%, transparent 100%);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.03); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-15px) scale(1.02); }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 215, 155, 0.6); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(0, 215, 155, 0); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
