@@ -2,10 +2,8 @@
 
 import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Loader2, AlertCircle, CheckCircle2, Zap, Shield, Globe } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { TransactionTabs, TransactionType } from "./transaction-tabs";
 import { SwapPanel } from "./panels/swap-panel";
@@ -19,6 +17,24 @@ interface TransactionState {
   message?: string;
   txHash?: string;
 }
+
+const FEATURES = [
+  {
+    icon: <Zap className="w-4 h-4 text-celo-gold" />,
+    title: "Instant",
+    description: "Real-time conversions",
+  },
+  {
+    icon: <Shield className="w-4 h-4 text-celo-green" />,
+    title: "Secure",
+    description: "Contract verified",
+  },
+  {
+    icon: <Globe className="w-4 h-4 text-blue-400" />,
+    title: "Multi-Provider",
+    description: "Best rates guaranteed",
+  },
+];
 
 export function UnifiedInterface() {
   const [activeTab, setActiveTab] = useState<TransactionType>("swap");
@@ -58,58 +74,75 @@ export function UnifiedInterface() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-24 pb-12">
-      {/* Animated background elements */}
+    <div className="min-h-screen jahpay-bg jahpay-grid pt-24 pb-16 relative overflow-hidden">
+      {/* Animated background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-celo-green/10 rounded-full blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl opacity-20 animate-pulse" />
+        {/* Primary green orb */}
+        <div
+          className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full opacity-[0.12]"
+          style={{
+            background: "radial-gradient(circle, #00d79b 0%, transparent 70%)",
+            animation: "float 9s ease-in-out infinite",
+          }}
+        />
+        {/* Secondary gold orb */}
+        <div
+          className="absolute bottom-[-15%] right-[-8%] w-[600px] h-[600px] rounded-full opacity-[0.08]"
+          style={{
+            background: "radial-gradient(circle, #ffc439 0%, transparent 70%)",
+            animation: "float-delayed 12s ease-in-out infinite",
+          }}
+        />
+        {/* Mid blue accent */}
+        <div
+          className="absolute top-[40%] right-[15%] w-[300px] h-[300px] rounded-full opacity-[0.06]"
+          style={{
+            background: "radial-gradient(circle, #3b82f6 0%, transparent 70%)",
+            animation: "float 15s ease-in-out infinite reverse",
+          }}
+        />
       </div>
 
-      <div className="container relative z-10 max-w-2xl mx-auto px-4">
-        {/* Header */}
+      <div className="container relative z-10 max-w-lg mx-auto px-4 mt-8">
+        {/* Tagline above card */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-center"
+          transition={{ delay: 0.05 }}
+          className="text-center mb-6"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-celo-green via-blue-400 to-celo-gold bg-clip-text text-transparent">
-            jahpay
-          </h1>
-          <p className="text-white/60 text-lg">
-            Seamless fiat-to-crypto and crypto-to-fiat conversions on Celo
+          <p className="text-xs font-medium text-white/30 uppercase tracking-[0.2em]">
+            Powered by Celo · DeFi Made Simple
           </p>
         </motion.div>
 
         {/* Main Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 25 }}
         >
-          <GlassCard className="p-6 md:p-8 shadow-2xl">
+          <GlassCard className="p-5 md:p-6" glow hover={false}>
             {/* Transaction Tabs */}
-            <TransactionTabs
-              activeTab={activeTab}
-              onTabChange={handleTabChange}
-            />
+            <TransactionTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
             {/* Status Messages */}
             <AnimatePresence mode="wait">
               {transactionState.status === "success" && (
                 <motion.div
                   key="success"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/30 flex items-start gap-3"
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="rounded-xl bg-celo-green/[0.08] border border-celo-green/25 flex items-start gap-3 px-4 py-3 overflow-hidden"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-green-400 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-celo-green flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-celo-green">
                       {transactionState.message}
                     </p>
                     {transactionState.txHash && (
-                      <p className="text-green-400/70 text-sm mt-1 font-mono break-all">
+                      <p className="text-xs text-celo-green/60 mt-0.5 font-mono truncate">
                         {transactionState.txHash}
                       </p>
                     )}
@@ -120,19 +153,15 @@ export function UnifiedInterface() {
               {transactionState.status === "error" && (
                 <motion.div
                   key="error"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 flex items-start gap-3"
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="rounded-xl bg-red-500/[0.08] border border-red-500/25 flex items-start gap-3 px-4 py-3 overflow-hidden"
                 >
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-red-400 font-medium">
-                      Transaction failed
-                    </p>
-                    <p className="text-red-400/70 text-sm mt-1">
-                      {transactionState.message}
-                    </p>
+                    <p className="text-sm font-medium text-red-400">Transaction failed</p>
+                    <p className="text-xs text-red-400/60 mt-0.5">{transactionState.message}</p>
                   </div>
                 </motion.div>
               )}
@@ -143,10 +172,10 @@ export function UnifiedInterface() {
               {activeTab === "swap" && (
                 <motion.div
                   key="swap"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.18 }}
                 >
                   <SwapPanel
                     onTransactionStart={handleTransactionStart}
@@ -160,10 +189,10 @@ export function UnifiedInterface() {
               {activeTab === "onramp" && (
                 <motion.div
                   key="onramp"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.18 }}
                 >
                   <OnrampPanel
                     onTransactionStart={handleTransactionStart}
@@ -177,10 +206,10 @@ export function UnifiedInterface() {
               {activeTab === "offramp" && (
                 <motion.div
                   key="offramp"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.18 }}
                 >
                   <OfframpPanel
                     onTransactionStart={handleTransactionStart}
@@ -195,9 +224,9 @@ export function UnifiedInterface() {
             {/* Transaction Summary */}
             {transactionState.status !== "idle" && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 pt-6 border-t border-white/10"
+                className="mt-5 pt-5 border-t border-white/[0.06]"
               >
                 <TransactionSummary
                   type={activeTab}
@@ -209,21 +238,18 @@ export function UnifiedInterface() {
           </GlassCard>
         </motion.div>
 
-        {/* Info Cards */}
+        {/* Feature Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8"
+          transition={{ delay: 0.22 }}
+          className="grid grid-cols-3 gap-3 mt-4"
         >
-          {[
-            { title: "Fast", description: "Instant conversions" },
-            { title: "Secure", description: "Smart contract verified" },
-            { title: "Multi-Provider", description: "Best rates guaranteed" },
-          ].map((item, idx) => (
-            <GlassCard key={idx} className="p-4 text-center">
-              <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-              <p className="text-white/60 text-sm">{item.description}</p>
+          {FEATURES.map((item, idx) => (
+            <GlassCard key={idx} className="p-3.5 text-center" hover>
+              <div className="flex justify-center mb-2">{item.icon}</div>
+              <h3 className="text-xs font-semibold text-white mb-0.5">{item.title}</h3>
+              <p className="text-[11px] text-white/40 leading-snug">{item.description}</p>
             </GlassCard>
           ))}
         </motion.div>
