@@ -38,7 +38,7 @@ export async function verifySignature(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      wallet_address: walletAddress,
+      address: walletAddress,
       signature,
       message,
     }),
