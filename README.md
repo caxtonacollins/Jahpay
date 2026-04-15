@@ -1,7 +1,6 @@
 <div align="center">
   <img src="apps/web/public/images/logo_name.png" alt="jahpay" width="200" />
   
-  # jahpay
   
   **Seamless fiat-to-crypto conversion on Celo**
   
@@ -10,13 +9,9 @@
   [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 </div>
 
----
+Jahpay is a modern Web3 application that enables seamless fiat-to-crypto and crypto-to-fiat conversions on the Celo blockchain. Built with Next.js and TypeScript, it works as both a standard website and a MiniPay Mini App, supporting stablecoin transactions with multiple payment providers.
 
-## Overview
-
-jahpay is a modern Web3 application that enables seamless fiat-to-crypto and crypto-to-fiat conversions on the Celo blockchain. Built with Next.js and TypeScript, it works as both a standard website and a MiniPay Mini App, supporting stablecoin transactions with multiple payment providers.
-
-## ✨ Features
+## Features
 
 - **Dual-Mode Operation**: Works as a website and MiniPay Mini App
 - **Multi-Provider Support**: Yellow Card, Cashramp, Bitmama
@@ -25,7 +20,7 @@ jahpay is a modern Web3 application that enables seamless fiat-to-crypto and cry
 - **Mobile-First Design**: Responsive UI optimized for mobile
 - **Type-Safe**: Full TypeScript support
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+
@@ -47,7 +42,7 @@ pnpm dev
 
 Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 jahpay/
@@ -58,7 +53,7 @@ jahpay/
 └── docs/                 # Documentation
 ```
 
-## 🛠 Available Commands
+## Available Commands
 
 | Command | Description |
 |---------|-------------|
@@ -67,7 +62,7 @@ jahpay/
 | `pnpm lint` | Lint all packages and apps |
 | `pnpm type-check` | Run TypeScript type checking |
 
-## 🏗 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -77,42 +72,42 @@ jahpay/
 | **Blockchain** | Celo, Solidity |
 | **Monorepo** | Turborepo, PNPM |
 
-## 🔗 Blockchain Integration
+## Blockchain Integration
 
 - **Network**: Celo Mainnet (42220) & Celo Sepolia (11142220)
 - **Tokens**: USDm, USDC, USDT
 - **Smart Contracts**: RampAggregator for optimized routing
 - **Wallet Support**: MetaMask, WalletConnect, MiniPay
 
-## 📱 MiniPay Support
+## MiniPay Support
 
 jahpay is fully compatible with MiniPay, the fastest-growing stablecoin wallet in the Global South. The app automatically detects the MiniPay environment and adapts accordingly.
 
 **Learn more**: [MiniPay Integration Guide](MINIPAY_INTEGRATION.md)
 
-## 📚 Documentation
+## Documentation
 
 - [MiniPay Integration](MINIPAY_INTEGRATION.md) - Full MiniPay setup guide
 - [Quick Start](QUICK_START_MINIPAY.md) - 5-minute setup
 - [Architecture](ARCHITECTURE.md) - System design
 - [Testing Checklist](MINIPAY_TESTING_CHECKLIST.md) - Testing procedures
 
-## 🔐 Security
+## Security
 
 - Smart contracts audited for security
 - No private keys stored in the app
 - Secure wallet integration via industry-standard libraries
 - Environment variables for sensitive configuration
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 Support
+## Support
 
 - **Celo Docs**: [https://docs.celo.org](https://docs.celo.org)
 - **MiniPay Docs**: [https://docs.minipay.xyz](https://docs.minipay.xyz)
