@@ -16,25 +16,21 @@ const tabs: Array<{
   id: TransactionType;
   label: string;
   icon: React.ReactNode;
-  description: string;
 }> = [
   {
     id: "swap",
     label: "Swap",
-    icon: <ArrowRightLeft className="w-5 h-5" />,
-    description: "Exchange crypto tokens",
+    icon: <ArrowRightLeft className="w-4 h-4" />,
   },
   {
     id: "onramp",
     label: "Buy Crypto",
-    icon: <TrendingUp className="w-5 h-5" />,
-    description: "Fiat to crypto",
+    icon: <TrendingUp className="w-4 h-4" />,
   },
   {
     id: "offramp",
     label: "Sell Crypto",
-    icon: <TrendingDown className="w-5 h-5" />,
-    description: "Crypto to fiat",
+    icon: <TrendingDown className="w-4 h-4" />,
   },
 ];
 
@@ -43,31 +39,31 @@ export function TransactionTabs({
   onTabChange,
 }: TransactionTabsProps) {
   return (
-    <div className="flex gap-2 md:gap-3 mb-8">
+    <div className="relative flex gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06] mb-6">
       {tabs.map((tab) => (
-        <motion.button
+        <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "relative flex-1 md:flex-none px-4 md:px-6 py-3 rounded-lg font-medium transition-all duration-200",
-            "flex items-center gap-2 justify-center md:justify-start",
+            "relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg",
+            "text-sm font-medium transition-colors duration-200 z-10",
             activeTab === tab.id
-              ? "bg-gradient-to-r from-celo-green to-celo-gold text-black shadow-lg"
-              : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white",
+              ? "text-black"
+              : "text-white/50 hover:text-white/80"
           )}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
         >
-          {tab.icon}
-          <span className="hidden sm:inline">{tab.label}</span>
           {activeTab === tab.id && (
             <motion.div
-              layoutId="activeTab"
-              className="absolute inset-0 rounded-lg -z-10"
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              layoutId="activeTabBg"
+              className="absolute inset-0 rounded-lg bg-gradient-to-r from-celo-green to-celo-gold"
+              transition={{ type: "spring", stiffness: 400, damping: 35 }}
             />
           )}
-        </motion.button>
+          <span className="relative z-10 flex items-center gap-2">
+            {tab.icon}
+            <span className="hidden sm:inline">{tab.label}</span>
+          </span>
+        </button>
       ))}
     </div>
   );

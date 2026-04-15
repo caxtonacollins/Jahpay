@@ -43,22 +43,15 @@ export function SwapPanel({
 
     try {
       onTransactionStart();
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
       onTransactionSuccess("0x" + Math.random().toString(16).slice(2));
     } catch (error) {
       onTransactionError("Swap failed. Please try again.");
     }
-  }, [
-    fromAmount,
-    toAmount,
-    onTransactionStart,
-    onTransactionSuccess,
-    onTransactionError,
-  ]);
+  }, [fromAmount, toAmount, onTransactionStart, onTransactionSuccess, onTransactionError]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* From Token */}
       <TokenInput
         label="You send"
@@ -69,16 +62,17 @@ export function SwapPanel({
         balance="1,234.56"
       />
 
-      {/* Switch Button */}
-      <div className="flex justify-center">
+      {/* Premium Switch Button */}
+      <div className="flex justify-center -my-1 relative z-10">
         <motion.button
           onClick={handleSwitch}
           disabled={isSwitching}
           whileHover={{ scale: 1.1, rotate: 180 }}
           whileTap={{ scale: 0.95 }}
-          className="p-3 rounded-lg bg-gradient-to-r from-celo-green/20 to-celo-gold/20 border border-celo-green/30 hover:border-celo-green/60 text-white transition-all disabled:opacity-50"
+          transition={{ type: "spring", stiffness: 400, damping: 20 }}
+          className="w-10 h-10 rounded-xl bg-[#0d111c] border-2 border-white/[0.1] hover:border-celo-green/50 text-white/60 hover:text-celo-green flex items-center justify-center shadow-lg transition-colors duration-200 disabled:opacity-50"
         >
-          <ArrowDownUp className="w-5 h-5" />
+          <ArrowDownUp className="w-4 h-4" />
         </motion.button>
       </div>
 
@@ -95,19 +89,25 @@ export function SwapPanel({
 
       {/* Rate Info */}
       {fromAmount && toAmount && (
-        <RateInfo
-          fromToken={fromToken}
-          toToken={toToken}
-          rate={parseFloat(toAmount) / parseFloat(fromAmount)}
-          fee="0.5%"
-        />
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-1"
+        >
+          <RateInfo
+            fromToken={fromToken}
+            toToken={toToken}
+            rate={parseFloat(toAmount) / parseFloat(fromAmount)}
+            fee="0.5%"
+          />
+        </motion.div>
       )}
 
       {/* Swap Button */}
       <Button
         onClick={handleSwap}
         disabled={!fromAmount || !toAmount || isLoading}
-        className="w-full h-12 text-base font-medium"
+        className="w-full h-13 text-base font-semibold mt-2 rounded-xl"
         variant="gradient"
       >
         {isLoading ? (
@@ -116,7 +116,7 @@ export function SwapPanel({
             Processing Swap...
           </>
         ) : (
-          `Swap ${fromToken} to ${toToken}`
+          `Swap ${fromToken} → ${toToken}`
         )}
       </Button>
     </div>
