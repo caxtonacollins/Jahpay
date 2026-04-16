@@ -1,21 +1,22 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export function WalletConnectButton() {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return (
       <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
         Connect Wallet
       </button>
-    )
+    );
   }
   return (
     <ConnectButton.Custom>
@@ -30,35 +31,34 @@ export function WalletConnectButton() {
       }) => {
         // Note: If your app doesn't use authentication, you
         // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading'
+        const ready = mounted && authenticationStatus !== "loading";
         const connected =
           ready &&
           account &&
           chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated')
+          (!authenticationStatus || authenticationStatus === "authenticated");
 
         const hiddenStyle = {
           opacity: 0,
-          pointerEvents: 'none' as const,
-          userSelect: 'none' as const,
-        }
+          pointerEvents: "none" as const,
+          userSelect: "none" as const,
+        };
 
         const iconStyle = {
           background: chain?.iconBackground,
           width: 12,
           height: 12,
           borderRadius: 999,
-          overflow: 'hidden' as const,
+          overflow: "hidden" as const,
           marginRight: 4,
-        }
+        };
 
-        const imgStyle = { width: 12, height: 12 }
+        const imgStyle = { width: 12, height: 12 };
 
         return (
           <div
             {...(!ready && {
-              'aria-hidden': true,
+              "aria-hidden": true,
               style: hiddenStyle,
             })}
           >
@@ -72,7 +72,7 @@ export function WalletConnectButton() {
                   >
                     Connect Wallet
                   </button>
-                )
+                );
               }
 
               if (chain.unsupported) {
@@ -84,7 +84,7 @@ export function WalletConnectButton() {
                   >
                     Wrong network
                   </button>
-                )
+                );
               }
 
               return (
@@ -97,9 +97,11 @@ export function WalletConnectButton() {
                     {chain.hasIcon && (
                       <div style={iconStyle}>
                         {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
+                          <Image
+                            alt={chain.name ?? "Chain icon"}
                             src={chain.iconUrl}
+                            width={12}
+                            height={12}
                             style={imgStyle}
                           />
                         )}
@@ -116,14 +118,14 @@ export function WalletConnectButton() {
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`
-                      : ''}
+                      : ""}
                   </button>
                 </div>
-              )
+              );
             })()}
           </div>
-        )
+        );
       }}
     </ConnectButton.Custom>
-  )
+  );
 }

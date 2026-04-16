@@ -4,9 +4,7 @@ pragma solidity ^0.8.27;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
-import {
-    ReentrancyGuard
-} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title RampAggregator
@@ -21,9 +19,8 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
     // ============ State Variables ============
     address public backendSigner;
     address public feeCollector;
-    uint256 public feeBps; // Fee in basis points (1 bps = 0.01%)
+    uint256 public feeBps;
 
-    // Provider configuration
     struct ProviderConfig {
         bool isActive;
         uint256 minAmount;
@@ -49,39 +46,15 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
     mapping(address => uint256) public userBalances; // For tracking user deposits
 
     // ============ Events ============
-    event OnRampCompleted(
-        address indexed user,
-        uint256 amount,
-        string provider,
-        string txReference
-    );
+    event OnRampCompleted(address indexed user, uint256 amount, string provider, string txReference);
 
-    event OffRampInitiated(
-        address indexed user,
-        uint256 amount,
-        bytes32 indexed requestId,
-        string provider
-    );
+    event OffRampInitiated(address indexed user, uint256 amount, bytes32 indexed requestId, string provider);
 
-    event OffRampCompleted(
-        address indexed user,
-        bytes32 indexed requestId,
-        uint256 amount
-    );
+    event OffRampCompleted(address indexed user, bytes32 indexed requestId, uint256 amount);
 
-    event OffRampCancelled(
-        address indexed user,
-        bytes32 indexed requestId,
-        uint256 amount
-    );
+    event OffRampCancelled(address indexed user, bytes32 indexed requestId, uint256 amount);
 
-    event ProviderUpdated(
-        string provider,
-        bool isActive,
-        uint256 minAmount,
-        uint256 maxAmount,
-        uint256 feeBps
-    );
+    event ProviderUpdated(string provider, bool isActive, uint256 minAmount, uint256 maxAmount, uint256 feeBps);
 
     event FeeUpdated(uint256 oldFeeBps, uint256 newFeeBps);
     event BackendSignerUpdated(address oldSigner, address newSigner);
@@ -121,10 +94,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
     }
 
     // ============ Constructor ============
-    constructor(
-        address _backendSigner,
-        address _feeCollector
-    ) Ownable(msg.sender) Pausable() ReentrancyGuard() {
+    constructor(address _backendSigner, address _feeCollector) Ownable(msg.sender) Pausable() ReentrancyGuard() {
         if (_backendSigner == address(0) || _feeCollector == address(0)) {
             revert InvalidAddress();
         }
@@ -152,12 +122,11 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @param provider Provider name (e.g., "yellowcard", "cashramp", "bitmama")
      * @param txReference External transaction reference from provider
      */
-    function recordOnRamp(
-        address user,
-        uint256 amount,
-        string memory provider,
-        string memory txReference
-    ) external onlyBackendSigner whenNotPaused {
+    function recordOnRamp(address user, uint256 amount, string memory provider, string memory txReference)
+        external
+        onlyBackendSigner
+        whenNotPaused
+    {
         if (user == address(0)) revert InvalidAddress();
         if (amount == 0) revert InvalidAmount();
         if (!providers[provider].isActive) revert ProviderNotActive();
@@ -179,12 +148,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @param amountFiat Expected fiat amount to receive
      * @return requestId Unique identifier for this off-ramp request
      */
-    function initiateOffRamp(
-        uint256 amount,
-        string memory provider,
-        string memory fiatCurrency,
-        uint256 amountFiat
-    )
+    function initiateOffRamp(uint256 amount, string memory provider, string memory fiatCurrency, uint256 amountFiat)
         external
         payable
         whenNotPaused
@@ -242,7 +206,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
 
         // Transfer fee to fee collector
         if (fee > 0 && feeCollector != address(0)) {
-            (bool success, ) = feeCollector.call{value: fee}("");
+            (bool success,) = feeCollector.call{value: fee}("");
             if (!success) revert TransferFailed();
         }
 
@@ -256,9 +220,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @dev Called by backend after fiat payment is sent to user
      * @param requestId Unique identifier of the off-ramp request
      */
-    function completeOffRamp(
-        bytes32 requestId
-    ) external onlyBackendSigner whenNotPaused {
+    function completeOffRamp(bytes32 requestId) external onlyBackendSigner whenNotPaused {
         OffRampRequest storage request = offRampRequests[requestId];
         if (request.user == address(0)) revert RequestNotFound();
         if (request.completed) revert RequestAlreadyCompleted();
@@ -298,7 +260,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
         // In production, transfer tokens back to user
         // Note: Fee was already sent to fee collector, so we refund the remaining amount
         if (refundAmount > 0) {
-            (bool success, ) = request.user.call{value: refundAmount}("");
+            (bool success,) = request.user.call{value: refundAmount}("");
             if (!success) revert TransferFailed();
         }
 
@@ -312,9 +274,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @param requestId Unique identifier of the off-ramp request
      * @return request Off-ramp request struct
      */
-    function getOffRampRequest(
-        bytes32 requestId
-    ) external view returns (OffRampRequest memory) {
+    function getOffRampRequest(bytes32 requestId) external view returns (OffRampRequest memory) {
         return offRampRequests[requestId];
     }
 
@@ -323,9 +283,7 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @param provider Provider name
      * @return bool True if provider is active
      */
-    function isProviderActive(
-        string memory provider
-    ) external view returns (bool) {
+    function isProviderActive(string memory provider) external view returns (bool) {
         return providers[provider].isActive;
     }
 
@@ -378,12 +336,8 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
         if (_feeBps > MAX_FEE_BPS) revert InvalidFee();
         if (minAmount > maxAmount) revert InvalidAmount();
 
-        providers[provider] = ProviderConfig({
-            isActive: active,
-            minAmount: minAmount,
-            maxAmount: maxAmount,
-            feeBps: _feeBps
-        });
+        providers[provider] =
+            ProviderConfig({isActive: active, minAmount: minAmount, maxAmount: maxAmount, feeBps: _feeBps});
 
         emit ProviderUpdated(provider, active, minAmount, maxAmount, _feeBps);
     }
@@ -429,13 +383,10 @@ contract RampAggregator is Ownable, Pausable, ReentrancyGuard {
      * @param token Token address (address(0) for native CELO)
      * @param amount Amount to withdraw
      */
-    function emergencyWithdraw(
-        address token,
-        uint256 amount
-    ) external onlyOwner {
+    function emergencyWithdraw(address token, uint256 amount) external onlyOwner {
         if (token == address(0)) {
             // Withdraw native CELO
-            (bool success, ) = owner().call{value: amount}("");
+            (bool success,) = owner().call{value: amount}("");
             if (!success) revert TransferFailed();
         } else {
             // Withdraw ERC20 token

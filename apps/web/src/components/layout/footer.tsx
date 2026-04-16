@@ -25,7 +25,7 @@ export function Footer() {
                 href={SiteConfig.links.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-teal-400 transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
@@ -34,14 +34,14 @@ export function Footer() {
                 href={SiteConfig.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-teal-400 transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="h-5 w-5" />
               </a>
               <a
                 href="mailto:hello@jahpay.app"
-                className="text-gray-400 hover:text-teal-400 transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Email"
               >
                 <Mail className="h-5 w-5" />
@@ -56,7 +56,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/buy"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Buy Crypto
                   </Link>
@@ -64,7 +64,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/sell"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Sell Crypto
                   </Link>
@@ -72,7 +72,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/pricing"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Pricing
                   </Link>
@@ -86,7 +86,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/about"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     About Us
                   </Link>
@@ -94,7 +94,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/blog"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Blog
                   </Link>
@@ -102,7 +102,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/careers"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Careers
                   </Link>
@@ -116,7 +116,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/help"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Help Center
                   </Link>
@@ -124,7 +124,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Contact Us
                   </Link>
@@ -132,7 +132,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/privacy"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Privacy Policy
                   </Link>
@@ -140,7 +140,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/terms"
-                    className="text-gray-400 hover:text-teal-400 text-sm transition-colors"
+                    className="text-gray-400 hover:text-brand-blue text-sm transition-colors"
                   >
                     Terms of Service
                   </Link>

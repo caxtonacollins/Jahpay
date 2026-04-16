@@ -15,16 +15,8 @@ contract FeeCollector is Ownable {
     mapping(address => uint256) public collectedFees; // token => amount
 
     // ============ Events ============
-    event FeesCollected(
-        address indexed token,
-        uint256 amount,
-        address indexed collector
-    );
-    event FeesWithdrawn(
-        address indexed token,
-        uint256 amount,
-        address indexed to
-    );
+    event FeesCollected(address indexed token, uint256 amount, address indexed collector);
+    event FeesWithdrawn(address indexed token, uint256 amount, address indexed to);
     event CollectorAuthorized(address indexed collector);
     event CollectorRevoked(address indexed collector);
 
@@ -51,14 +43,14 @@ contract FeeCollector is Ownable {
     constructor() Ownable(msg.sender) {}
 
     // ============ Receive ============
+    // Allow contract to receive native tokens (CELO)
     receive() external payable {
-        // Allow contract to receive native tokens (CELO)
         collectedFees[address(0)] += msg.value;
         emit FeesCollected(address(0), msg.value, msg.sender);
     }
 
+    // Allow contract to receive native tokens (CELO)
     fallback() external payable {
-        // Allow contract to receive native tokens (CELO)
         collectedFees[address(0)] += msg.value;
         emit FeesCollected(address(0), msg.value, msg.sender);
     }
@@ -70,10 +62,7 @@ contract FeeCollector is Ownable {
      * @param token Token address (address(0) for native CELO)
      * @param amount Amount to collect
      */
-    function collectFees(
-        address token,
-        uint256 amount
-    ) external payable onlyCollector {
+    function collectFees(address token, uint256 amount) external payable onlyCollector {
         if (amount == 0) revert InvalidAmount();
 
         if (token == address(0)) {
@@ -82,11 +71,7 @@ contract FeeCollector is Ownable {
             collectedFees[address(0)] += amount;
         } else {
             // ERC20 token - must be approved first
-            bool success = IERC20(token).transferFrom(
-                msg.sender,
-                address(this),
-                amount
-            );
+            bool success = IERC20(token).transferFrom(msg.sender, address(this), amount);
             if (!success) revert TransferFailed();
             collectedFees[token] += amount;
         }
@@ -100,10 +85,7 @@ contract FeeCollector is Ownable {
      * @param feeBps Fee in basis points
      * @return fee Calculated fee amount
      */
-    function calculateFee(
-        uint256 amount,
-        uint256 feeBps
-    ) external pure returns (uint256) {
+    function calculateFee(uint256 amount, uint256 feeBps) external pure returns (uint256) {
         return (amount * feeBps) / 10000;
     }
 
@@ -113,11 +95,7 @@ contract FeeCollector is Ownable {
      * @param to Recipient address
      * @param amount Amount to withdraw
      */
-    function withdrawFees(
-        address token,
-        address to,
-        uint256 amount
-    ) external onlyOwner {
+    function withdrawFees(address token, address to, uint256 amount) external onlyOwner {
         if (to == address(0)) revert InvalidAddress();
         if (amount == 0) revert InvalidAmount();
         if (collectedFees[token] < amount) revert InvalidAmount();
@@ -126,7 +104,7 @@ contract FeeCollector is Ownable {
 
         if (token == address(0)) {
             // Withdraw native CELO
-            (bool success, ) = to.call{value: amount}("");
+            (bool success,) = to.call{value: amount}("");
             if (!success) revert TransferFailed();
         } else {
             // Withdraw ERC20 token
