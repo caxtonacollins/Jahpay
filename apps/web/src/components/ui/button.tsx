@@ -1,49 +1,63 @@
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+          "border border-white/20 bg-white/5 hover:bg-white/10 text-white backdrop-blur-sm transition-all duration-300",
         secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
-        gradient: 'bg-gradient-to-r from-celo-green to-celo-gold text-black hover:opacity-90',
-        glass: 'glass hover:bg-white/10',
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+        gradient:
+          "bg-gradient-to-r from-brand-blue to-brand-green text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all duration-300",
+        glass:
+          "surface-glass border border-white/10 hover:bg-white/10 text-white",
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
+        default: "h-11 px-6 py-2",
+        sm: "h-9 rounded-md px-4",
+        lg: "h-12 rounded-lg px-10 text-base",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: "default",
+      size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, children, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isLoading = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot : "button";
 
     return (
       <Comp
@@ -81,35 +95,39 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export { Button, buttonVariants };
 
 // This is a custom button component that extends the base Button component
 export const GradientButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, variant = "gradient", ...props }, ref) => {
     return (
       <Button
         className={cn(
-          'relative overflow-hidden group',
-          'bg-gradient-to-r from-celo-green to-celo-gold',
-          'text-black font-medium',
-          'hover:from-celo-green/90 hover:to-celo-gold/90',
-          'active:scale-[0.98] transition-all duration-200',
-          className
+          "relative overflow-hidden group",
+          "font-semibold tracking-wide",
+          "active:scale-[0.98] transition-all duration-300",
+          "shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]",
+          className,
         )}
+        variant={variant as any}
         ref={ref}
         {...props}
       >
         <span className="relative z-10">{props.children}</span>
         <span
-          className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          aria-hidden="true"
+        />
+        <span
+          className="absolute -inset-1 bg-gradient-to-r from-brand-blue to-brand-green rounded-lg blur opacity-20 group-hover:opacity-40 transition-opacity duration-300 -z-10"
           aria-hidden="true"
         />
       </Button>
     );
-  }
+  },
 );
-GradientButton.displayName = 'GradientButton';
+GradientButton.displayName = "GradientButton";

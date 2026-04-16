@@ -25,9 +25,9 @@ export function GlassCard({
         "bg-[#0d111c]/80 backdrop-blur-2xl",
         "border border-white/[0.06]",
         "transition-all duration-300",
-        glow && "glow-green border-celo-green/20",
+        glow && "glow-blue border-brand-blue/20",
         hover && !glow && "hover:border-white/[0.12] hover:shadow-2xl hover:shadow-black/40",
-        gradient && "bg-gradient-to-br from-celo-green/10 to-celo-gold/5",
+        gradient && "bg-gradient-to-br from-brand-blue/10 to-brand-green/5",
         className
       )}
     >
@@ -35,7 +35,7 @@ export function GlassCard({
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent pointer-events-none" />
       {/* Inner glow when focused */}
       {glow && (
-        <div className="absolute inset-0 bg-gradient-to-b from-celo-green/[0.04] to-transparent pointer-events-none rounded-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/[0.04] to-transparent pointer-events-none rounded-2xl" />
       )}
       <div className="relative">{children}</div>
     </div>
