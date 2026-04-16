@@ -19,6 +19,12 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import type { Variants } from "framer-motion";
 import Image from "next/image";
+import { GradientButton } from "@/components/ui/button";
+import { StatCard } from "@/components/ui/stat-card";
+import { FeatureCard } from "@/components/ui/feature-card";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Badge } from "@/components/ui/badge";
+import { TransactionInterface } from "@/components/main-app/core/transaction-interface";
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -49,13 +55,13 @@ const providers = [
     name: "Yellow Card",
     icon: "/images/yellowcard1.png",
     description: "20+ African countries",
-    color: "from-celo-gold to-yellow-600",
+    color: "from-brand-blue to-blue-700",
   },
   {
     name: "Cashramp",
     icon: "/images/cashramp.jpeg",
     description: "Fast & reliable",
-    color: "from-celo-green to-emerald-700",
+    color: "from-brand-green to-emerald-700",
   },
   {
     name: "Bitmama",
@@ -71,21 +77,21 @@ const features = [
     description:
       "Seamless integration with Yellow Card, Cashramp, and Bitmama for optimal rates and availability.",
     icon: Globe,
-    color: "from-blue-500 to-cyan-500",
+    color: "from-brand-blue to-cyan-500",
   },
   {
     title: "Instant Conversions",
     description:
       "Convert between fiat and crypto in minutes with real-time exchange rates and transparent fees.",
     icon: Lightning,
-    color: "from-celo-gold to-yellow-500",
+    color: "from-blue-400 to-brand-blue",
   },
   {
     title: "Bank-to-Wallet",
     description:
       "Direct on-ramps from bank transfers and mobile money. Off-ramps to any Nigerian bank account.",
     icon: Smartphone,
-    color: "from-celo-green to-emerald-500",
+    color: "from-brand-green to-emerald-500",
   },
   {
     title: "Secure & Audited",
@@ -99,14 +105,14 @@ const features = [
     description:
       "Competitive platform fees starting at just 1.5% with no hidden charges or surprise costs.",
     icon: TrendingUp,
-    color: "from-blue-500 to-indigo-500",
+    color: "from-brand-blue to-indigo-500",
   },
   {
     title: "Real-time Tracking",
     description:
       "Monitor every transaction in real-time with detailed status updates and transaction history.",
     icon: BarChart3,
-    color: "from-celo-green to-teal-500",
+    color: "from-brand-green to-teal-500",
   },
 ];
 
@@ -205,10 +211,10 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                   >
-                    <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-celo-green to-emerald-400 whitespace-nowrap">
+                    <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-brand-blue to-cyan-400 whitespace-nowrap">
                       Fiat
                     </span>
-                    <span className="absolute -bottom-1 left-0 right-0 h-2 bg-gradient-to-r from-celo-green/30 to-emerald-500/30 blur-md" />
+                    <span className="absolute -bottom-1 left-0 right-0 h-2 bg-gradient-to-r from-brand-blue/30 to-cyan-500/30 blur-md" />
                   </motion.span>
 
                   <motion.div
@@ -226,19 +232,19 @@ export default function Home() {
                     }}
                   >
                     {/* Background glow */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-celo-green/20 to-celo-gold/20 blur-md" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-blue/20 to-brand-green/20 blur-md" />
 
                     {/* Main circle */}
                     <div
                       className="relative z-10 h-12 w-12 md:h-14 md:w-14 rounded-full 
-                             bg-gradient-to-br from-celo-green/30 to-celo-gold/30 
-                             border border-celo-green/30 
+                             bg-gradient-to-br from-brand-blue/30 to-brand-green/30 
+                             border border-brand-blue/30 
                              flex items-center justify-center 
                              backdrop-blur-sm"
                     >
                       <svg
                         viewBox="0 0 24 24"
-                        className="h-6 w-6 md:h-8 md:w-8 text-celo-gold"
+                        className="h-6 w-6 md:h-8 md:w-8 text-brand-blue"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -255,7 +261,7 @@ export default function Home() {
                           transition={{
                             duration: 3,
                             repeat: Infinity,
-                            repeatType: "reverse",
+                            repeatType: "loop",
                           }}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -274,7 +280,7 @@ export default function Home() {
                             duration: 3,
                             delay: 0.5,
                             repeat: Infinity,
-                            repeatType: "reverse",
+                            repeatType: "loop",
                           }}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -289,10 +295,10 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                   >
-                    <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-celo-gold to-orange-400 whitespace-nowrap">
+                    <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-brand-green to-teal-400 whitespace-nowrap">
                       Crypto
                     </span>
-                    <span className="absolute -bottom-1 left-0 right-0 h-2 bg-gradient-to-r from-celo-gold/30 to-orange-500/30 blur-md" />
+                    <span className="absolute -bottom-1 left-0 right-0 h-2 bg-gradient-to-r from-brand-green/30 to-emerald-500/30 blur-md" />
                   </motion.span>
                 </div>
 
@@ -325,7 +331,7 @@ export default function Home() {
                 Convert between your local currency and Celo in minutes with the
                 best rates across 20+ African countries.
                 <span className="text-white font-semibold flex items-center justify-center mt-2 group">
-                  <Globe className="w-5 h-5 mr-2 text-celo-green group-hover:text-celo-gold animate-pulse" />
+                  <Globe className="w-5 h-5 mr-2 text-brand-blue group-hover:text-brand-green animate-pulse" />
                   Multi-provider ramp aggregator for everyone.
                 </span>
               </motion.span>
@@ -340,16 +346,13 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 1 }}
             >
               <Link href="/app">
-                <Button
+                <GradientButton
                   size="lg"
-                  className="relative overflow-hidden group px-8 py-6 text-base font-semibold bg-gradient-to-r from-celo-green to-emerald-500 hover:from-celo-green hover:to-emerald-400 shadow-lg hover:shadow-xl glow-green-sm transition-all transform hover:-translate-y-0.5 text-black"
+                  className="px-8 py-6 text-base font-semibold"
                 >
-                  <span className="relative z-10 flex items-center">
-                    Launch App
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Button>
+                  Launch App
+                  {/* <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /> */}
+                </GradientButton>
               </Link>
 
               <Button
@@ -371,12 +374,12 @@ export default function Home() {
               className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-slate-700/50"
             >
               {stats.map((stat, idx) => (
-                <div key={idx} className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-slate-400">{stat.label}</div>
-                </div>
+                <StatCard
+                  key={idx}
+                  value={stat.value}
+                  label={stat.label}
+                  delay={1.2 + idx * 0.1}
+                />
               ))}
             </motion.div>
           </motion.div>
@@ -389,84 +392,9 @@ export default function Home() {
             className="mt-20 relative"
           >
             <div className="relative group">
-              {/* Glassmorphic Card */}
-              <div className="relative bg-gradient-to-br from-[#0d111c]/80 to-[#060b14]/80 border border-white/[0.06] rounded-2xl p-8 backdrop-blur-2xl overflow-hidden shadow-2xl">
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-celo-green/30 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-celo-green/5 via-transparent to-celo-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                <div className="relative space-y-6">
-                  {/* Mock Swap Interface */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Send */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-medium text-slate-400 uppercase tracking-wider">
-                        You Send
-                      </label>
-                      <div className="bg-[#111624] border border-white/[0.04] rounded-xl p-4 space-y-2 relative overflow-hidden group-hover:border-celo-green/20 transition-colors">
-                        <div className="flex justify-between items-center">
-                          <span className="text-3xl font-bold text-white tracking-tight">
-                            2,500
-                          </span>
-                          <span className="text-sm px-3 py-1.5 bg-[#1a2133] text-white font-medium rounded-full flex items-center gap-1.5">
-                            🇳🇬 NGN
-                          </span>
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          Balance: 145,000 NGN
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Receive */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-medium text-slate-400 uppercase tracking-wider">
-                        You Receive
-                      </label>
-                      <div className="bg-[#111624] border border-white/[0.04] rounded-xl p-4 space-y-2 relative overflow-hidden group-hover:border-celo-green/20 transition-colors">
-                        <div className="flex justify-between items-center">
-                          <span className="text-3xl font-bold text-white tracking-tight">
-                            1.70
-                          </span>
-                          <span className="text-sm px-3 py-1.5 bg-[#1a2133] text-white font-medium rounded-full flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-celo-green flex items-center justify-center text-[8px] font-bold text-black leading-none">cU</span>
-                            cUSD
-                          </span>
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          Balance: 0.00 cUSD
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Fee Breakdown */}
-                  <div className="bg-transparent rounded-lg p-2 space-y-2 border-t border-white/[0.06] pt-4">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-400">Rate</span>
-                      <span className="text-white font-medium">
-                        1 cUSD = 1,470 NGN
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-400 flex items-center gap-1">
-                        <Lightning className="w-3.5 h-3.5 text-celo-gold" />
-                        Network Fee
-                      </span>
-                      <span className="text-white font-medium">
-                        ~₦37.50
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Button */}
-                  <Button className="w-full bg-gradient-to-r from-celo-green to-emerald-500 hover:from-celo-green hover:to-emerald-400 py-6 text-lg font-bold text-black rounded-xl">
-                    Swap NGN → cUSD
-                  </Button>
-                </div>
-              </div>
-
+              <TransactionInterface />
               {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-celo-green/20 to-celo-gold/20 rounded-2xl blur-3xl -z-10 group-hover:blur-2xl transition-all duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/20 to-brand-green/20 rounded-2xl blur-3xl -z-10 group-hover:blur-2xl transition-all duration-500" />
             </div>
           </motion.div>
         </div>
@@ -485,15 +413,19 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <motion.span
-              className="inline-block px-4 py-2 mb-4 text-sm font-medium bg-gradient-to-r from-celo-green/10 to-celo-gold/10 text-celo-green rounded-full border border-celo-green/30 backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
+              className="mb-4"
             >
-              Features
-            </motion.span>
+              <Badge
+                variant="outline"
+                className="px-4 py-1.5 border-brand-blue/30 bg-brand-blue/5 text-brand-blue rounded-full backdrop-blur-sm uppercase tracking-wider font-semibold"
+              >
+                Features
+              </Badge>
+            </motion.div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-200">
               Powerful Features
             </h2>
@@ -511,37 +443,16 @@ export default function Home() {
           >
             {features.map((feature, idx) => {
               const Icon = feature.icon;
-              const gradient = feature.color.split(" ")[1]; // Extract gradient class
 
               return (
-                <motion.div
+                <FeatureCard
                   key={idx}
-                  variants={item}
-                  className="group relative"
-                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                >
-                  <div className="relative h-full border border-white/[0.06] bg-[#0d111c]/60 rounded-2xl p-6 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:border-celo-green/30 hover:shadow-2xl hover:shadow-celo-green/10">
-                    {/* Animated gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-celo-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    <div className="relative">
-                      <motion.div
-                        className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} mb-6 transform transition-transform duration-300 group-hover:scale-110 shadow-lg`}
-                        initial={{ scale: 1 }}
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <Icon className="h-6 w-6 text-black" />
-                      </motion.div>
-
-                      <h3 className="text-xl font-bold mb-3 text-white">
-                        {feature.title}
-                      </h3>
-                      <p className="text-slate-400 leading-relaxed mb-4">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
+                  icon={<Icon className="h-6 w-6 text-white" />}
+                  title={feature.title}
+                  description={feature.description}
+                  gradient={feature.color}
+                  className="h-full"
+                />
               );
             })}
           </motion.div>
@@ -557,7 +468,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, idx) => (
                 <div key={idx} className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-celo-green to-emerald-400">
+                  <div className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-green to-emerald-400">
                     {stat.value}
                   </div>
                   <div className="text-sm text-slate-400 font-medium tracking-wide uppercase">
@@ -583,15 +494,19 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <motion.span
-              className="inline-block px-4 py-2 mb-4 text-sm font-medium bg-gradient-to-r from-celo-gold/10 to-yellow-500/10 text-celo-gold rounded-full border border-celo-gold/30 backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
+              className="mb-4"
             >
-              Process
-            </motion.span>
+              <Badge
+                variant="brand-blue"
+                className="px-4 py-1.5 rounded-full uppercase tracking-wider font-semibold"
+              >
+                Process
+              </Badge>
+            </motion.div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-200">
               How It Works
             </h2>
@@ -603,22 +518,22 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 relative">
             {/* Animated connection line */}
             <motion.div
-              className="hidden md:block absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-celo-green/20 to-transparent"
+              className="hidden md:block absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-brand-blue/20 to-transparent"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
               viewport={{ once: true }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
             >
-              <div className="absolute h-full w-1/2 bg-gradient-to-r from-celo-green to-celo-gold animate-pulse" />
+              <div className="absolute h-full w-1/2 bg-gradient-to-r from-brand-blue to-brand-green animate-pulse" />
             </motion.div>
 
             {steps.map((step, idx) => {
               const Icon = step.icon;
               const colors = [
-                "from-celo-green to-emerald-500",
-                "from-emerald-500 to-teal-500",
-                "from-teal-500 to-cyan-500",
-                "from-cyan-500 to-blue-500",
+                "from-brand-blue to-blue-500",
+                "from-blue-500 to-brand-green",
+                "from-brand-green to-emerald-500",
+                "from-emerald-500 to-cyan-500",
               ][idx % 4];
 
               return (
@@ -636,14 +551,14 @@ export default function Home() {
                   className="relative group"
                 >
                   {/* Step number with gradient ring */}
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#060b14] border-2 border-white/[0.08] flex items-center justify-center z-10 group-hover:border-celo-green/30 transition-colors">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#060b14] border-2 border-white/[0.08] flex items-center justify-center z-10 group-hover:border-brand-blue/30 transition-colors">
                     <span className="relative z-10 text-lg font-bold text-white">
                       {idx + 1}
                     </span>
                   </div>
 
                   {/* Card */}
-                  <div className="relative h-full bg-[#0d111c]/80 border border-white/[0.06] rounded-2xl p-6 pt-10 backdrop-blur-lg transition-all duration-300 group-hover:border-celo-green/20 group-hover:shadow-2xl hover:shadow-celo-green/5">
+                  <div className="relative h-full bg-[#0d111c]/80 border border-white/[0.06] rounded-2xl p-6 pt-10 backdrop-blur-lg transition-all duration-300 group-hover:border-brand-blue/20 group-hover:shadow-2xl hover:shadow-brand-blue/5">
                     {/* Gradient overlay */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
@@ -673,7 +588,7 @@ export default function Home() {
 
       {/* User Testimonial Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
-         {/* Section overlay implicitly merges with grid */}
+        {/* Section overlay implicitly merges with grid */}
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -688,7 +603,7 @@ export default function Home() {
                   alt="Smiling user with Jahpay"
                   className="rounded-2xl shadow-2xl relative z-10 border border-white/[0.06]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-celo-green/20 to-celo-gold/20 blur-3xl -z-10 rounded-full mix-blend-screen opacity-50" />
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-brand-green/20 blur-3xl -z-10 rounded-full mix-blend-screen opacity-50" />
               </div>
             </motion.div>
             <motion.div
@@ -725,20 +640,25 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <motion.span
-              className="inline-block px-4 py-2 mb-4 text-sm font-medium bg-gradient-to-r from-celo-green/10 to-celo-gold/10 text-celo-green rounded-full border border-celo-green/30 backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
+              className="mb-4"
             >
-              Partners
-            </motion.span>
+              <Badge
+                variant="brand-green"
+                className="px-4 py-1.5 rounded-full uppercase tracking-wider font-semibold"
+              >
+                Partners
+              </Badge>
+            </motion.div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
               Trusted Providers
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Multi-provider aggregator ensures best rates and maximum availability
+              Multi-provider aggregator ensures best rates and maximum
+              availability
             </p>
           </motion.div>
 
@@ -760,7 +680,9 @@ export default function Home() {
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 >
                   <div className="relative h-full border border-white/[0.06] bg-[#0d111c]/60 rounded-2xl p-8 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:border-white/[0.1] hover:shadow-2xl">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${colors} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500`} />
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${colors} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500`}
+                    />
                     <div
                       className={`absolute -inset-1 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-10 blur-2xl transition-opacity duration-500`}
                     ></div>
@@ -786,7 +708,7 @@ export default function Home() {
 
                       <div className="w-8 h-px bg-white/20 my-4" />
 
-                      <div className="text-sm font-medium text-celo-green group-hover:text-emerald-400 transition-colors flex items-center">
+                      <div className="text-sm font-medium text-brand-blue group-hover:text-brand-green transition-colors flex items-center">
                         <span>Learn more</span>
                         <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -843,14 +765,14 @@ export default function Home() {
                 description:
                   "Our multi-provider aggregator compares rates to ensure you always get the best deal. No hidden markups.",
                 icon: TrendingUp,
-                colors: "from-celo-green to-emerald-500",
+                colors: "from-brand-green to-emerald-500",
               },
               {
                 title: "Lightning Fast",
                 description:
                   "Most transactions complete in under 5 minutes. Real-time rate updates and instant confirmations keep you in control.",
                 icon: Zap,
-                colors: "from-celo-gold to-yellow-500",
+                colors: "from-brand-blue to-blue-500",
               },
               {
                 title: "Secure & Audited",
@@ -875,7 +797,7 @@ export default function Home() {
                   className="group relative"
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 >
-                  <div className="relative h-full bg-[#0d111c]/60 border border-white/[0.06] rounded-2xl p-8 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:border-white/[0.1] hover:shadow-xl hover:shadow-celo-green/5">
+                  <div className="relative h-full bg-[#0d111c]/60 border border-white/[0.06] rounded-2xl p-8 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:border-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/5">
                     <div className="relative">
                       <motion.div
                         className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${learnItem.colors} mb-6 transform transition-transform duration-300 group-hover:scale-110`}
@@ -945,7 +867,7 @@ export default function Home() {
                     onClick={() => setExpandedFaq(isOpen ? -1 : idx)}
                     className={`w-full text-left bg-[#0d111c]/60 border ${
                       isOpen
-                        ? "border-celo-green/30"
+                        ? "border-brand-blue/30"
                         : "border-white/[0.06] hover:border-white/[0.12]"
                     } rounded-xl p-6 transition-all duration-300 backdrop-blur-lg`}
                   >
@@ -957,13 +879,13 @@ export default function Home() {
                         animate={{ rotate: isOpen ? 180 : 0 }}
                         className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                           isOpen
-                            ? "bg-celo-green/10"
+                            ? "bg-brand-blue/10"
                             : "bg-white/[0.04] group-hover:bg-white/[0.08]"
                         } transition-colors`}
                       >
                         <ChevronDown
                           className={`h-4 w-4 ${
-                            isOpen ? "text-celo-green" : "text-slate-400"
+                            isOpen ? "text-brand-blue" : "text-slate-400"
                           } transition-colors`}
                         />
                       </motion.div>
@@ -1028,7 +950,7 @@ export default function Home() {
             className="relative group"
           >
             <div className="relative border border-white/[0.08] bg-[#0d111c]/80 rounded-2xl p-12 backdrop-blur-lg overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-celo-green/5 via-transparent to-celo-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/5 via-transparent to-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative text-center">
                 <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
@@ -1041,18 +963,18 @@ export default function Home() {
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/app">
-                    <Button
+                    <GradientButton
                       size="lg"
-                      className="px-8 py-6 text-base font-bold bg-gradient-to-r from-celo-green to-emerald-500 hover:from-celo-green hover:to-emerald-400 shadow-lg hover:shadow-xl text-black transition-all glow-green-sm"
+                      className="px-8 py-6 text-base font-bold shadow-lg hover:shadow-xl"
                     >
                       Launch App
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                      {/* <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /> */}
+                    </GradientButton>
                   </Link>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="px-8 py-6 text-base font-semibold border-white/[0.1] hover:bg-white/[0.05] text-white backdrop-blur-sm"
+                    className="px-8 py-6 text-base font-semibold"
                   >
                     Explore Docs
                   </Button>
@@ -1060,7 +982,7 @@ export default function Home() {
               </div>
 
               {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-celo-green/10 to-celo-gold/10 rounded-2xl blur-3xl -z-10 group-hover:blur-2xl transition-all duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/10 to-brand-green/10 rounded-2xl blur-3xl -z-10 group-hover:blur-2xl transition-all duration-500" />
             </div>
           </motion.div>
         </div>

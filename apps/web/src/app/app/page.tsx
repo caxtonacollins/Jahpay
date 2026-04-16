@@ -1,11 +1,13 @@
+"use client";
+
 import { UnifiedInterface } from "@/components/main-app/unified-interface";
 
-export const metadata = {
-  title: "jahpay - Swap, Buy & Sell Crypto",
-  description:
-    "Seamless fiat-to-crypto and crypto-to-fiat conversions on Celo blockchain",
-};
-
 export default function AppPage() {
-  return <UnifiedInterface />;
+  return (
+    <main className="flex-1 jahpay-bg jahpay-grid">
+      {/* Section overlay */}
+      <div className="absolute inset-0 -z-10 section-overlay-hero" />
+      <UnifiedInterface />
+    </main>
+  );
 }
