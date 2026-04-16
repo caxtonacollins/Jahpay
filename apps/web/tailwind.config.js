@@ -48,6 +48,8 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "brand-blue": "hsl(var(--brand-blue))",
+        "brand-green": "hsl(var(--brand-green))",
         "celo-green": "#00d79b",
         "celo-gold": "#ffc439",
       },
