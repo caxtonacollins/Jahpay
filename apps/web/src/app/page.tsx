@@ -65,23 +65,23 @@ const fadeInUp: Variants = {
 };
 
 const providers = [
-  { 
-    name: "Yellow Card", 
-    icon: "/images/yellowcard1.png", 
+  {
+    name: "Yellow Card",
+    icon: "/images/yellowcard1.png",
     description: "20+ African countries",
     color: "from-brand-blue to-blue-700",
   },
-  { 
-    name: "Cashramp", 
-    icon: "/images/cashramp.jpeg", 
+  {
+    name: "Cashramp",
+    icon: "/images/cashramp.jpeg",
     description: "Fast & reliable",
     color: "from-brand-green to-emerald-700",
   },
-  { 
-    name: "Bitmama", 
-    icon: "/images/bitmama.png", 
+  {
+    name: "Bitmama",
+    icon: "/images/bitmama.png",
     description: "Multi-currency support",
-    color: "from-purple-500 to-pink-500"
+    color: "from-purple-500 to-pink-500",
   },
 ];
 
@@ -249,15 +249,15 @@ export default function Home() {
                 >
                   <Zap className="h-4 w-4 text-yellow-300" />
                 </motion.span>
-                <span className="group-hover:text-white transition-colors">Built on Celo • Production-Grade dApp</span>
+                <span className="group-hover:text-white transition-colors">
+                  Built on Celo • Production-Grade dApp
+                </span>
               </div>
             </motion.div>
 
             {/* Main Heading */}
             <motion.div variants={item} className="relative">
-              <motion.h1
-                className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6 leading-tight"
-              >
+              <motion.h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6 leading-tight">
                 <div className="flex items-center justify-center">
                   <motion.span
                     className="inline-block relative"
@@ -277,12 +277,12 @@ export default function Home() {
                     animate={{
                       opacity: 1,
                       scale: 1,
-                      x: [0, 5, -5, 0]
+                      x: [0, 5, -5, 0],
                     }}
                     transition={{
                       duration: 4,
                       repeat: Infinity,
-                      repeatType: "loop"
+                      repeatType: "loop",
                     }}
                   >
                     {/* Background glow */}
@@ -294,7 +294,8 @@ export default function Home() {
                              bg-gradient-to-br from-brand-blue/30 to-brand-green/30 
                              border border-brand-blue/30 
                              flex items-center justify-center 
-                             backdrop-blur-sm">
+                             backdrop-blur-sm"
+                    >
                       <svg
                         viewBox="0 0 24 24"
                         className="h-6 w-6 md:h-8 md:w-8 text-brand-blue"
@@ -309,7 +310,7 @@ export default function Home() {
                           animate={{
                             pathLength: 1,
                             opacity: 1,
-                            x: [-2, 2, -2]
+                            x: [-2, 2, -2],
                           }}
                           transition={{
                             duration: 3,
@@ -327,7 +328,7 @@ export default function Home() {
                           animate={{
                             pathLength: 1,
                             opacity: 1,
-                            x: [2, -2, 2]
+                            x: [2, -2, 2],
                           }}
                           transition={{
                             duration: 3,
@@ -523,7 +524,9 @@ export default function Home() {
                   <div className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-green to-emerald-400">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-slate-400 font-medium">{stat.label}</div>
+                  <div className="text-sm text-slate-400 font-medium">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -597,7 +600,7 @@ export default function Home() {
                     delay: idx * 0.1,
                     duration: 0.5,
                     type: "spring",
-                    stiffness: 100
+                    stiffness: 100,
                   }}
                   viewport={{ once: true, margin: "-50px" }}
                   className="relative group"
@@ -612,10 +615,14 @@ export default function Home() {
                   {/* Card */}
                   <div className="relative h-full bg-[#0d111c]/80 border border-white/[0.06] rounded-2xl p-6 pt-10 backdrop-blur-lg transition-all duration-300 group-hover:border-brand-blue/20 group-hover:shadow-2xl hover:shadow-brand-blue/5">
                     {/* Gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${colors} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                    ></div>
 
                     <div className="relative z-10">
-                      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors} mb-6 transform transition-transform duration-300 group-hover:scale-110`}>
+                      <div
+                        className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors} mb-6 transform transition-transform duration-300 group-hover:scale-110`}
+                      >
                         <Icon className="h-6 w-6 text-white" />
                       </div>
 
@@ -646,7 +653,8 @@ export default function Home() {
               Ready to get started?
             </h3>
             <p className="text-lg text-slate-300/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of users enjoying seamless fiat-to-crypto conversions today.
+              Join thousands of users enjoying seamless fiat-to-crypto
+              conversions today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -684,10 +692,12 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <div className="relative">
-                <img
+                <Image
                   src="/images/banner.png"
                   alt="Smiling user with Jahpay"
                   className="rounded-2xl shadow-2xl relative z-10 border border-white/[0.06]"
+                  width={600}
+                  height={400}
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-brand-green/20 blur-3xl -z-10 rounded-full mix-blend-screen opacity-50" />
               </div>
@@ -698,9 +708,15 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">From Local Currency to Crypto, All in Your Hands</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+                From Local Currency to Crypto, All in Your Hands
+              </h2>
               <p className="text-lg text-slate-300/90 mb-8 leading-relaxed">
-                Jahpay puts the power of seamless digital finance right in your pocket. With a user-friendly interface, you can effortlessly navigate the world of crypto, making transactions as simple as sending a text message. Experience the joy of financial freedom with a platform designed for you.
+                Jahpay puts the power of seamless digital finance right in your
+                pocket. With a user-friendly interface, you can effortlessly
+                navigate the world of crypto, making transactions as simple as
+                sending a text message. Experience the joy of financial freedom
+                with a platform designed for you.
               </p>
               <Button
                 size="lg"
@@ -765,7 +781,7 @@ export default function Home() {
               const colors = [
                 "from-purple-500 to-blue-500",
                 "from-blue-500 to-cyan-500",
-                "from-cyan-500 to-emerald-500"
+                "from-cyan-500 to-emerald-500",
               ][idx % 3];
 
               return (
@@ -785,15 +801,14 @@ export default function Home() {
 
                     <div className="relative z-10 text-center h-full flex flex-col items-center">
                       <div className="relative w-20 h-20 mb-6 transform transition-transform duration-300 group-hover:scale-110">
-                          <Image 
-                            src={provider.icon}
-                            alt={provider.name}
-                            width={80}
-                            height={80}
-                            className="object-contain w-full h-full rounded-lg"
-     
-                            priority
-                          />
+                        <Image
+                          src={provider.icon}
+                          alt={provider.name}
+                          width={80}
+                          height={80}
+                          className="object-contain w-full h-full rounded-lg"
+                          priority
+                        />
                       </div>
 
                       <h3 className="text-xl font-bold mb-3 text-white">
@@ -961,11 +976,7 @@ export default function Home() {
             {faqs.map((faq, idx) => {
               const isOpen = expandedFaq === idx;
               return (
-                <motion.div
-                  key={idx}
-                  variants={item}
-                  className="group"
-                >
+                <motion.div key={idx} variants={item} className="group">
                   <motion.button
                     onClick={() => setExpandedFaq(isOpen ? -1 : idx)}
                     className={`w-full text-left bg-[#0d111c]/60 border ${
@@ -990,21 +1001,19 @@ export default function Home() {
                           className={`h-4 w-4 ${
                             isOpen ? "text-brand-blue" : "text-slate-400"
                           } transition-colors`}
-                      >
-                        <ChevronDown className={`h-4 w-4 ${isOpen ? 'text-blue-400' : 'text-slate-400'
-                          } transition-colors`} />
+                        />
                       </motion.div>
                     </div>
 
                     <motion.div
                       initial={false}
                       animate={{
-                        height: isOpen ? 'auto' : 0,
+                        height: isOpen ? "auto" : 0,
                         opacity: isOpen ? 1 : 0,
-                        marginTop: isOpen ? '1rem' : 0,
-                        paddingTop: isOpen ? '1rem' : 0,
+                        marginTop: isOpen ? "1rem" : 0,
+                        paddingTop: isOpen ? "1rem" : 0,
                       }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden border-t border-slate-700/30"
                     >
                       <p className="text-slate-300/90 leading-relaxed">

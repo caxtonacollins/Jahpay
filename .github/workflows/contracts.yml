@@ -36,24 +36,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
         with:
-          version: 8
+          submodules: recursive
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'pnpm'
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint contracts
+      - name: Check Solidity formatting
         working-directory: apps/contracts
-        run: pnpm lint
+        run: forge fmt --check
 
   build:
     runs-on: ubuntu-latest
