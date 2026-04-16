@@ -60,16 +60,16 @@ export function TokenInput({
   }, []);
 
   return (
-    <div className="rounded-xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-celo-green/40 focus-within:bg-white/[0.06] transition-all duration-200">
+    <div className="rounded-xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-brand-blue/40 focus-within:bg-white/[0.06] transition-all duration-200">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-medium text-white/40 uppercase tracking-wider">{label}</span>
         {balance && (
           <button
             onClick={() => onAmountChange(balance.replace(/,/g, ""))}
-            className="flex items-center gap-1 text-xs text-white/40 hover:text-celo-green transition-colors group"
+            className="flex items-center gap-1 text-xs text-white/40 hover:text-brand-blue transition-colors group"
           >
             <span className="font-mono">Balance: {balance}</span>
-            <span className="text-[10px] text-celo-green/60 group-hover:text-celo-green transition-colors font-medium">MAX</span>
+            <span className="text-[10px] text-brand-blue/60 group-hover:text-brand-blue transition-colors font-medium">MAX</span>
           </button>
         )}
       </div>
@@ -135,7 +135,7 @@ export function TokenInput({
                       <div className="text-xs text-white/40 truncate">{t.name}</div>
                     </div>
                     {t.symbol === token && (
-                      <Check className="w-3.5 h-3.5 text-celo-green shrink-0" />
+                      <Check className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                     )}
                   </button>
                 ))}

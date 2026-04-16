@@ -47,7 +47,7 @@ export function FiatInput({
   }, []);
 
   return (
-    <div className="rounded-xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-celo-green/40 focus-within:bg-white/[0.06] transition-all duration-200">
+    <div className="rounded-xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-brand-blue/40 focus-within:bg-white/[0.06] transition-all duration-200">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-medium text-white/40 uppercase tracking-wider">{label}</span>
       </div>
@@ -99,7 +99,7 @@ export function FiatInput({
                       <div className="text-xs text-white/40 truncate">{f.name}</div>
                     </div>
                     {f.code === currency && (
-                      <Check className="w-3.5 h-3.5 text-celo-green shrink-0" />
+                      <Check className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                     )}
                   </button>
                 ))}
