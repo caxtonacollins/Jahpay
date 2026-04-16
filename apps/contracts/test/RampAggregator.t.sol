@@ -14,35 +14,11 @@ contract RampAggregatorTest is Test {
     address public user = address(0x3);
     address public feeCollectorAddress = address(0x4);
 
-    event OnRampCompleted(
-        address indexed user,
-        uint256 amount,
-        string provider,
-        string txReference
-    );
-    event OffRampInitiated(
-        address indexed user,
-        uint256 amount,
-        bytes32 indexed requestId,
-        string provider
-    );
-    event OffRampCompleted(
-        address indexed user,
-        bytes32 indexed requestId,
-        uint256 amount
-    );
-    event OffRampCancelled(
-        address indexed user,
-        bytes32 indexed requestId,
-        uint256 amount
-    );
-    event ProviderUpdated(
-        string provider,
-        bool isActive,
-        uint256 minAmount,
-        uint256 maxAmount,
-        uint256 feeBps
-    );
+    event OnRampCompleted(address indexed user, uint256 amount, string provider, string txReference);
+    event OffRampInitiated(address indexed user, uint256 amount, bytes32 indexed requestId, string provider);
+    event OffRampCompleted(address indexed user, bytes32 indexed requestId, uint256 amount);
+    event OffRampCancelled(address indexed user, bytes32 indexed requestId, uint256 amount);
+    event ProviderUpdated(string provider, bool isActive, uint256 minAmount, uint256 maxAmount, uint256 feeBps);
 
     function setUp() public {
         vm.startPrank(owner);
@@ -97,12 +73,7 @@ contract RampAggregatorTest is Test {
     function test_RecordOnRamp_InvalidProvider() public {
         vm.prank(backendSigner);
         vm.expectRevert(RampAggregator.ProviderNotActive.selector);
-        rampAggregator.recordOnRamp(
-            user,
-            10 ether,
-            "invalid_provider",
-            "tx_ref_123"
-        );
+        rampAggregator.recordOnRamp(user, 10 ether, "invalid_provider", "tx_ref_123");
     }
 
     function test_InitiateOffRamp() public {
@@ -120,8 +91,7 @@ contract RampAggregatorTest is Test {
 
         assertNotEq(requestId, bytes32(0));
 
-        RampAggregator.OffRampRequest memory request = rampAggregator
-            .getOffRampRequest(requestId);
+        RampAggregator.OffRampRequest memory request = rampAggregator.getOffRampRequest(requestId);
         assertEq(request.user, user);
         assertEq(request.amount, amount);
         assertEq(request.provider, "yellowcard");
@@ -136,12 +106,7 @@ contract RampAggregatorTest is Test {
     function test_InitiateOffRamp_BelowMinimum() public {
         vm.startPrank(user);
         vm.expectRevert(RampAggregator.InvalidAmount.selector);
-        rampAggregator.initiateOffRamp{value: 0.5 ether}(
-            0.5 ether,
-            "yellowcard",
-            "NGN",
-            100000
-        );
+        rampAggregator.initiateOffRamp{value: 0.5 ether}(0.5 ether, "yellowcard", "NGN", 100000);
         vm.stopPrank();
     }
 
@@ -149,24 +114,14 @@ contract RampAggregatorTest is Test {
         vm.deal(user, 2000 ether);
         vm.startPrank(user);
         vm.expectRevert(RampAggregator.InvalidAmount.selector);
-        rampAggregator.initiateOffRamp{value: 2000 ether}(
-            2000 ether,
-            "yellowcard",
-            "NGN",
-            40000000
-        );
+        rampAggregator.initiateOffRamp{value: 2000 ether}(2000 ether, "yellowcard", "NGN", 40000000);
         vm.stopPrank();
     }
 
     function test_CompleteOffRamp() public {
         vm.startPrank(user);
         uint256 amount = 5 ether;
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(
-            amount,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(amount, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         vm.prank(backendSigner);
@@ -175,27 +130,20 @@ contract RampAggregatorTest is Test {
 
         rampAggregator.completeOffRamp(requestId);
 
-        RampAggregator.OffRampRequest memory request = rampAggregator
-            .getOffRampRequest(requestId);
+        RampAggregator.OffRampRequest memory request = rampAggregator.getOffRampRequest(requestId);
         assertTrue(request.completed);
     }
 
     function test_CancelOffRamp() public {
         vm.startPrank(user);
         uint256 amount = 5 ether;
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(
-            amount,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(amount, "yellowcard", "NGN", 1000000);
 
         uint256 balanceBefore = user.balance;
         rampAggregator.cancelOffRamp(requestId);
         vm.stopPrank();
 
-        RampAggregator.OffRampRequest memory request = rampAggregator
-            .getOffRampRequest(requestId);
+        RampAggregator.OffRampRequest memory request = rampAggregator.getOffRampRequest(requestId);
         assertTrue(request.cancelled);
         // User should receive refund (minus fee that was sent to fee collector)
         assertGt(user.balance, balanceBefore);
@@ -204,20 +152,14 @@ contract RampAggregatorTest is Test {
     function test_CancelOffRamp_ByBackend() public {
         vm.startPrank(user);
         uint256 amount = 5 ether;
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(
-            amount,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: amount}(amount, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         uint256 balanceBefore = user.balance;
         vm.prank(backendSigner);
         rampAggregator.cancelOffRamp(requestId);
 
-        RampAggregator.OffRampRequest memory request = rampAggregator
-            .getOffRampRequest(requestId);
+        RampAggregator.OffRampRequest memory request = rampAggregator.getOffRampRequest(requestId);
         assertTrue(request.cancelled);
         // User should receive refund (minus fee that was sent to fee collector)
         assertGt(user.balance, balanceBefore);
@@ -252,13 +194,7 @@ contract RampAggregatorTest is Test {
         vm.expectEmit(false, false, false, true);
         emit ProviderUpdated("cashramp", true, 0.1 ether, 500 ether, 150);
 
-        rampAggregator.setProviderConfig(
-            "cashramp",
-            true,
-            0.1 ether,
-            500 ether,
-            150
-        );
+        rampAggregator.setProviderConfig("cashramp", true, 0.1 ether, 500 ether, 150);
 
         assertTrue(rampAggregator.isProviderActive("cashramp"));
     }
@@ -310,12 +246,7 @@ contract RampAggregatorTest is Test {
     // State Transition Tests
     function test_CompleteOffRamp_AlreadyCompleted() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         vm.prank(backendSigner);
@@ -329,12 +260,7 @@ contract RampAggregatorTest is Test {
 
     function test_CancelOffRamp_AlreadyCancelled() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         rampAggregator.cancelOffRamp(requestId);
         vm.stopPrank();
 
@@ -346,12 +272,7 @@ contract RampAggregatorTest is Test {
 
     function test_CompleteOffRamp_AfterCancelled() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         rampAggregator.cancelOffRamp(requestId);
         vm.stopPrank();
 
@@ -363,12 +284,7 @@ contract RampAggregatorTest is Test {
 
     function test_CancelOffRamp_AfterCompleted() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         vm.prank(backendSigner);
@@ -383,12 +299,7 @@ contract RampAggregatorTest is Test {
     // Boundary Condition Tests
     function test_InitiateOffRamp_ExactlyAtMinimum() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 1 ether}(
-            1 ether,
-            "yellowcard",
-            "NGN",
-            200000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 1 ether}(1 ether, "yellowcard", "NGN", 200000);
         vm.stopPrank();
 
         assertNotEq(requestId, bytes32(0));
@@ -397,12 +308,8 @@ contract RampAggregatorTest is Test {
     function test_InitiateOffRamp_ExactlyAtMaximum() public {
         vm.deal(user, 1500 ether);
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 1000 ether}(
-            1000 ether,
-            "yellowcard",
-            "NGN",
-            200000000
-        );
+        bytes32 requestId =
+            rampAggregator.initiateOffRamp{value: 1000 ether}(1000 ether, "yellowcard", "NGN", 200000000);
         vm.stopPrank();
 
         assertNotEq(requestId, bytes32(0));
@@ -436,13 +343,7 @@ contract RampAggregatorTest is Test {
     function test_SetProviderConfig_OnlyOwner() public {
         vm.prank(user);
         vm.expectRevert();
-        rampAggregator.setProviderConfig(
-            "newprovider",
-            true,
-            1 ether,
-            100 ether,
-            100
-        );
+        rampAggregator.setProviderConfig("newprovider", true, 1 ether, 100 ether, 100);
     }
 
     function test_EmergencyWithdraw_OnlyOwner() public {
@@ -471,23 +372,13 @@ contract RampAggregatorTest is Test {
 
         vm.startPrank(user);
         vm.expectRevert();
-        rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
     }
 
     function test_CompleteOffRamp_WhenPaused() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         vm.prank(owner);
@@ -500,12 +391,7 @@ contract RampAggregatorTest is Test {
 
     function test_CancelOffRamp_WhenPaused() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         vm.prank(owner);
@@ -520,12 +406,7 @@ contract RampAggregatorTest is Test {
     function test_RecordOnRamp_InvalidUser() public {
         vm.prank(backendSigner);
         vm.expectRevert(RampAggregator.InvalidAddress.selector);
-        rampAggregator.recordOnRamp(
-            address(0),
-            10 ether,
-            "yellowcard",
-            "tx_ref"
-        );
+        rampAggregator.recordOnRamp(address(0), 10 ether, "yellowcard", "tx_ref");
     }
 
     function test_SetBackendSigner_InvalidAddress() public {
@@ -543,20 +424,9 @@ contract RampAggregatorTest is Test {
     // Provider Configuration Tests
     function test_UpdateProviderConfig() public {
         vm.prank(owner);
-        rampAggregator.setProviderConfig(
-            "yellowcard",
-            true,
-            2 ether,
-            500 ether,
-            200
-        );
+        rampAggregator.setProviderConfig("yellowcard", true, 2 ether, 500 ether, 200);
 
-        (
-            bool isActive,
-            uint256 minAmount,
-            uint256 maxAmount,
-            uint256 feeBps
-        ) = rampAggregator.providers("yellowcard");
+        (bool isActive, uint256 minAmount, uint256 maxAmount, uint256 feeBps) = rampAggregator.providers("yellowcard");
         assertEq(minAmount, 2 ether);
         assertEq(maxAmount, 500 ether);
         assertEq(feeBps, 200);
@@ -565,35 +435,18 @@ contract RampAggregatorTest is Test {
 
     function test_DeactivateProvider() public {
         vm.prank(owner);
-        rampAggregator.setProviderConfig(
-            "yellowcard",
-            false,
-            1 ether,
-            1000 ether,
-            100
-        );
+        rampAggregator.setProviderConfig("yellowcard", false, 1 ether, 1000 ether, 100);
 
         assertFalse(rampAggregator.isProviderActive("yellowcard"));
     }
 
     function test_InitiateOffRamp_InactiveProvider() public {
         vm.prank(owner);
-        rampAggregator.setProviderConfig(
-            "yellowcard",
-            false,
-            1 ether,
-            1000 ether,
-            100
-        );
+        rampAggregator.setProviderConfig("yellowcard", false, 1 ether, 1000 ether, 100);
 
         vm.startPrank(user);
         vm.expectRevert(RampAggregator.ProviderNotActive.selector);
-        rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
     }
 
@@ -610,27 +463,15 @@ contract RampAggregatorTest is Test {
 
     function test_MultipleOffRamps_SameUser() public {
         vm.startPrank(user);
-        bytes32 requestId1 = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId1 = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
 
-        bytes32 requestId2 = rampAggregator.initiateOffRamp{value: 10 ether}(
-            10 ether,
-            "yellowcard",
-            "NGN",
-            2000000
-        );
+        bytes32 requestId2 = rampAggregator.initiateOffRamp{value: 10 ether}(10 ether, "yellowcard", "NGN", 2000000);
         vm.stopPrank();
 
         assertNotEq(requestId1, requestId2);
 
-        RampAggregator.OffRampRequest memory request1 = rampAggregator
-            .getOffRampRequest(requestId1);
-        RampAggregator.OffRampRequest memory request2 = rampAggregator
-            .getOffRampRequest(requestId2);
+        RampAggregator.OffRampRequest memory request1 = rampAggregator.getOffRampRequest(requestId1);
+        RampAggregator.OffRampRequest memory request2 = rampAggregator.getOffRampRequest(requestId2);
 
         assertEq(request1.amount, 5 ether);
         assertEq(request2.amount, 10 ether);
@@ -653,24 +494,14 @@ contract RampAggregatorTest is Test {
     function test_InitiateOffRamp_MsgValueMismatch() public {
         vm.startPrank(user);
         vm.expectRevert(RampAggregator.InvalidAmount.selector);
-        rampAggregator.initiateOffRamp{value: 5 ether}(
-            10 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        rampAggregator.initiateOffRamp{value: 5 ether}(10 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
     }
 
     // Cancel by Unauthorized User
     function test_CancelOffRamp_UnauthorizedUser() public {
         vm.startPrank(user);
-        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(
-            5 ether,
-            "yellowcard",
-            "NGN",
-            1000000
-        );
+        bytes32 requestId = rampAggregator.initiateOffRamp{value: 5 ether}(5 ether, "yellowcard", "NGN", 1000000);
         vm.stopPrank();
 
         address unauthorizedUser = address(0x6);
@@ -696,8 +527,7 @@ contract RampAggregatorTest is Test {
 
     function test_GetOffRampRequest_NonExistent() public view {
         bytes32 fakeRequestId = keccak256(abi.encodePacked("fake"));
-        RampAggregator.OffRampRequest memory request = rampAggregator
-            .getOffRampRequest(fakeRequestId);
+        RampAggregator.OffRampRequest memory request = rampAggregator.getOffRampRequest(fakeRequestId);
         assertEq(request.user, address(0));
     }
 }

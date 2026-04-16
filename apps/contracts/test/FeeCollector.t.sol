@@ -71,7 +71,7 @@ contract FeeCollectorTest is Test {
     function test_ReceiveFunction() public {
         vm.deal(address(0x5), 10 ether);
         vm.prank(address(0x5));
-        (bool success, ) = address(feeCollector).call{value: 5 ether}("");
+        (bool success,) = address(feeCollector).call{value: 5 ether}("");
         require(success);
 
         assertEq(feeCollector.getCollectedFees(address(0)), 5 ether);
@@ -80,9 +80,7 @@ contract FeeCollectorTest is Test {
     function test_FallbackFunction() public {
         vm.deal(address(0x5), 10 ether);
         vm.prank(address(0x5));
-        (bool success, ) = address(feeCollector).call{value: 3 ether}(
-            abi.encodeWithSignature("nonExistentFunction()")
-        );
+        (bool success,) = address(feeCollector).call{value: 3 ether}(abi.encodeWithSignature("nonExistentFunction()"));
         require(success);
 
         assertEq(feeCollector.getCollectedFees(address(0)), 3 ether);
