@@ -35,7 +35,7 @@ export function TokenSelector({ token, onSelect, className, disabled = false }: 
             className="h-6 w-6 rounded-full"
           />
         ) : (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-celo-green/20 text-sm font-medium text-celo-green">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-blue/20 text-sm font-medium text-brand-blue">
             {token.symbol[0]}
           </div>
         )}
@@ -67,7 +67,7 @@ export function TokenOption({ token, isSelected, onSelect }: TokenOptionProps) {
       className={cn(
         'flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-colors',
         isSelected
-          ? 'bg-celo-green/10 text-celo-green'
+          ? 'bg-brand-blue/10 text-brand-blue'
           : 'hover:bg-bg-tertiary/50'
       )}
     >
@@ -80,7 +80,7 @@ export function TokenOption({ token, isSelected, onSelect }: TokenOptionProps) {
           className="h-8 w-8 rounded-full"
         />
       ) : (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-celo-green/20 text-sm font-medium text-celo-green">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-blue/20 text-sm font-medium text-brand-blue">
           {token.symbol[0]}
         </div>
       )}

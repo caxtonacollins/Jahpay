@@ -15,7 +15,7 @@ const PROVIDERS = [
     id: "yellowcard",
     name: "Yellow Card",
     badge: "Popular",
-    badgeColor: "text-celo-gold bg-celo-gold/10",
+    badgeColor: "text-brand-blue bg-brand-blue/10",
     description: "Best rates",
   },
   {
@@ -29,7 +29,7 @@ const PROVIDERS = [
     id: "bitmama",
     name: "Bitmama",
     badge: "Secure",
-    badgeColor: "text-celo-green bg-celo-green/10",
+    badgeColor: "text-brand-green bg-brand-green/10",
     description: "Verified",
   },
 ];
@@ -56,7 +56,7 @@ export function ProviderSelector({
               className={cn(
                 "relative p-3 rounded-xl border transition-all duration-200 text-left",
                 isSelected
-                  ? "bg-celo-green/[0.08] border-celo-green/50"
+                  ? "bg-brand-blue/[0.08] border-brand-blue/50"
                   : "bg-white/[0.03] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]"
               )}
             >
@@ -64,7 +64,7 @@ export function ProviderSelector({
               {isSelected && (
                 <motion.div
                   layoutId="providerSelection"
-                  className="absolute inset-0 rounded-xl border-2 border-celo-green/60 pointer-events-none"
+                  className="absolute inset-0 rounded-xl border-2 border-brand-blue/60 pointer-events-none"
                   transition={{ type: "spring", stiffness: 400, damping: 35 }}
                 />
               )}
@@ -74,7 +74,7 @@ export function ProviderSelector({
                   {provider.name}
                 </span>
                 {isSelected && (
-                  <Check className="w-3 h-3 text-celo-green shrink-0 mt-0.5" />
+                  <Check className="w-3 h-3 text-brand-blue shrink-0 mt-0.5" />
                 )}
               </div>
 

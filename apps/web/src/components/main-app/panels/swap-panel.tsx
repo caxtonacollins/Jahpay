@@ -70,7 +70,7 @@ export function SwapPanel({
           whileHover={{ scale: 1.1, rotate: 180 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
-          className="w-10 h-10 rounded-xl bg-[#0d111c] border-2 border-white/[0.1] hover:border-celo-green/50 text-white/60 hover:text-celo-green flex items-center justify-center shadow-lg transition-colors duration-200 disabled:opacity-50"
+          className="w-10 h-10 rounded-xl bg-[#0d111c] border-2 border-white/[0.1] hover:border-brand-blue/50 text-white/60 hover:text-brand-blue flex items-center justify-center shadow-lg transition-colors duration-200 disabled:opacity-50"
         >
           <ArrowDownUp className="w-4 h-4" />
         </motion.button>
