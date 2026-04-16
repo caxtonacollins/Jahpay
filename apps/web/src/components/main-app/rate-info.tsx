@@ -16,7 +16,7 @@ export function RateInfo({ fromToken, toToken, rate, fee }: RateInfoProps) {
       {/* Live rate */}
       <div className="flex items-center gap-2">
         <span
-          className="w-2 h-2 rounded-full bg-celo-green shrink-0"
+          className="w-2 h-2 rounded-full bg-brand-green shrink-0"
           style={{ animation: "live-pulse 2s ease-in-out infinite" }}
         />
         <span className="text-xs text-white/50">1 {fromToken}</span>
@@ -28,9 +28,9 @@ export function RateInfo({ fromToken, toToken, rate, fee }: RateInfoProps) {
 
       {/* Fee */}
       <div className="flex items-center gap-1.5">
-        <Zap className="w-3 h-3 text-celo-gold/70" />
+        <Zap className="w-3 h-3 text-brand-blue/70" />
         <span className="text-xs text-white/40">Fee</span>
-        <span className="text-xs font-medium text-celo-gold/80">{fee}</span>
+        <span className="text-xs font-medium text-brand-blue/80">{fee}</span>
       </div>
     </div>
   );

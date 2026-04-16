@@ -42,7 +42,7 @@ export function TransactionSummary({
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <div className="w-8 h-8 border-2 border-celo-green/30 border-t-celo-green rounded-full" />
+            <div className="w-8 h-8 border-2 border-brand-blue/30 border-t-brand-blue rounded-full" />
           </motion.div>
         )}
       </div>

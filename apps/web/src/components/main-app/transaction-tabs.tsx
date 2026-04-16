@@ -55,7 +55,7 @@ export function TransactionTabs({
           {activeTab === tab.id && (
             <motion.div
               layoutId="activeTabBg"
-              className="absolute inset-0 rounded-lg bg-gradient-to-r from-celo-green to-celo-gold"
+              className="absolute inset-0 rounded-lg bg-gradient-to-r from-brand-blue to-brand-green"
               transition={{ type: "spring", stiffness: 400, damping: 35 }}
             />
           )}
