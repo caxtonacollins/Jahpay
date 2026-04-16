@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { CountrySelector } from "./country-selector";
 import { FeeBreakdown } from "./fee-breakdown";
+import { CurrencySelector } from "./currency-selector";
 
 interface SwapInterfaceProps {
   type: "buy" | "sell";
@@ -64,17 +65,17 @@ export function SwapInterface({
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <select
+              <CurrencySelector
                 value={fiatCurrency}
-                onChange={(e) => onFiatChange(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-              >
-                <option value="NGN">NGN</option>
-                <option value="GHS">GHS</option>
-                <option value="KES">KES</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-              </select>
+                onChange={onFiatChange}
+                currencies={[
+                  { value: "NGN", label: "NGN" },
+                  { value: "GHS", label: "GHS" },
+                  { value: "KES", label: "KES" },
+                  { value: "USD", label: "USD" },
+                  { value: "EUR", label: "EUR" },
+                ]}
+              />
             </div>
             {type === "buy" && (
               <CountrySelector value={fiatCurrency} onChange={onFiatChange} />
@@ -106,18 +107,18 @@ export function SwapInterface({
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none opacity-75"
                 />
               </div>
-              <select
+              <CurrencySelector
                 value={cryptoCurrency}
-                onChange={(e) => onCryptoChange(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-              >
-                <option value="USDC">USDC</option>
-                <option value="USDT">USDT</option>
-                <option value="cUSD">cUSD</option>
-                <option value="CELO">CELO</option>
-                <option value="BTC">BTC</option>
-                <option value="ETH">ETH</option>
-              </select>
+                onChange={onCryptoChange}
+                currencies={[
+                  { value: "USDC", label: "USDC" },
+                  { value: "USDT", label: "USDT" },
+                  { value: "cUSD", label: "cUSD" },
+                  { value: "CELO", label: "CELO" },
+                  { value: "BTC", label: "BTC" },
+                  { value: "ETH", label: "ETH" },
+                ]}
+              />
             </div>
           </div>
 
@@ -149,15 +150,15 @@ export function SwapInterface({
         <h3 className="text-lg font-semibold text-white mb-3">
           Select Provider
         </h3>
-        <select
+        <CurrencySelector
           value={selectedProvider}
-          onChange={(e) => onProviderChange(e.target.value)}
-          className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-        >
-          <option value="yellowcard">Yellow Card</option>
-          <option value="cashramp">Cashramp</option>
-          <option value="bitmama">Bitmama</option>
-        </select>
+          onChange={onProviderChange}
+          currencies={[
+            { value: "yellowcard", label: "Yellow Card" },
+            { value: "cashramp", label: "Cashramp" },
+            { value: "bitmama", label: "Bitmama" },
+          ]}
+        />
       </div>
 
       {/* Fee breakdown */}

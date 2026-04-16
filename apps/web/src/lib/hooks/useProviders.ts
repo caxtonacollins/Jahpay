@@ -1,7 +1,17 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { QuoteResponse } from "types/database";
+import type { ExchangeRate as ProviderExchangeRate, ProviderQuote } from "@/lib/providers/types";
+
+type RatesResponse = {
+  from: string;
+  to: string;
+  amount: string;
+  bestQuote: ProviderQuote;
+  allQuotes: ProviderQuote[];
+  rates: ProviderExchangeRate[];
+  timestamp: string;
+};
 
 export function useExchangeRate(
   fromCurrency: string,
@@ -16,7 +26,7 @@ export function useExchangeRate(
       );
 
       if (!response.ok) throw new Error("Failed to fetch rates");
-      return response.json() as Promise<QuoteResponse>;
+      return response.json() as Promise<RatesResponse>;
     },
     enabled: !!fromCurrency && !!toCurrency && amount > 0,
     refetchInterval: 30000, // Refresh every 30 seconds

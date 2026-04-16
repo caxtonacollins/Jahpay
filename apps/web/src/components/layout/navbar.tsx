@@ -10,18 +10,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { WalletConnectButton } from "@/components/connect-button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useMiniPay } from "@/hooks/useMiniPay";
 
-// const navLinks = [
-//   { name: "Home", href: "/" },
-//   { name: "Docs", href: "https://docs.celo.org", external: true },
-// ]
+const navLinks = [
+  { name: "Buy", href: "/buy" },
+  { name: "Sell", href: "/sell" },
+  { name: "History", href: "/history" },
+  { name: "Docs", href: "https://docs.celo.org", external: true },
+]
 
 export function Navbar() {
   const pathname = usePathname();
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { isMiniPay } = useMiniPay();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,7 +48,7 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 w-full bg-transparent transition-transform duration-300 ease-in-out",
-        visible ? "translate-y-0" : "-translate-y-full",
+        visible ? "translate-y-0" : "-translate-y-full"
       )}
       style={{
         background: "rgba(0, 0, 0, 0.2)",
@@ -75,20 +75,13 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           {/* Mobile Menu Button */}
           <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="gradient"
-                size="icon"
-                className="md:hidden text-white hover:bg-gray-800"
-              >
+            <SheetTrigger asChild >
+              <Button variant="gradient" size="icon" className="md:hidden text-white hover:bg-gray-800">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-72 bg-[#0A0E17] border-r border-gray-800"
-            >
+            <SheetContent side="left" className="w-72 bg-[#0A0E17] border-r border-gray-800">
               <div className="flex flex-col h-full px-4 py-6">
                 <div className="flex items-center justify-start gap-3 mb-8">
                   <Image
@@ -101,12 +94,26 @@ export function Navbar() {
                   />
                 </div>
                 <nav className="flex-1 flex flex-col gap-4">
-                  {/* Only show connect button if not in MiniPay */}
-                  {!isMiniPay && (
-                    <div className="mt-6 pt-6">
-                      <WalletConnectButton />
-                    </div>
-                  )}
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      target={link.external ? "_blank" : undefined}
+                      rel={link.external ? "noopener noreferrer" : undefined}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-colors",
+                        pathname === link.href
+                          ? "bg-gray-800 text-white"
+                          : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                      )}
+                    >
+                      {link.name}
+                      {link.external && <ExternalLink className="h-4 w-4" />}
+                    </Link>
+                  ))}
+                  <div className="mt-6 pt-6">
+                    <WalletConnectButton />
+                  </div>
                 </nav>
               </div>
             </SheetContent>
@@ -115,7 +122,7 @@ export function Navbar() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {/* {navLinks.map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -130,11 +137,10 @@ export function Navbar() {
               {link.name}
               {link.external && <ExternalLink className="h-4 w-4" />}
             </Link>
-          ))} */}
+          ))}
 
           <div className="flex items-center gap-4">
-            {/* Only show connect button if not in MiniPay */}
-            {!isMiniPay && <WalletConnectButton />}
+            <WalletConnectButton />
           </div>
         </nav>
       </div>

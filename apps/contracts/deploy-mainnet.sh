@@ -75,8 +75,6 @@ forge script script/Deploy.s.sol:DeployScript \
 echo ""
 echo "✅ Deployment complete!"
 echo ""
-echo "📝 Contract addresses have been saved to .env file"
-echo ""
 echo "🔍 Next steps:"
 echo "   1. Verify the contracts on CeloScan"
 echo "   2. Test the deployment with a small transaction"

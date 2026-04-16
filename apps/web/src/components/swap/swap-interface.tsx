@@ -135,8 +135,8 @@ export function SwapInterface() {
     } catch (error) {
       console.error('Swap error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to process swap. Please try again.',
+        title: "We couldn’t process that",
+        description: "Nothing was charged. Try again in a moment.",
         type: 'error',
       });
     } finally {
