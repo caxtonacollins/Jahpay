@@ -1,11 +1,10 @@
-"use client";
-
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowDownUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TokenInput } from "../inputs/token-input";
 import { RateInfo } from "../rate-info";
+import { getExchangeRate, performSwap } from "@/lib/minipay-utils";
 
 interface SwapPanelProps {
   onTransactionStart: () => void;
@@ -24,7 +23,40 @@ export function SwapPanel({
   const [toToken, setToToken] = useState("cUSD");
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
+  const [currentRate, setCurrentRate] = useState<number | null>(null);
   const [isSwitching, setIsSwitching] = useState(false);
+  const [isFetchingRate, setIsFetchingRate] = useState(false);
+
+  // Fetch real exchange rate when tokens change
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        setIsFetchingRate(true);
+        const rate = await getExchangeRate(fromToken, toToken);
+        setCurrentRate(rate);
+        
+        // Update toAmount if fromAmount exists
+        if (fromAmount) {
+          setToAmount((parseFloat(fromAmount) * rate).toFixed(6));
+        }
+      } catch (error) {
+        console.error("Failed to fetch rate:", error);
+      } finally {
+        setIsFetchingRate(false);
+      }
+    };
+
+    fetchRate();
+  }, [fromToken, toToken]);
+
+  // Update toAmount when fromAmount changes
+  useEffect(() => {
+    if (fromAmount && currentRate) {
+      setToAmount((parseFloat(fromAmount) * currentRate).toFixed(6));
+    } else {
+      setToAmount("");
+    }
+  }, [fromAmount, currentRate]);
 
   const handleSwitch = useCallback(() => {
     setIsSwitching(true);
@@ -43,12 +75,12 @@ export function SwapPanel({
 
     try {
       onTransactionStart();
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      onTransactionSuccess("0x" + Math.random().toString(16).slice(2));
+      const txHash = await performSwap(fromToken, toToken, fromAmount);
+      onTransactionSuccess(txHash);
     } catch (error) {
-      onTransactionError("Swap failed. Please try again.");
+      onTransactionError(error instanceof Error ? error.message : "Swap failed. Please try again.");
     }
-  }, [fromAmount, toAmount, onTransactionStart, onTransactionSuccess, onTransactionError]);
+  }, [fromAmount, toAmount, fromToken, toToken, onTransactionStart, onTransactionSuccess, onTransactionError]);
 
   return (
     <div className="space-y-2">
@@ -88,25 +120,34 @@ export function SwapPanel({
       />
 
       {/* Rate Info */}
-      {fromAmount && toAmount && (
+      {(isFetchingRate || currentRate) && (
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
           className="px-1"
         >
-          <RateInfo
-            fromToken={fromToken}
-            toToken={toToken}
-            rate={parseFloat(toAmount) / parseFloat(fromAmount)}
-            fee="0.5%"
-          />
+          {isFetchingRate ? (
+            <div className="flex items-center gap-2 text-xs text-white/40 mb-2">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Fetching best rate...
+            </div>
+          ) : (
+            currentRate && (
+              <RateInfo
+                fromToken={fromToken}
+                toToken={toToken}
+                rate={currentRate}
+                fee="0.5%"
+              />
+            )
+          )}
         </motion.div>
       )}
 
       {/* Swap Button */}
       <Button
         onClick={handleSwap}
-        disabled={!fromAmount || !toAmount || isLoading}
+        disabled={!fromAmount || !toAmount || isLoading || isFetchingRate}
         className="w-full h-13 text-base font-semibold mt-2 rounded-xl"
         variant="gradient"
       >
