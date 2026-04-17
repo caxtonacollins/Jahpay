@@ -41,38 +41,58 @@ export async function POST(req: NextRequest) {
     }
 
     // Select provider
+    const factory = new ProviderFactory();
     let provider;
-    if (body.preferred_provider) {
-      try {
-        const factory = new ProviderFactory();
+    
+    try {
+      if (body.preferred_provider) {
         provider = factory.getProvider(body.preferred_provider);
-      } catch (error) {
-        return NextResponse.json(
-          { error: "Invalid provider" },
-          { status: 400 }
-        );
+      } else {
+        const providers = factory.getAllProviders();
+        if (providers.length === 0) {
+          throw new Error("No providers available");
+        }
+        provider = providers[0];
       }
-    } else {
-      // Auto-select best provider
-      const factory = new ProviderFactory();
-      const providers = factory.getAllProviders();
-      provider = providers[0];
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Provider selection failed" },
+        { status: 400 }
+      );
     }
 
-    // In production, you would:
-    // 1. Verify bank account
-    // 2. Lock tokens in smart contract
-    // 3. Store transaction in database
-    // 4. Call provider API
+    // Call provider API to initiate
+    try {
+      // In a real app, you would fetch bank account details from database here
+      const mockBankAccount = {
+        account_number: "0123456789",
+        bank_code: "058", // GTBank Nigeria
+      };
 
-    const mockResponse: InitiateOffRampResponse = {
-      transaction_id: `tx_${Date.now()}`,
-      provider: provider.name,
-      status: "pending",
-      expires_in: 300,
-    };
+      const initiationResult = await provider.initiateOffRamp({
+        amount: body.amount,
+        currency: body.fiat_currency,
+        bankAccount: mockBankAccount,
+        // Optional: callbackUrl: ...
+      });
 
-    return NextResponse.json(mockResponse, { status: 201 });
+      // In production, you would also store the transaction in your database here
+
+      const response: InitiateOffRampResponse = {
+        transaction_id: initiationResult.provider_tx_id || `tx_${Date.now()}`,
+        provider: provider.name,
+        status: "pending",
+        expires_in: initiationResult.expires_in || 300,
+      };
+
+      return NextResponse.json(response, { status: 201 });
+    } catch (error) {
+      console.error("Provider initiation error:", error);
+      return NextResponse.json(
+        { error: "Provider failed to initiate transaction" },
+        { status: 502 }
+      );
+    }
   } catch (error) {
     console.error("Off-ramp initiation error:", error);
     return NextResponse.json(

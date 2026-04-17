@@ -45,38 +45,55 @@ export async function POST(req: NextRequest) {
     }
 
     // Select provider
+    const factory = new ProviderFactory();
     let provider;
-    if (body.preferred_provider) {
-      try {
-        const factory = new ProviderFactory();
+    
+    try {
+      if (body.preferred_provider) {
         provider = factory.getProvider(body.preferred_provider);
-      } catch (error) {
-        return NextResponse.json(
-          { error: "Invalid provider" },
-          { status: 400 }
-        );
+      } else {
+        // Auto-select best provider (first available for now)
+        const providers = factory.getAllProviders();
+        if (providers.length === 0) {
+          throw new Error("No providers available");
+        }
+        provider = providers[0];
       }
-    } else {
-      // Auto-select best provider (first available for now)
-      const factory = new ProviderFactory();
-      const providers = factory.getAllProviders();
-      provider = providers[0];
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Provider selection failed" },
+        { status: 400 }
+      );
     }
 
-    // In production, you would:
-    // 1. Store transaction in database
-    // 2. Call provider API to initiate
-    // 3. Webhook from provider updates status
+    // Call provider API to initiate
+    try {
+      const initiationResult = await provider.initiateOnRamp({
+        amount: body.amount,
+        currency: body.fiat_currency,
+        walletAddress: walletAddress,
+        // Optional: email: user.email, callbackUrl: ...
+      });
 
-    const mockResponse: InitiateOnRampResponse = {
-      transaction_id: `tx_${Date.now()}`,
-      provider: provider.name,
-      status: "pending",
-      provider_url: `https://provider.example.com/checkout?tx=${Date.now()}`,
-      expires_in: 300,
-    };
+      // In production, you would also store the transaction in your database here
+      // For MVP, we'll return the provider results directly
 
-    return NextResponse.json(mockResponse, { status: 201 });
+      const response: InitiateOnRampResponse = {
+        transaction_id: initiationResult.provider_tx_id || `tx_${Date.now()}`,
+        provider: provider.name,
+        status: "pending",
+        provider_url: initiationResult.provider_url,
+        expires_in: initiationResult.expires_in || 300,
+      };
+
+      return NextResponse.json(response, { status: 201 });
+    } catch (error) {
+      console.error("Provider initiation error:", error);
+      return NextResponse.json(
+        { error: "Provider failed to initiate transaction" },
+        { status: 502 }
+      );
+    }
   } catch (error) {
     console.error("On-ramp initiation error:", error);
     return NextResponse.json(
