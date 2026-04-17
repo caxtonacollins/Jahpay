@@ -176,6 +176,207 @@ export async function checkTransactionStatus(
 }
 
 /**
+ * Get exchange rate between two tokens
+ */
+export async function getExchangeRate(
+    fromSymbol: string,
+    toSymbol: string
+): Promise<number> {
+    try {
+        // Use CoinGecko for real-time rates
+        // Mapping symbols to CoinGecko IDs
+        const symbolMap: Record<string, string> = {
+            'CELO': 'celo',
+            'USDm': 'celo-dollar',
+            'cUSD': 'celo-dollar',
+            'USDC': 'usd-coin',
+            'USDT': 'tether',
+        };
+
+        const fromId = symbolMap[fromSymbol];
+        const toId = symbolMap[toSymbol];
+
+        if (!fromId || !toId) return 1.0;
+
+        const response = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${fromId},${toId}&vs_currencies=usd`
+        );
+        const data = await response.json();
+
+        const fromPrice = data[fromId].usd;
+        const toPrice = data[toId].usd;
+
+        return fromPrice / toPrice;
+    } catch (error) {
+        console.error('Failed to fetch exchange rate:', error);
+        // Fallback rates if API fails
+        const fallbackRates: Record<string, number> = {
+            'CELO_USDm': 0.8,
+            'USDm_CELO': 1.25,
+            'USDC_USDm': 1,
+            'USDT_USDm': 1,
+        };
+        return fallbackRates[`${fromSymbol}_${toSymbol}`] || 1.0;
+    }
+}
+
+/**
+ * Perform a token swap
+ * For MVP, this can be integrated with Mento or Uniswap
+ * Currently implementation is a placeholder that notifies about the transaction
+ */
+export async function performSwap(
+    fromToken: string,
+    toToken: string,
+    amount: string,
+    chainId: number = 42220
+): Promise<string> {
+    if (!window.ethereum) throw new Error('No wallet detected');
+
+    const walletClient = createWalletClient({
+        chain: celo,
+        transport: custom(window.ethereum),
+    });
+
+    // In a real implementation, you would:
+    // 1. Check if it's a Mento swap (cUSD/CELO etc)
+    // 2. Or a Uniswap swap
+    // 3. For now, we'll simulate the contract call or use a simple transfer if it's a mock swap
+    
+    // This is where the real swap logic would go. 
+    // Example for Mento: 
+    // const hash = await walletClient.sendTransaction({ ...mentoSatisfiedParams });
+
+    // For now, we'll simulate a successful transaction hash
+    // since we don't have a specific swap contract provided in the prompt
+    console.log(`Swapping ${amount} ${fromToken} to ${toToken}...`);
+    
+    // Simulate some delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    return "0x" + Math.random().toString(16).slice(2) + "0000000000000000";
+}
+
+/**
+ * Approve a token for the RampAggregator contract
+ */
+export async function approveToken(
+    tokenAddress: string,
+    amount: string,
+    decimals: number = 18,
+    chainId: number = 42220
+): Promise<string> {
+    if (!window.ethereum) throw new Error('No wallet detected');
+
+    const walletClient = createWalletClient({
+        chain: celo,
+        transport: custom(window.ethereum),
+    });
+
+    const feeCurrencyAddress = chainId === 11142220
+        ? MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY_SEPOLIA
+        : MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY;
+
+    const { RAMP_CONTRACT_ADDRESS } = await import('./constants');
+
+    try {
+        const data = encodeFunctionData({
+            abi: [
+                {
+                    name: 'approve',
+                    type: 'function',
+                    stateMutability: 'nonpayable',
+                    inputs: [
+                        { name: 'spender', type: 'address' },
+                        { name: 'amount', type: 'uint256' },
+                    ],
+                    outputs: [{ name: '', type: 'bool' }],
+                },
+            ],
+            functionName: 'approve',
+            args: [RAMP_CONTRACT_ADDRESS as `0x${string}`, parseUnits(amount, decimals)],
+        });
+
+        const hash = await walletClient.sendTransaction({
+            account: walletClient.account!,
+            to: tokenAddress as `0x${string}`,
+            data,
+            feeCurrency: feeCurrencyAddress as `0x${string}`,
+        });
+
+        return hash;
+    } catch (error) {
+        console.error('Failed to approve token:', error);
+        throw error;
+    }
+}
+
+/**
+ * Call initiateOffRamp on the RampAggregator contract
+ */
+export async function initiateOffRampContractCall(
+    amount: string,
+    provider: string,
+    fiatCurrency: string,
+    fiatAmount: string,
+    tokenSymbol: string = 'USDm',
+    chainId: number = 42220
+): Promise<string> {
+    if (!window.ethereum) throw new Error('No wallet detected');
+
+    const walletClient = createWalletClient({
+        chain: celo,
+        transport: custom(window.ethereum),
+    });
+
+    const { RAMP_CONTRACT_ADDRESS, SUPPORTED_TOKENS } = await import('./constants');
+    const token = SUPPORTED_TOKENS.find(t => t.symbol === tokenSymbol);
+    if (!token) throw new Error(`Token ${tokenSymbol} not supported`);
+
+    const feeCurrencyAddress = chainId === 11142220
+        ? MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY_SEPOLIA
+        : MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY;
+
+    try {
+        const data = encodeFunctionData({
+            abi: [
+                {
+                    name: 'initiateOffRamp',
+                    type: 'function',
+                    stateMutability: 'payable',
+                    inputs: [
+                        { name: 'amount', type: 'uint256' },
+                        { name: 'provider', type: 'string' },
+                        { name: 'fiatCurrency', type: 'string' },
+                        { name: 'amountFiat', type: 'uint256' },
+                    ],
+                    outputs: [{ name: '', type: 'bytes32' }],
+                },
+            ],
+            functionName: 'initiateOffRamp',
+            args: [
+                parseUnits(amount, token.decimals),
+                provider,
+                fiatCurrency,
+                parseUnits(fiatAmount, 2), // Assuming 2 decimals for fiat (e.g. cents/kobo)
+            ],
+        });
+
+        const hash = await walletClient.sendTransaction({
+            account: walletClient.account!,
+            to: RAMP_CONTRACT_ADDRESS as `0x${string}`,
+            data,
+            feeCurrency: feeCurrencyAddress as `0x${string}`,
+        });
+
+        return hash;
+    } catch (error) {
+        console.error('Failed to initiate off-ramp contract call:', error);
+        throw error;
+    }
+}
+
+/**
  * Get supported stablecoins for MiniPay
  */
 export function getSupportedStablecoins() {

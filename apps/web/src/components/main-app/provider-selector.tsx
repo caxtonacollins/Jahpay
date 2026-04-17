@@ -1,43 +1,86 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProviderSelectorProps {
   selectedProvider: string;
   onProviderChange: (provider: string) => void;
+  fromCurrency?: string;
+  toCurrency?: string;
+  amount?: string;
 }
 
 const PROVIDERS = [
   {
     id: "yellowcard",
     name: "Yellow Card",
-    badge: "Popular",
-    badgeColor: "text-brand-blue bg-brand-blue/10",
-    description: "Best rates",
   },
   {
     id: "cashramp",
     name: "Cashramp",
-    badge: "Fast",
-    badgeColor: "text-blue-400 bg-blue-400/10",
-    description: "Instant",
   },
   {
     id: "bitmama",
     name: "Bitmama",
-    badge: "Secure",
-    badgeColor: "text-brand-green bg-brand-green/10",
-    description: "Verified",
   },
 ];
 
 export function ProviderSelector({
   selectedProvider,
   onProviderChange,
+  fromCurrency = "USD",
+  toCurrency = "cUSD",
+  amount = "100",
 }: ProviderSelectorProps) {
+  const [rates, setRates] = useState<Record<string, string | null>>({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      if (!amount || isNaN(parseFloat(amount))) {
+        setRates({});
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch("/api/providers/rates", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Format rates for each provider
+          const formattedRates: Record<string, string | null> = {};
+          PROVIDERS.forEach((provider) => {
+            const rate = data.rates?.[provider.id];
+            if (rate) {
+              formattedRates[provider.id] = `${rate}%`;
+            } else {
+              formattedRates[provider.id] = "N/A";
+            }
+          });
+          setRates(formattedRates);
+        }
+      } catch (error) {
+        console.error("Failed to fetch rates:", error);
+        PROVIDERS.forEach((provider) => {
+          setRates((prev) => ({ ...prev, [provider.id]: "N/A" }));
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRates();
+  }, [amount, fromCurrency, toCurrency]);
+
   return (
     <div>
       <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
@@ -47,6 +90,8 @@ export function ProviderSelector({
       <div className="grid grid-cols-3 gap-2">
         {PROVIDERS.map((provider) => {
           const isSelected = selectedProvider === provider.id;
+          const rate = rates[provider.id];
+
           return (
             <motion.button
               key={provider.id}
@@ -57,7 +102,7 @@ export function ProviderSelector({
                 "relative p-3 rounded-xl border transition-all duration-200 text-left",
                 isSelected
                   ? "bg-brand-blue/[0.08] border-brand-blue/50"
-                  : "bg-white/[0.03] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]"
+                  : "bg-white/[0.03] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]",
               )}
             >
               {/* Selected indicator */}
@@ -78,13 +123,14 @@ export function ProviderSelector({
                 )}
               </div>
 
-              <div
-                className={cn(
-                  "inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium",
-                  provider.badgeColor
+              <div className="flex items-center gap-1">
+                {loading ? (
+                  <Loader2 className="w-3 h-3 animate-spin text-brand-blue" />
+                ) : (
+                  <span className="text-[10px] font-medium text-brand-blue">
+                    {rate || "Loading..."}
+                  </span>
                 )}
-              >
-                {provider.badge}
               </div>
             </motion.button>
           );

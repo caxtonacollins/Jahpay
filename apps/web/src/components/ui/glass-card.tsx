@@ -21,14 +21,16 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        "relative rounded-2xl overflow-hidden",
+        "relative z-10 rounded-2xl overflow-visible",
         "bg-[#0d111c]/80 backdrop-blur-2xl",
         "border border-white/[0.06]",
         "transition-all duration-300",
         glow && "glow-blue border-brand-blue/20",
-        hover && !glow && "hover:border-white/[0.12] hover:shadow-2xl hover:shadow-black/40",
+        hover &&
+          !glow &&
+          "hover:border-white/[0.12] hover:shadow-2xl hover:shadow-black/40",
         gradient && "bg-gradient-to-br from-brand-blue/10 to-brand-green/5",
-        className
+        className,
       )}
     >
       {/* Top edge highlight */}
