@@ -30,7 +30,6 @@ export function OnrampPanel({
   const [isFetchingQuote, setIsFetchingQuote] = useState(false);
   const [quoteError, setQuoteError] = useState<string | null>(null);
 
-  // Fetch quote when fiat amount changes
   useEffect(() => {
     const fetchQuote = async () => {
       if (!fiatAmount || isNaN(parseFloat(fiatAmount))) {
@@ -41,14 +40,14 @@ export function OnrampPanel({
       try {
         setIsFetchingQuote(true);
         setQuoteError(null);
-        
+
         // In a real app, this would be a specialized quote API
         // For now, we'll simulate a 1% fee and use a fixed rate
         // as we don't have a public quote endpoint ready yet in the provided files
         const rate = 1.0; // 1 USD = 1 cUSD for simulation
         const fee = 0.01; // 1%
         const receiveAmount = parseFloat(fiatAmount) * (1 - fee) * rate;
-        
+
         setCryptoAmount(receiveAmount.toFixed(2));
       } catch (error) {
         setQuoteError("Failed to get quote");
@@ -99,18 +98,18 @@ export function OnrampPanel({
       }
 
       const data = await response.json();
-      
+
       // Notify success
       onTransactionSuccess(data.transaction_id);
-      
+
       toast({
         title: "Order Initiated",
         description: "Please complete the payment on the provider's platform.",
         action: {
           label: "Complete",
           onClick: () => {
-            if (data.provider_url) window.open(data.provider_url, '_blank');
-          }
+            if (data.provider_url) window.open(data.provider_url, "_blank");
+          },
         },
       });
 
@@ -118,9 +117,12 @@ export function OnrampPanel({
       if (data.provider_url) {
         window.open(data.provider_url, "_blank");
       }
-
     } catch (error) {
-      onTransactionError(error instanceof Error ? error.message : "Purchase failed. Please try again.");
+      onTransactionError(
+        error instanceof Error
+          ? error.message
+          : "Purchase failed. Please try again.",
+      );
     }
   }, [
     fiatAmount,
@@ -164,7 +166,8 @@ export function OnrampPanel({
         ) : quoteError ? (
           <div className="text-xs text-red-500">{quoteError}</div>
         ) : (
-          fiatAmount && cryptoAmount && (
+          fiatAmount &&
+          cryptoAmount && (
             <RateInfo
               fromToken={fiatCurrency}
               toToken={cryptoToken}
@@ -179,13 +182,20 @@ export function OnrampPanel({
       <ProviderSelector
         selectedProvider={selectedProvider}
         onProviderChange={setSelectedProvider}
+        fromCurrency={fiatCurrency}
+        toCurrency={cryptoToken}
+        amount={fiatAmount}
       />
 
       {/* Buy Button */}
       <Button
         onClick={handleBuy}
         disabled={
-          !fiatAmount || !cryptoAmount || !selectedProvider || isLoading || isFetchingQuote
+          !fiatAmount ||
+          !cryptoAmount ||
+          !selectedProvider ||
+          isLoading ||
+          isFetchingQuote
         }
         className="w-full h-12 text-base font-medium"
         variant="gradient"

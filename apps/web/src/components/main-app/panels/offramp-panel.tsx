@@ -7,7 +7,12 @@ import { FiatInput } from "../inputs/fiat-input";
 import { RateInfo } from "../rate-info";
 import { ProviderSelector } from "../provider-selector";
 import { useMiniPay } from "@/hooks/useMiniPay";
-import { getExchangeRate, approveToken, initiateOffRampContractCall, getTokenAddress } from "@/lib/minipay-utils";
+import {
+  getExchangeRate,
+  approveToken,
+  initiateOffRampContractCall,
+  getTokenAddress,
+} from "@/lib/minipay-utils";
 import { toast } from "@/components/ui/use-toast";
 
 interface OfframpPanelProps {
@@ -96,7 +101,7 @@ export function OfframpPanel({
       const initiationData = await response.json();
 
       // 2. Approve Token (if not native CELO)
-      if (cryptoToken !== 'CELO') {
+      if (cryptoToken !== "CELO") {
         const tokenAddress = getTokenAddress(cryptoToken, 42220); // Default to mainnet chainId or detect
         await approveToken(tokenAddress, cryptoAmount);
         toast({ title: "Approved", description: "Token approval successful." });
@@ -108,17 +113,21 @@ export function OfframpPanel({
         selectedProvider,
         fiatCurrency,
         fiatAmount,
-        cryptoToken
+        cryptoToken,
       );
 
       onTransactionSuccess(txHash);
       toast({
         title: "Off-ramp Started",
-        description: "Your tokens are locked. Provider will process the fiat payment soon.",
+        description:
+          "Your tokens are locked. Provider will process the fiat payment soon.",
       });
-
     } catch (error) {
-      onTransactionError(error instanceof Error ? error.message : "Sale failed. Please try again.");
+      onTransactionError(
+        error instanceof Error
+          ? error.message
+          : "Sale failed. Please try again.",
+      );
     }
   }, [
     cryptoAmount,
@@ -162,7 +171,9 @@ export function OfframpPanel({
             Fetching best price...
           </div>
         ) : (
-          cryptoAmount && fiatAmount && currentRate && (
+          cryptoAmount &&
+          fiatAmount &&
+          currentRate && (
             <RateInfo
               fromToken={cryptoToken}
               toToken={fiatCurrency}
@@ -177,13 +188,20 @@ export function OfframpPanel({
       <ProviderSelector
         selectedProvider={selectedProvider}
         onProviderChange={setSelectedProvider}
+        fromCurrency={cryptoToken}
+        toCurrency={fiatCurrency}
+        amount={cryptoAmount}
       />
 
       {/* Sell Button */}
       <Button
         onClick={handleSell}
         disabled={
-          !cryptoAmount || !fiatAmount || !selectedProvider || isLoading || isFetchingQuote
+          !cryptoAmount ||
+          !fiatAmount ||
+          !selectedProvider ||
+          isLoading ||
+          isFetchingQuote
         }
         className="w-full h-12 text-base font-medium"
         variant="gradient"
