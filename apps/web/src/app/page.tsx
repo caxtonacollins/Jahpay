@@ -203,28 +203,25 @@ export default function Home() {
   const [expandedFaq, setExpandedFaq] = useState(0);
 
   return (
-    <main className="flex-1">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black" />
+    <main className="flex-1 overflow-x-hidden jahpay-grid">
+      {/* Unified Jahpay Background */}
+      <div className="fixed inset-0 -z-10 jahpay-bg">
+        <div className="absolute inset-0 jahpay-grid opacity-30" />
+        {/* Subtle animated glow following the brand colors */}
         <motion.div
           animate={{
-            backgroundPosition: ["0% 0%", "100% 100%"],
+            opacity: [0.3, 0.5, 0.3],
+            scale: [1, 1.1, 1],
           }}
-          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-transparent to-purple-950/20"
-          style={{ backgroundSize: "400% 400%" }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(59,130,246,0.15),transparent_70%)]"
         />
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-900 to-slate-950" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_70%)]" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.1))]" />
-        </div>
+      <section className="relative min-h-screen flex items-center">
+        {/* Section Overlay for Blending */}
+        <div className="absolute inset-0 -z-10 section-overlay-hero" />
 
         {/* Animated floating elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -239,22 +236,6 @@ export default function Home() {
             variants={container}
             className="text-center max-w-6xl mx-auto pt-24 md:pt-32"
           >
-            {/* Badge */}
-            <motion.div variants={item} className="inline-flex">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-300 rounded-full border border-blue-500/30 backdrop-blur-sm hover:border-blue-500/50 transition-all group">
-                <motion.span
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="inline-block"
-                >
-                  <Zap className="h-4 w-4 text-yellow-300" />
-                </motion.span>
-                <span className="group-hover:text-white transition-colors">
-                  Built on Celo • Production-Grade dApp
-                </span>
-              </div>
-            </motion.div>
-
             {/* Main Heading */}
             <motion.div variants={item} className="relative">
               <motion.h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6 leading-tight">
@@ -451,12 +432,8 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -top-1/3 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tl from-cyan-500/5 to-blue-500/5 rounded-full blur-3xl" />
-        </div>
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-features" />
 
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <motion.div
@@ -535,11 +512,8 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-900/50 to-transparent">
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, rgba(0, 0, 0, 0) 70%)" />
-        </div>
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-howit" />
 
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <motion.div
@@ -681,8 +655,8 @@ export default function Home() {
       </section>
 
       {/* User Testimonial Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        {/* Section overlay implicitly merges with grid */}
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-howit opacity-50" />
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -733,13 +707,8 @@ export default function Home() {
       </section>
 
       {/* Providers Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-900/30 to-transparent">
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/3 -left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/3 -right-1/4 w-[600px] h-[600px] bg-gradient-to-tl from-cyan-500/5 to-blue-500/5 rounded-full blur-3xl" />
-        </div>
-
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-providers" />
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -836,8 +805,9 @@ export default function Home() {
       {/* Learn More / Choose Jahpay Section */}
       <section
         id="learn-more-section"
-        className="relative py-20 lg:py-32 overflow-hidden"
+        className="relative py-20 lg:py-32"
       >
+        <div className="absolute inset-0 -z-10 section-overlay-features opacity-60" />
         <div className="container px-4 mx-auto max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -935,12 +905,8 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-900/50 to-transparent">
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, rgba(0, 0, 0, 0) 70%)" />
-        </div>
-
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-faq" />
         <div className="container px-4 mx-auto max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -1051,7 +1017,8 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
+      <section className="relative py-20 lg:py-32">
+        <div className="absolute inset-0 -z-10 section-overlay-cta" />
         <div className="container px-4 mx-auto max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
