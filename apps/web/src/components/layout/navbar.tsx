@@ -41,7 +41,7 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 w-full bg-transparent transition-transform duration-300 ease-in-out",
-        visible ? "translate-y-0" : "-translate-y-full"
+        visible ? "translate-y-0" : "-translate-y-full",
       )}
       style={{
         background: "rgba(0, 0, 0, 0.2)",
@@ -66,15 +66,35 @@ export function Navbar() {
 
         {/* Right side - Desktop nav and mobile menu button */}
         <div className="flex items-center gap-4">
+          {/* Desktop navigation links */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href="/transactions"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-white",
+                pathname === "/transactions" ? "text-white" : "text-gray-400",
+              )}
+            >
+              Transactions
+            </Link>
+          </nav>
+
           {/* Mobile Menu Button */}
           <Sheet>
-            <SheetTrigger asChild >
-              <Button variant="gradient" size="icon" className="md:hidden text-white hover:bg-gray-800">
+            <SheetTrigger asChild>
+              <Button
+                variant="gradient"
+                size="icon"
+                className="md:hidden text-white hover:bg-gray-800"
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-[#0A0E17] border-r border-gray-800">
+            <SheetContent
+              side="left"
+              className="w-72 bg-[#0A0E17] border-r border-gray-800"
+            >
               <div className="flex flex-col h-full px-4 py-6">
                 <div className="flex items-center justify-start gap-3 mb-8">
                   <Image
@@ -86,8 +106,21 @@ export function Navbar() {
                     priority
                   />
                 </div>
-                  <div className="mt-6 pt-6">
-                    <WalletConnectButton />
+                <nav className="flex flex-col gap-4 mt-6 pt-6 border-t border-gray-800">
+                  <Link
+                    href="/transactions"
+                    className={cn(
+                      "text-sm font-medium transition-colors hover:text-white py-2",
+                      pathname === "/transactions"
+                        ? "text-white"
+                        : "text-gray-400",
+                    )}
+                  >
+                    Transactions
+                  </Link>
+                </nav>
+                <div className="mt-auto pt-6">
+                  <WalletConnectButton />
                 </div>
               </div>
             </SheetContent>
@@ -95,9 +128,9 @@ export function Navbar() {
         </div>
 
         {/* Desktop navigation */}
-          <div className="flex items-center gap-4">
-            <WalletConnectButton />
-          </div>
+        <div className="flex items-center gap-4">
+          <WalletConnectButton />
+        </div>
       </div>
     </header>
   );
