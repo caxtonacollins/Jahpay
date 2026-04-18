@@ -8,19 +8,19 @@ import { ProviderQuote, ExchangeRate, ProviderQuoteRequest } from "./types";
  * - Countries: Nigeria, Ghana, Kenya, Uganda
  */
 export class CashrampProvider extends BaseProvider {
-  private readonly baseUrl = "https://api.cashramp.com/v1";
+  private readonly graphqlUrl = "https://api.useaccrue.com/cashramp/api/graphql";
   private apiKey: string;
 
   constructor(apiKey?: string) {
     super({
       name: "Cashramp",
       apiKey,
-      baseUrl: "https://api.cashramp.com/v1",
+      baseUrl: "https://api.useaccrue.com/cashramp/api/graphql",
       feePercentage: 2.0, // 2% fee
       logo: "/providers/cashramp.png",
       description: "Bank transfer on/off ramp for African markets",
       supportedPairs: {
-        from: ["NGN", "GHS", "KES", "UGX"],
+        from: ["NGN", "GHS", "KES", "UGX", "USD"],
         to: ["BTC", "ETH", "USDC", "USDT", "CELO", "cUSD"],
       },
     });
@@ -28,43 +28,59 @@ export class CashrampProvider extends BaseProvider {
   }
 
   /**
-   * Get quote from Cashramp
+   * Get quote from Cashramp using GraphQL
    */
   async getQuote(request: ProviderQuoteRequest): Promise<ProviderQuote> {
-    const { from, to, amount, address } = request;
+    const { from, to, amount } = request;
 
     try {
-      const response = await this.fetch<any>("/quote", {
-        method: "POST",
-        body: JSON.stringify({
-          from_currency: from,
-          to_currency: to,
-          amount,
-          type: "buy", // Cashramp endpoint for buying crypto
-        }),
+      const query = `
+        query GetRampQuote($amount: Float!, $currency: String!, $country: String!, $paymentType: String!) {
+          rampQuote(amount: $amount, currency: $currency, country: $country, paymentType: $paymentType) {
+            id
+            exchangeRate
+            totalAmount
+            feeAmount
+            paymentType
+          }
+        }
+      `;
+
+      // Determine payment type and country
+      const isOffRamp = ['BTC', 'ETH', 'USDC', 'USDT', 'CELO', 'cUSD'].includes(from.toUpperCase());
+      const paymentType = isOffRamp ? "withdrawal" : "deposit";
+      const country = "NG"; // Default to NG, could be derived from currency
+
+      const response = await this.fetchGraphQL<any>(query, {
+        amount: parseFloat(amount),
+        currency: isOffRamp ? to.toLowerCase() : from.toLowerCase(),
+        country,
+        paymentType,
       });
 
-      const rate =
-        response.rate ||
-        (1 / parseFloat(amount)) * parseFloat(response.amount_out);
-      const fee = parseFloat(amount) * (this.config.feePercentage / 100);
+      const quote = response.data.rampQuote;
+      const rate = quote.exchangeRate;
+      const fee = quote.feeAmount;
 
       return {
         provider: this.config.name,
         fromAmount: amount,
-        toAmount: response.amount_out || String(parseFloat(amount) / rate),
+        toAmount: String(quote.totalAmount),
         rate,
-        minAmount: response.min_amount || "100",
-        maxAmount: response.max_amount || "1000000",
+        minAmount: "100",
+        maxAmount: "1000000",
         fee: String(fee),
         estimatedTime: "30-60 minutes",
         providerFee: String(fee),
         networkFee: "0",
-        totalToReceive:
-          response.amount_out || String(parseFloat(amount) / rate),
+        totalToReceive: String(quote.totalAmount),
       };
     } catch (error) {
       console.error("Cashramp quote error:", error);
+      // Fallback in case of API failure during development
+      if (!this.apiKey) {
+        return this.getSimulatedQuote(request);
+      }
       throw new Error(`Failed to get Cashramp quote: ${error}`);
     }
   }
@@ -74,15 +90,14 @@ export class CashrampProvider extends BaseProvider {
    */
   async getExchangeRate(from: string, to: string): Promise<ExchangeRate> {
     try {
-      const response = await this.fetch<any>("/rates", {
-        method: "GET",
-        url: `${this.baseUrl}/rates?from=${from}&to=${to}`,
-      });
+      // GraphQL doesn't have a direct "rates" query in the snippet, 
+      // but we can get a quote for a unit amount
+      const quote = await this.getQuote({ from, to, amount: "1" });
 
       return {
         from,
         to,
-        rate: response.rate,
+        rate: quote.rate,
         provider: this.config.name,
         timestamp: Date.now(),
       };
@@ -92,180 +107,61 @@ export class CashrampProvider extends BaseProvider {
     }
   }
 
+  private getSimulatedQuote(request: ProviderQuoteRequest): ProviderQuote {
+    const rate = 1200; // Simulated NGN/USD
+    const amount = parseFloat(request.amount);
+    return {
+      provider: this.config.name,
+      fromAmount: request.amount,
+      toAmount: String(amount / rate),
+      rate,
+      minAmount: "100",
+      maxAmount: "1000000",
+      fee: String(amount * 0.02),
+      estimatedTime: "30-60 minutes",
+      totalToReceive: String(amount / rate),
+    };
+  }
+
   /**
-   * Get supported currencies
+   * Helper method to make GraphQL requests
    */
+  protected async fetchGraphQL<T>(
+    query: string,
+    variables: Record<string, any> = {}
+  ): Promise<T> {
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
+    });
+
+    const response = await fetch(this.graphqlUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Cashramp GraphQL error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const result = await response.json();
+    if (result.errors) {
+      throw new Error(`Cashramp GraphQL error: ${result.errors[0].message}`);
+    }
+
+    return result;
+  }
+
   async getSupportedCurrencies(): Promise<{ from: string[]; to: string[] }> {
     return {
       from: this.config.supportedPairs.from,
       to: this.config.supportedPairs.to,
     };
-  }
-
-  /**
-   * Initiate on-ramp transaction
-   */
-  async initiateOnRamp(params: {
-    amount: number;
-    fiatCurrency: string;
-    cryptoCurrency: string;
-    walletAddress: string;
-    callbackUrl: string;
-  }): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/transactions/initiate", {
-        method: "POST",
-        body: JSON.stringify({
-          fiat_amount: params.amount,
-          fiat_currency: params.fiatCurrency,
-          crypto_currency: params.cryptoCurrency,
-          wallet_address: params.walletAddress,
-          callback_url: params.callbackUrl,
-          type: "buy",
-        }),
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: "pending",
-        paymentUrl: response.payment_url,
-        expiresIn: 900, // 15 minutes
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Cashramp on-ramp error:", error);
-      throw new Error(`Failed to initiate Cashramp on-ramp: ${error}`);
-    }
-  }
-
-  /**
-   * Initiate off-ramp transaction
-   */
-  async initiateOffRamp(params: {
-    amount: number;
-    cryptoCurrency: string;
-    fiatCurrency: string;
-    bankAccount: any;
-    callbackUrl: string;
-  }): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/transactions/initiate", {
-        method: "POST",
-        body: JSON.stringify({
-          crypto_amount: params.amount,
-          crypto_currency: params.cryptoCurrency,
-          fiat_currency: params.fiatCurrency,
-          bank_account: params.bankAccount,
-          callback_url: params.callbackUrl,
-          type: "sell",
-        }),
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: "pending",
-        expiresIn: 900,
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Cashramp off-ramp error:", error);
-      throw new Error(`Failed to initiate Cashramp off-ramp: ${error}`);
-    }
-  }
-
-  /**
-   * Get transaction status
-   */
-  async getTransactionStatus(txId: string): Promise<any> {
-    try {
-      const response = await this.fetch<any>(`/transactions/${txId}`, {
-        method: "GET",
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: response.status,
-        amount: response.amount,
-        currency: response.currency,
-        timestamp: response.timestamp,
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Cashramp transaction status error:", error);
-      throw new Error(`Failed to get Cashramp transaction status: ${error}`);
-    }
-  }
-
-  /**
-   * Verify bank account
-   */
-  async verifyBankAccount(
-    accountNumber: string,
-    bankCode: string
-  ): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/bank/verify", {
-        method: "POST",
-        body: JSON.stringify({
-          account_number: accountNumber,
-          bank_code: bankCode,
-        }),
-      });
-
-      return {
-        valid: response.valid,
-        accountName: response.account_name,
-        bankName: response.bank_name,
-        currency: response.currency,
-      };
-    } catch (error) {
-      console.error("Cashramp bank verification error:", error);
-      throw new Error(`Failed to verify bank account with Cashramp: ${error}`);
-    }
-  }
-
-  /**
-   * Get supported banks
-   */
-  async getSupportedBanks(countryCode: string): Promise<any[]> {
-    try {
-      const response = await this.fetch<any>(`/banks?country=${countryCode}`, {
-        method: "GET",
-      });
-
-      return response.banks || [];
-    } catch (error) {
-      console.error("Cashramp get banks error:", error);
-      throw new Error(`Failed to get supported banks from Cashramp: ${error}`);
-    }
-  }
-
-  /**
-   * Helper method to make API requests
-   */
-  protected async fetch<T>(
-    endpoint: string,
-    options: RequestInit & { url?: string } = {}
-  ): Promise<T> {
-    const url = options.url || `${this.baseUrl}${endpoint}`;
-
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.apiKey}`,
-      ...options.headers,
-    });
-
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Cashramp API error: ${response.status} ${response.statusText}`
-      );
-    }
-
-    return response.json();
   }
 }

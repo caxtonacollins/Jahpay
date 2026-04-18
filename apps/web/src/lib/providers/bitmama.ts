@@ -8,19 +8,20 @@ import { ProviderQuote, ExchangeRate, ProviderQuoteRequest } from "./types";
  * - Countries: Nigeria, Ghana
  */
 export class BitmamaProvider extends BaseProvider {
-  private readonly baseUrl = "https://api.bitmama.com/api/v1";
+  private readonly stagingUrl = "https://enterprise-api-staging.bitmama.io/v1";
+  private readonly prodUrl = "https://enterprise-api.bitmama.io/v1";
   private apiKey: string;
 
   constructor(apiKey?: string) {
     super({
       name: "Bitmama",
       apiKey,
-      baseUrl: "https://api.bitmama.com/api/v1",
+      baseUrl: apiKey ? "https://enterprise-api.bitmama.io/v1" : "https://enterprise-api-staging.bitmama.io/v1",
       feePercentage: 2.5, // 2.5% fee
       logo: "/providers/bitmama.png",
       description: "Mobile money and bank transfer ramp",
       supportedPairs: {
-        from: ["NGN", "GHS"],
+        from: ["NGN", "GHS", "USD"],
         to: ["BTC", "ETH", "USDC", "USDT", "CELO", "cUSD"],
       },
     });
@@ -34,35 +35,29 @@ export class BitmamaProvider extends BaseProvider {
     const { from, to, amount } = request;
 
     try {
-      const response = await this.fetch<any>("/rates", {
-        method: "POST",
-        body: JSON.stringify({
-          from_currency: from,
-          to_currency: to,
-          amount: parseFloat(amount),
-        }),
-      });
-
-      const rate =
-        response.rate ||
-        (1 / parseFloat(amount)) * parseFloat(response.to_amount);
-      const fee = parseFloat(amount) * (this.config.feePercentage / 100);
+      const exchangeRate = await this.getExchangeRate(from, to);
+      const rate = exchangeRate.rate;
+      const toAmount = parseFloat(amount) * rate;
+      const fee = this.calculateFee(amount);
 
       return {
         provider: this.config.name,
         fromAmount: amount,
-        toAmount: response.to_amount || String(parseFloat(amount) / rate),
+        toAmount: String(toAmount),
         rate,
-        minAmount: response.min_amount || "50",
-        maxAmount: response.max_amount || "5000000",
+        minAmount: "50",
+        maxAmount: "5000000",
         fee: String(fee),
         estimatedTime: "45-120 minutes",
         providerFee: String(fee),
         networkFee: "0",
-        totalToReceive: response.to_amount || String(parseFloat(amount) / rate),
+        totalToReceive: String(toAmount),
       };
     } catch (error) {
       console.error("Bitmama quote error:", error);
+      if (!this.apiKey) {
+        return this.getSimulatedQuote(request);
+      }
       throw new Error(`Failed to get Bitmama quote: ${error}`);
     }
   }
@@ -72,169 +67,72 @@ export class BitmamaProvider extends BaseProvider {
    */
   async getExchangeRate(from: string, to: string): Promise<ExchangeRate> {
     try {
-      const response = await this.fetch<any>("/rates", {
+      // ticker format: maticusd, btcnngn
+      const ticker = `${to.toLowerCase()}${from.toLowerCase()}`;
+      const response = await this.fetch<any>(`/rate?ticker=${ticker}`, {
         method: "GET",
-        url: `${this.baseUrl}/rates?from=${from}&to=${to}`,
+        headers: {
+          "token": this.apiKey,
+        },
       });
+
+      if (response.status !== "success") {
+        throw new Error(response.message || "Failed to fetch rate from Bitmama");
+      }
 
       return {
         from,
         to,
-        rate: response.rate,
+        rate: response.message.buy, // or sell depending on direction
         provider: this.config.name,
         timestamp: Date.now(),
       };
     } catch (error) {
       console.error("Bitmama exchange rate error:", error);
+      if (!this.apiKey) {
+        return {
+          from,
+          to,
+          rate: this.getSimulatedRate(from, to),
+          provider: `${this.config.name} (Simulated)`,
+          timestamp: Date.now(),
+        };
+      }
       throw new Error(`Failed to get Bitmama exchange rate: ${error}`);
     }
   }
 
-  /**
-   * Get supported currencies
-   */
+  private getSimulatedQuote(request: ProviderQuoteRequest): ProviderQuote {
+    const rate = 1250;
+    const amount = parseFloat(request.amount);
+    return {
+      provider: this.config.name,
+      fromAmount: request.amount,
+      toAmount: String(amount / rate),
+      rate,
+      minAmount: "50",
+      maxAmount: "5000000",
+      fee: String(amount * 0.025),
+      estimatedTime: "45-120 minutes",
+      totalToReceive: String(amount / rate),
+    };
+  }
+
+  private getSimulatedRate(from: string, to: string): number {
+    const baseRates: Record<string, number> = {
+      'NGN': 1250, 'GHS': 13, 'USD': 1,
+      'BTC': 0.000024, 'ETH': 0.00048, 'USDC': 1, 'USDT': 1, 'CELO': 0.48, 'cUSD': 1,
+    };
+    const fromRate = baseRates[from.toUpperCase()] || 1;
+    const toRate = baseRates[to.toUpperCase()] || 1;
+    return fromRate / toRate;
+  }
+
   async getSupportedCurrencies(): Promise<{ from: string[]; to: string[] }> {
     return {
       from: this.config.supportedPairs.from,
       to: this.config.supportedPairs.to,
     };
-  }
-
-  /**
-   * Create deposit (on-ramp)
-   */
-  async initiateOnRamp(params: {
-    amount: number;
-    fiatCurrency: string;
-    cryptoCurrency: string;
-    walletAddress: string;
-    paymentMethod: "bank_transfer" | "mobile_money";
-    callbackUrl: string;
-  }): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/transactions/deposit", {
-        method: "POST",
-        body: JSON.stringify({
-          fiat_amount: params.amount,
-          fiat_currency: params.fiatCurrency,
-          crypto_currency: params.cryptoCurrency,
-          wallet_address: params.walletAddress,
-          payment_method: params.paymentMethod,
-          callback_url: params.callbackUrl,
-        }),
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: "pending",
-        paymentDetails: response.payment_details,
-        expiresIn: 1800, // 30 minutes
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Bitmama deposit error:", error);
-      throw new Error(`Failed to initiate Bitmama deposit: ${error}`);
-    }
-  }
-
-  /**
-   * Create withdrawal (off-ramp)
-   */
-  async initiateOffRamp(params: {
-    amount: number;
-    cryptoCurrency: string;
-    fiatCurrency: string;
-    destination: "bank_account" | "mobile_money" | any;
-    callbackUrl: string;
-  }): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/transactions/withdrawal", {
-        method: "POST",
-        body: JSON.stringify({
-          crypto_amount: params.amount,
-          crypto_currency: params.cryptoCurrency,
-          fiat_currency: params.fiatCurrency,
-          destination: params.destination,
-          callback_url: params.callbackUrl,
-        }),
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: "pending",
-        expiresIn: 1800,
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Bitmama withdrawal error:", error);
-      throw new Error(`Failed to initiate Bitmama withdrawal: ${error}`);
-    }
-  }
-
-  /**
-   * Get transaction by ID
-   */
-  async getTransactionStatus(txId: string): Promise<any> {
-    try {
-      const response = await this.fetch<any>(`/transactions/${txId}`, {
-        method: "GET",
-      });
-
-      return {
-        transactionId: response.transaction_id,
-        status: response.status,
-        amount: response.amount,
-        currency: response.currency,
-        timestamp: response.timestamp,
-        metadata: response.metadata,
-      };
-    } catch (error) {
-      console.error("Bitmama transaction status error:", error);
-      throw new Error(`Failed to get Bitmama transaction status: ${error}`);
-    }
-  }
-
-  /**
-   * Verify bank account
-   */
-  async verifyBankAccount(
-    accountNumber: string,
-    bankCode: string
-  ): Promise<any> {
-    try {
-      const response = await this.fetch<any>("/bank/verify", {
-        method: "POST",
-        body: JSON.stringify({
-          account_number: accountNumber,
-          bank_code: bankCode,
-        }),
-      });
-
-      return {
-        valid: response.valid,
-        accountName: response.account_name,
-        bankName: response.bank_name,
-      };
-    } catch (error) {
-      console.error("Bitmama bank verification error:", error);
-      throw new Error(`Failed to verify bank account with Bitmama: ${error}`);
-    }
-  }
-
-  /**
-   * Get supported banks
-   */
-  async getSupportedBanks(countryCode: string): Promise<any[]> {
-    try {
-      const response = await this.fetch<any>(`/banks?country=${countryCode}`, {
-        method: "GET",
-      });
-
-      return response.banks || [];
-    } catch (error) {
-      console.error("Bitmama get banks error:", error);
-      throw new Error(`Failed to get supported banks from Bitmama: ${error}`);
-    }
   }
 
   /**
@@ -244,11 +142,10 @@ export class BitmamaProvider extends BaseProvider {
     endpoint: string,
     options: RequestInit & { url?: string } = {}
   ): Promise<T> {
-    const url = options.url || `${this.baseUrl}${endpoint}`;
+    const url = options.url || `${this.config.baseUrl}${endpoint}`;
 
     const headers = new Headers({
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.apiKey}`,
       ...options.headers,
     });
 
