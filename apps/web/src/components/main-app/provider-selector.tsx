@@ -47,7 +47,13 @@ export function ProviderSelector({
 
       try {
         setLoading(true);
-        const response = await fetch("/api/providers/rates", {
+        const queryParams = new URLSearchParams({
+          from: fromCurrency,
+          to: toCurrency,
+          amount: amount,
+        });
+
+        const response = await fetch(`/api/providers/rates?${queryParams.toString()}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -58,14 +64,19 @@ export function ProviderSelector({
           const data = await response.json();
           // Format rates for each provider
           const formattedRates: Record<string, string | null> = {};
-          PROVIDERS.forEach((provider) => {
-            const rate = data.rates?.[provider.id];
-            if (rate) {
-              formattedRates[provider.id] = `${rate}%`;
-            } else {
-              formattedRates[provider.id] = "N/A";
-            }
-          });
+          
+          if (data.allQuotes && Array.isArray(data.allQuotes)) {
+            data.allQuotes.forEach((quote: any) => {
+              const providerId = quote.provider.toLowerCase().replace(/\s+/g, '');
+              formattedRates[providerId] = `${quote.rate.toFixed(2)}`;
+            });
+          } else if (data.rates) {
+            // Fallback for different response structure
+            Object.entries(data.rates).forEach(([id, rate]: [string, any]) => {
+              formattedRates[id] = typeof rate === 'number' ? rate.toFixed(2) : String(rate);
+            });
+          }
+
           setRates(formattedRates);
         }
       } catch (error) {
@@ -78,7 +89,8 @@ export function ProviderSelector({
       }
     };
 
-    fetchRates();
+    const timer = setTimeout(fetchRates, 500); // Debounce
+    return () => clearTimeout(timer);
   }, [amount, fromCurrency, toCurrency]);
 
   return (
