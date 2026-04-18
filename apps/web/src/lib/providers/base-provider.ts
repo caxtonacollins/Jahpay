@@ -81,9 +81,16 @@ export abstract class BaseProvider {
   public async isPairSupported(from: string, to: string): Promise<boolean> {
     const { from: fromCurrencies, to: toCurrencies } =
       await this.getSupportedCurrencies();
-    return (
-      fromCurrencies.includes(from.toUpperCase()) &&
-      toCurrencies.includes(to.toUpperCase())
-    );
+    
+    const fromUpper = from.toUpperCase();
+    const toUpper = to.toUpperCase();
+
+    // Check on-ramp direction (Fiat -> Crypto)
+    const isOnRamp = fromCurrencies.includes(fromUpper) && toCurrencies.includes(toUpper);
+    
+    // Check off-ramp direction (Crypto -> Fiat)
+    const isOffRamp = toCurrencies.includes(fromUpper) && fromCurrencies.includes(toUpper);
+
+    return isOnRamp || isOffRamp;
   }
 }
