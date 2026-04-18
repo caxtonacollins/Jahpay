@@ -6,7 +6,7 @@ source "$(dirname "$0")/../.env"
 set +a
 
 # Configuration
-INTERVAL=300  # 5 minutes in seconds
+INTERVAL=100  # 5 minutes in seconds
 RPC_URL="${RPC_URL:-http://localhost:8545}"
 RAMP_AGGREGATOR="${RAMP_AGGREGATOR_ADDRESS:-0xA7800f93677723c1e3238ECd4bfDB2fa82DF4Fe0}"
 FEE_COLLECTOR="${FEE_COLLECTOR_ADDRESS:-0x5c043e1D09495F04a9f33551c49CE244c8226C46}"
