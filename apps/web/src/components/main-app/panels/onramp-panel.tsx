@@ -41,14 +41,28 @@ export function OnrampPanel({
         setIsFetchingQuote(true);
         setQuoteError(null);
 
-        // In a real app, this would be a specialized quote API
-        // For now, we'll simulate a 1% fee and use a fixed rate
-        // as we don't have a public quote endpoint ready yet in the provided files
-        const rate = 1.0; // 1 USD = 1 cUSD for simulation
-        const fee = 0.01; // 1%
-        const receiveAmount = parseFloat(fiatAmount) * (1 - fee) * rate;
+        const queryParams = new URLSearchParams({
+          from: fiatCurrency,
+          to: cryptoToken,
+          amount: fiatAmount,
+        });
 
-        setCryptoAmount(receiveAmount.toFixed(2));
+        const response = await fetch(`/api/providers/rates?${queryParams.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          const selectedQuote = data.allQuotes?.find(
+            (q: any) => q.provider.toLowerCase().replace(/\s+/g, '') === selectedProvider.toLowerCase()
+          ) || data.bestQuote;
+
+          if (selectedQuote) {
+            setCryptoAmount(selectedQuote.toAmount);
+          }
+        } else {
+          // Simulation fallback if API fails
+          const fee = 0.01; // 1%
+          const receiveAmount = parseFloat(fiatAmount) * (1 - fee);
+          setCryptoAmount(receiveAmount.toFixed(2));
+        }
       } catch (error) {
         setQuoteError("Failed to get quote");
         console.error(error);
@@ -59,7 +73,7 @@ export function OnrampPanel({
 
     const timer = setTimeout(fetchQuote, 500);
     return () => clearTimeout(timer);
-  }, [fiatAmount, fiatCurrency, cryptoToken]);
+  }, [fiatAmount, fiatCurrency, cryptoToken, selectedProvider]);
 
   const { userAddress } = useMiniPay();
 

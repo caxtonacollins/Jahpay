@@ -38,14 +38,37 @@ export function OfframpPanel({
 
   const { userAddress } = useMiniPay();
 
-  // Fetch exchange rate
+  // Fetch exchange rate from aggregator
   useEffect(() => {
     const fetchRate = async () => {
+      if (!cryptoAmount || isNaN(parseFloat(cryptoAmount))) {
+        setFiatAmount("");
+        return;
+      }
+
       try {
         setIsFetchingQuote(true);
-        const rate = await getExchangeRate(cryptoToken, fiatCurrency);
-        setCurrentRate(rate);
-        if (cryptoAmount) {
+        const queryParams = new URLSearchParams({
+          from: cryptoToken,
+          to: fiatCurrency,
+          amount: cryptoAmount,
+        });
+
+        const response = await fetch(`/api/providers/rates?${queryParams.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          const selectedQuote = data.allQuotes?.find(
+            (q: any) => q.provider.toLowerCase().replace(/\s+/g, '') === selectedProvider.toLowerCase()
+          ) || data.bestQuote;
+
+          if (selectedQuote) {
+            setCurrentRate(selectedQuote.rate);
+            setFiatAmount(selectedQuote.toAmount);
+          }
+        } else {
+          // Fallback to basic rate if aggregator fails
+          const rate = await getExchangeRate(cryptoToken, fiatCurrency);
+          setCurrentRate(rate);
           setFiatAmount((parseFloat(cryptoAmount) * rate).toFixed(2));
         }
       } catch (error) {
@@ -54,17 +77,10 @@ export function OfframpPanel({
         setIsFetchingQuote(false);
       }
     };
-    fetchRate();
-  }, [cryptoToken, fiatCurrency]);
 
-  // Update fiatAmount when cryptoAmount changes
-  useEffect(() => {
-    if (cryptoAmount && currentRate) {
-      setFiatAmount((parseFloat(cryptoAmount) * currentRate).toFixed(2));
-    } else {
-      setFiatAmount("");
-    }
-  }, [cryptoAmount, currentRate]);
+    const timer = setTimeout(fetchRate, 500);
+    return () => clearTimeout(timer);
+  }, [cryptoToken, fiatCurrency, cryptoAmount, selectedProvider]);
 
   const handleSell = useCallback(async () => {
     if (!cryptoAmount || !fiatAmount) {
