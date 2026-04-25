@@ -4,7 +4,7 @@ import { ArrowDownUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TokenInput } from "../inputs/token-input";
 import { RateInfo } from "../rate-info";
-import { getExchangeRate, performSwap } from "@/lib/minipay-utils";
+import { getExchangeRate, performSwap } from "@/lib/minipay/utils";
 
 interface SwapPanelProps {
   onTransactionStart: () => void;
@@ -34,7 +34,7 @@ export function SwapPanel({
         setIsFetchingRate(true);
         const rate = await getExchangeRate(fromToken, toToken);
         setCurrentRate(rate);
-        
+
         // Update toAmount if fromAmount exists
         if (fromAmount) {
           setToAmount((parseFloat(fromAmount) * rate).toFixed(6));
@@ -78,9 +78,21 @@ export function SwapPanel({
       const txHash = await performSwap(fromToken, toToken, fromAmount);
       onTransactionSuccess(txHash);
     } catch (error) {
-      onTransactionError(error instanceof Error ? error.message : "Swap failed. Please try again.");
+      onTransactionError(
+        error instanceof Error
+          ? error.message
+          : "Swap failed. Please try again.",
+      );
     }
-  }, [fromAmount, toAmount, fromToken, toToken, onTransactionStart, onTransactionSuccess, onTransactionError]);
+  }, [
+    fromAmount,
+    toAmount,
+    fromToken,
+    toToken,
+    onTransactionStart,
+    onTransactionSuccess,
+    onTransactionError,
+  ]);
 
   return (
     <div className="space-y-2">
