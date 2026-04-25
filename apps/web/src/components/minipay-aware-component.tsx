@@ -1,6 +1,6 @@
 "use client";
 
-import { useMiniPay } from "@/hooks/useMiniPay";
+import { useMiniPay } from "@/lib/hooks/useMiniPay";
 import { useEffect, useState } from "react";
 
 /**
