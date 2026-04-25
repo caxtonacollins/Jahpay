@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FiatInput } from "../inputs/fiat-input";
@@ -7,7 +6,7 @@ import { TokenInput } from "../inputs/token-input";
 import { RateInfo } from "../rate-info";
 import { ProviderSelector } from "../provider-selector";
 import { toast } from "@/components/ui/use-toast";
-import { useMiniPay } from "@/hooks/useMiniPay";
+import { useMiniPay } from "@/lib/hooks/useMiniPay";
 
 interface OnrampPanelProps {
   onTransactionStart: () => void;
@@ -41,14 +40,35 @@ export function OnrampPanel({
         setIsFetchingQuote(true);
         setQuoteError(null);
 
-        // In a real app, this would be a specialized quote API
-        // For now, we'll simulate a 1% fee and use a fixed rate
-        // as we don't have a public quote endpoint ready yet in the provided files
-        const rate = 1.0; // 1 USD = 1 cUSD for simulation
-        const fee = 0.01; // 1%
-        const receiveAmount = parseFloat(fiatAmount) * (1 - fee) * rate;
+        const queryParams = new URLSearchParams({
+          from: fiatCurrency,
+          to: cryptoToken,
+          amount: fiatAmount,
+        });
 
-        setCryptoAmount(receiveAmount.toFixed(2));
+        const response = await fetch(
+          `/api/providers/rates?${queryParams.toString()}`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const selectedQuote =
+            data.allQuotes?.find(
+              (q: any) =>
+                q.provider.toLowerCase().replace(/\s+/g, "") ===
+                selectedProvider.toLowerCase(),
+            ) || data.bestQuote;
+
+          if (selectedQuote) {
+            setCryptoAmount(selectedQuote.toAmount);
+          }
+        } else {
+          // Simulation fallback if API fails
+          const rate = 1.0; // 1 USD = 1 cUSD for simulation
+          const fee = 0.01; // 1%
+          const receiveAmount = parseFloat(fiatAmount) * (1 - fee) * rate;
+          setCryptoAmount(receiveAmount.toFixed(2));
+        }
+      }
       } catch (error) {
         setQuoteError("Failed to get quote");
         console.error(error);
