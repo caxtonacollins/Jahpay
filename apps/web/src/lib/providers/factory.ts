@@ -11,7 +11,7 @@ export class ProviderFactory {
   private providers: Map<ProviderName, BaseProvider> = new Map();
   private initialized = false;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): ProviderFactory {
     if (!ProviderFactory.instance) {
@@ -26,9 +26,15 @@ export class ProviderFactory {
     try {
       // Initialize Yellow Card
       if (process.env.NEXT_PUBLIC_YELLOWCARD_API_KEY) {
+        const apiSecret = process.env.YELLOWCARD_API_SECRET || '';
+        const useSandbox = process.env.NODE_ENV === 'development';
         this.register(
           "yellowcard",
-          new YellowCardProvider(process.env.NEXT_PUBLIC_YELLOWCARD_API_KEY)
+          new YellowCardProvider(
+            process.env.NEXT_PUBLIC_YELLOWCARD_API_KEY,
+            apiSecret,
+            useSandbox
+          )
         );
       }
 
