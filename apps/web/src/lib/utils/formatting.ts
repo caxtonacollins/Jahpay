@@ -110,3 +110,21 @@ export function formatDateTime(date: Date | string): string {
     second: "2-digit",
   });
 }
+
+
+/**
+ * Truncate an address for display
+ */
+export function truncateAddress(address: string, startLength = 6, endLength = 4): string {
+  if (address.length <= startLength + endLength) {
+    return address;
+  }
+  return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
+}
+
+/**
+ * Sleep for a given number of milliseconds
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
