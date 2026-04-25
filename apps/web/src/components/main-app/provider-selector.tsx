@@ -17,14 +17,17 @@ const PROVIDERS = [
   {
     id: "yellowcard",
     name: "Yellow Card",
+    status: "active",
   },
   {
     id: "cashramp",
     name: "Cashramp",
+    status: "coming-soon",
   },
   {
     id: "bitmama",
     name: "Bitmama",
+    status: "coming-soon",
   },
 ];
 
@@ -91,22 +94,26 @@ export function ProviderSelector({
         {PROVIDERS.map((provider) => {
           const isSelected = selectedProvider === provider.id;
           const rate = rates[provider.id];
+          const isComingSoon = provider.status === "coming-soon";
 
           return (
             <motion.button
               key={provider.id}
-              onClick={() => onProviderChange(provider.id)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              onClick={() => !isComingSoon && onProviderChange(provider.id)}
+              whileHover={!isComingSoon ? { scale: 1.02 } : {}}
+              whileTap={!isComingSoon ? { scale: 0.98 } : {}}
+              disabled={isComingSoon}
               className={cn(
                 "relative p-3 rounded-xl border transition-all duration-200 text-left",
-                isSelected
-                  ? "bg-brand-blue/[0.08] border-brand-blue/50"
-                  : "bg-white/[0.03] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]",
+                isComingSoon
+                  ? "bg-white/[0.02] border-white/[0.05] cursor-not-allowed opacity-50"
+                  : isSelected
+                    ? "bg-brand-blue/[0.08] border-brand-blue/50"
+                    : "bg-white/[0.03] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]",
               )}
             >
               {/* Selected indicator */}
-              {isSelected && (
+              {isSelected && !isComingSoon && (
                 <motion.div
                   layoutId="providerSelection"
                   className="absolute inset-0 rounded-xl border-2 border-brand-blue/60 pointer-events-none"
@@ -118,13 +125,17 @@ export function ProviderSelector({
                 <span className="text-[11px] font-semibold text-white leading-tight">
                   {provider.name}
                 </span>
-                {isSelected && (
+                {isSelected && !isComingSoon && (
                   <Check className="w-3 h-3 text-brand-blue shrink-0 mt-0.5" />
                 )}
               </div>
 
               <div className="flex items-center gap-1">
-                {loading ? (
+                {isComingSoon ? (
+                  <span className="text-[10px] font-medium text-white/40">
+                    Coming soon
+                  </span>
+                ) : loading ? (
                   <Loader2 className="w-3 h-3 animate-spin text-brand-blue" />
                 ) : (
                   <span className="text-[10px] font-medium text-brand-blue">
