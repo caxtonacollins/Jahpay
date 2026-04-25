@@ -1,18 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TokenInput } from "../inputs/token-input";
 import { FiatInput } from "../inputs/fiat-input";
 import { RateInfo } from "../rate-info";
 import { ProviderSelector } from "../provider-selector";
-import { useMiniPay } from "@/hooks/useMiniPay";
+import { useMiniPay } from "@/lib/hooks/useMiniPay";
 import {
   getExchangeRate,
   approveToken,
   initiateOffRampContractCall,
   getTokenAddress,
-} from "@/lib/minipay-utils";
+} from "@/lib/minipay/utils";
 import { toast } from "@/components/ui/use-toast";
 
 interface OfframpPanelProps {
@@ -43,10 +42,35 @@ export function OfframpPanel({
     const fetchRate = async () => {
       try {
         setIsFetchingQuote(true);
-        const rate = await getExchangeRate(cryptoToken, fiatCurrency);
-        setCurrentRate(rate);
-        if (cryptoAmount) {
-          setFiatAmount((parseFloat(cryptoAmount) * rate).toFixed(2));
+        const queryParams = new URLSearchParams({
+          from: cryptoToken,
+          to: fiatCurrency,
+          amount: cryptoAmount,
+        });
+
+        const response = await fetch(
+          `/api/providers/rates?${queryParams.toString()}`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const selectedQuote =
+            data.allQuotes?.find(
+              (q: any) =>
+                q.provider.toLowerCase().replace(/\s+/g, "") ===
+                selectedProvider.toLowerCase(),
+            ) || data.bestQuote;
+
+          if (selectedQuote) {
+            setCurrentRate(selectedQuote.rate);
+            setFiatAmount(selectedQuote.toAmount);
+          }
+        } else {
+          // Fallback to basic rate if aggregator fails
+          const rate = await getExchangeRate(cryptoToken, fiatCurrency);
+          setCurrentRate(rate);
+          if (cryptoAmount) {
+            setFiatAmount((parseFloat(cryptoAmount) * rate).toFixed(2));
+          }
         }
       } catch (error) {
         console.error("Failed to fetch rate:", error);
@@ -55,7 +79,7 @@ export function OfframpPanel({
       }
     };
     fetchRate();
-  }, [cryptoToken, fiatCurrency]);
+  }, [cryptoToken, fiatCurrency, cryptoAmount, selectedProvider]);
 
   // Update fiatAmount when cryptoAmount changes
   useEffect(() => {
@@ -98,7 +122,7 @@ export function OfframpPanel({
       });
 
       if (!response.ok) throw new Error("Failed to initiate off-ramp");
-      const initiationData = await response.json();
+      const data = await response.json();
 
       // 2. Approve Token (if not native CELO)
       if (cryptoToken !== "CELO") {
