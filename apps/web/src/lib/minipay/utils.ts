@@ -1,6 +1,7 @@
 import { createPublicClient, createWalletClient, custom, http, formatEther, fromHex, encodeFunctionData, parseUnits } from 'viem';
 import { celo } from 'viem/chains';
 import { MINIPAY_CONFIG, SUPPORTED_TOKENS } from './constants';
+import { buildMentoSwapTransaction, getMentoQuote, isMentoPairTradable } from '../mento/mento-swap';
 
 /**
  * Get the appropriate token address based on chain
@@ -221,9 +222,9 @@ export async function getExchangeRate(
 }
 
 /**
- * Perform a token swap
- * For MVP, this can be integrated with Mento or Uniswap
- * Currently implementation is a placeholder that notifies about the transaction
+ * Perform a token swap using Mento SDK
+ * Supports CELO ↔ cUSD ↔ USDC swaps on Celo mainnet and Sepolia
+ * Uses legacy transactions (no EIP-1559) for MiniPay compatibility
  */
 export async function performSwap(
     fromToken: string,
@@ -233,28 +234,59 @@ export async function performSwap(
 ): Promise<string> {
     if (!window.ethereum) throw new Error('No wallet detected');
 
-    const walletClient = createWalletClient({
-        chain: celo,
-        transport: custom(window.ethereum),
-    });
+    try {
+        // Get user address from wallet
+        const accounts = await window.ethereum.request({
+            method: 'eth_accounts',
+        }) as string[];
 
-    // In a real implementation, you would:
-    // 1. Check if it's a Mento swap (cUSD/CELO etc)
-    // 2. Or a Uniswap swap
-    // 3. For now, we'll simulate the contract call or use a simple transfer if it's a mock swap
+        if (!accounts || accounts.length === 0) {
+            throw new Error('No wallet account found');
+        }
 
-    // This is where the real swap logic would go. 
-    // Example for Mento: 
-    // const hash = await walletClient.sendTransaction({ ...mentoSatisfiedParams });
+        const userAddress = accounts[0];
 
-    // For now, we'll simulate a successful transaction hash
-    // since we don't have a specific swap contract provided in the prompt
-    console.log(`Swapping ${amount} ${fromToken} to ${toToken}...`);
+        // Check if pair is tradable on Mento
+        const isTradable = await isMentoPairTradable(fromToken, toToken, chainId);
+        if (!isTradable) {
+            throw new Error(`${fromToken}/${toToken} pair is not currently tradable on Mento`);
+        }
 
-    // Simulate some delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+        // Build swap transaction using Mento SDK
+        const { approval, swap } = await buildMentoSwapTransaction(
+            fromToken,
+            toToken,
+            amount,
+            userAddress, // recipient
+            userAddress, // owner
+            chainId,
+            0.5 // 0.5% slippage tolerance
+        );
 
-    return "0x" + Math.random().toString(16).slice(2) + "0000000000000000";
+        const walletClient = createWalletClient({
+            chain: celo,
+            transport: custom(window.ethereum),
+        });
+
+        // Send approval transaction if needed
+        if (approval) {
+            console.log('Sending token approval...');
+            const approvalHash = await walletClient.sendTransaction(approval);
+            console.log('Approval tx hash:', approvalHash);
+        }
+
+        // Send swap transaction
+        console.log(`Swapping ${amount} ${fromToken} to ${toToken}...`);
+        const swapHash = await walletClient.sendTransaction(swap.params);
+        console.log('Swap tx hash:', swapHash);
+
+        return swapHash;
+    } catch (error) {
+        console.error('Swap error:', error);
+        throw new Error(
+            `Swap failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+    }
 }
 
 /**
