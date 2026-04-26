@@ -98,3 +98,9 @@ Thumbs.db
 
 # Turbo
 .turbo
+
+# Foundry/Forge
+apps/contracts/out/
+apps/contracts/cache/
+apps/contracts/broadcast/
+*.gas-snapshot
