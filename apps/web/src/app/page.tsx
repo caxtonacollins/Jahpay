@@ -165,7 +165,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function Home() {
   return (
-    <main className="flex-1 overflow-x-hidden">
+    <main className="flex-1 overflow-x-hidden jahpay-bg jahpay-grid">
       {/* ── Background ──────────────────────────────────────────────── */}
       <div className="fixed inset-0 -z-10 bg-[#060b14]">
         <div
@@ -252,12 +252,6 @@ export default function Home() {
                 variants={fadeUp}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <a
-                  href="#swap"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-base hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
-                >
-                  Start Swapping <ArrowRight className="w-4 h-4" />
-                </a>
                 <a
                   href="https://docs.celo.org/build-on-celo/build-with-ai/8004"
                   target="_blank"
