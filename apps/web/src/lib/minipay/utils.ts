@@ -271,13 +271,13 @@ export async function performSwap(
         // Send approval transaction if needed
         if (approval) {
             console.log('Sending token approval...');
-            const approvalHash = await walletClient.sendTransaction(approval);
+            const approvalHash = await walletClient.sendTransaction(approval as any);
             console.log('Approval tx hash:', approvalHash);
         }
 
         // Send swap transaction
         console.log(`Swapping ${amount} ${fromToken} to ${toToken}...`);
-        const swapHash = await walletClient.sendTransaction(swap.params);
+        const swapHash = await walletClient.sendTransaction(swap.params as any);
         console.log('Swap tx hash:', swapHash);
 
         return swapHash;
@@ -289,124 +289,11 @@ export async function performSwap(
     }
 }
 
-/**
- * Approve a token for the RampAggregator contract
- */
-export async function approveToken(
-    tokenAddress: string,
-    amount: string,
-    decimals: number = 18,
-    chainId: number = 42220
-): Promise<string> {
-    if (!window.ethereum) throw new Error('No wallet detected');
+// approveToken and initiateOffRampContractCall removed — ramp functionality
+// has been replaced by the USDC↔USDT swap-only flow via Mento Protocol.
 
-    const walletClient = createWalletClient({
-        chain: celo,
-        transport: custom(window.ethereum),
-    });
 
-    const feeCurrencyAddress = chainId === 11142220
-        ? MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY_SEPOLIA
-        : MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY;
 
-    const { RAMP_CONTRACT_ADDRESS } = await import('./constants');
-
-    try {
-        const data = encodeFunctionData({
-            abi: [
-                {
-                    name: 'approve',
-                    type: 'function',
-                    stateMutability: 'nonpayable',
-                    inputs: [
-                        { name: 'spender', type: 'address' },
-                        { name: 'amount', type: 'uint256' },
-                    ],
-                    outputs: [{ name: '', type: 'bool' }],
-                },
-            ],
-            functionName: 'approve',
-            args: [RAMP_CONTRACT_ADDRESS as `0x${string}`, parseUnits(amount, decimals)],
-        });
-
-        const hash = await walletClient.sendTransaction({
-            account: walletClient.account!,
-            to: tokenAddress as `0x${string}`,
-            data,
-            feeCurrency: feeCurrencyAddress as `0x${string}`,
-        });
-
-        return hash;
-    } catch (error) {
-        console.error('Failed to approve token:', error);
-        throw error;
-    }
-}
-
-/**
- * Call initiateOffRamp on the RampAggregator contract
- */
-export async function initiateOffRampContractCall(
-    amount: string,
-    provider: string,
-    fiatCurrency: string,
-    fiatAmount: string,
-    tokenSymbol: string = 'USDm',
-    chainId: number = 42220
-): Promise<string> {
-    if (!window.ethereum) throw new Error('No wallet detected');
-
-    const walletClient = createWalletClient({
-        chain: celo,
-        transport: custom(window.ethereum),
-    });
-
-    const { RAMP_CONTRACT_ADDRESS, SUPPORTED_TOKENS } = await import('./constants');
-    const token = SUPPORTED_TOKENS.find(t => t.symbol === tokenSymbol);
-    if (!token) throw new Error(`Token ${tokenSymbol} not supported`);
-
-    const feeCurrencyAddress = chainId === 11142220
-        ? MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY_SEPOLIA
-        : MINIPAY_CONFIG.SUPPORTED_FEE_CURRENCY;
-
-    try {
-        const data = encodeFunctionData({
-            abi: [
-                {
-                    name: 'initiateOffRamp',
-                    type: 'function',
-                    stateMutability: 'payable',
-                    inputs: [
-                        { name: 'amount', type: 'uint256' },
-                        { name: 'provider', type: 'string' },
-                        { name: 'fiatCurrency', type: 'string' },
-                        { name: 'amountFiat', type: 'uint256' },
-                    ],
-                    outputs: [{ name: '', type: 'bytes32' }],
-                },
-            ],
-            functionName: 'initiateOffRamp',
-            args: [
-                parseUnits(amount, token.decimals),
-                provider,
-                fiatCurrency,
-                parseUnits(fiatAmount, 2), // Assuming 2 decimals for fiat (e.g. cents/kobo)
-            ],
-        });
-
-        const hash = await walletClient.sendTransaction({
-            account: walletClient.account!,
-            to: RAMP_CONTRACT_ADDRESS as `0x${string}`,
-            data,
-            feeCurrency: feeCurrencyAddress as `0x${string}`,
-        });
-
-        return hash;
-    } catch (error) {
-        console.error('Failed to initiate off-ramp contract call:', error);
-        throw error;
-    }
-}
 
 /**
  * Get supported stablecoins for MiniPay

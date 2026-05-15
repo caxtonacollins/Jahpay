@@ -1,7 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { ExchangeRate as ProviderExchangeRate, ProviderQuote } from "@/lib/providers/types";
+// providers module removed — types inlined below
+type ProviderExchangeRate = { from: string; to: string; rate: number };
+type ProviderQuote = { fromToken: string; toToken: string; fromAmount: string; toAmount: string; provider?: string };
 
 type RatesResponse = {
   from: string;
