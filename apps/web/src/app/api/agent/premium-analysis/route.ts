@@ -4,32 +4,50 @@ import { celo } from "thirdweb/chains";
 
 export const runtime = "edge";
 
-const client = createThirdwebClient({
-  secretKey: process.env.THIRDWEB_SECRET_KEY || "", // Server-side only
-});
-
-const thirdwebFacilitator = facilitator({
-  client,
-  // The address receiving the fee (our platform fee collector)
-  serverWalletAddress: process.env.NEXT_PUBLIC_FEE_COLLECTOR_ADDRESS || "0x0000000000000000000000000000000000000000",
-});
-
 /**
  * Premium AI Market Analysis Endpoint
  * Gated by x402 (Agent Payments Layer)
  * Requires a $0.05 payment in stablecoins on Celo to access.
  */
 export async function GET(request: Request) {
+  // Validate required environment variables
+  const secretKey = process.env.THIRDWEB_SECRET_KEY;
+  const feeCollectorAddress = process.env.NEXT_PUBLIC_FEE_COLLECTOR_ADDRESS;
+
+  if (!secretKey) {
+    return Response.json(
+      { error: "Server configuration error: THIRDWEB_SECRET_KEY not set" },
+      { status: 500 }
+    );
+  }
+
+  if (!feeCollectorAddress) {
+    return Response.json(
+      { error: "Server configuration error: FEE_COLLECTOR_ADDRESS not set" },
+      { status: 500 }
+    );
+  }
+
+  // Initialize client and facilitator inside the handler
+  const client = createThirdwebClient({
+    secretKey, // Server-side only
+  });
+
+  const thirdwebFacilitator = facilitator({
+    client,
+    // The address receiving the fee (our platform fee collector)
+    serverWalletAddress: feeCollectorAddress,
+  });
+
   // Extract payment signature from headers
   const paymentData = request.headers.get("PAYMENT-SIGNATURE") || request.headers.get("X-PAYMENT");
-  const url = new URL(request.url);
 
   // Use settlePayment from thirdweb to verify the x402 payment
   const result = await settlePayment({
     resourceUrl: request.url,
     method: "GET",
     paymentData,
-    payTo: process.env.NEXT_PUBLIC_FEE_COLLECTOR_ADDRESS || "0x0000000000000000000000000000000000000000",
+    payTo: feeCollectorAddress,
     network: celo,
     price: "$0.05", // $0.05 USD micro-fee
     facilitator: thirdwebFacilitator,
