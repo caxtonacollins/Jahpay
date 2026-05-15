@@ -2,17 +2,8 @@
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowDownUp,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  Info,
-  Zap,
-} from "lucide-react";
-import { useAccount, useWalletClient, usePublicClient } from "wagmi";
-import { celo } from "wagmi/chains";
-import { createWalletClient, custom, formatUnits, parseUnits } from "viem";
+import { ArrowDownUp, Loader2, AlertCircle, Info, Zap } from "lucide-react";
+import { useAccount, useWalletClient } from "wagmi";
 import {
   getSwapQuote,
   buildSwapTransaction,
@@ -24,173 +15,13 @@ import {
   getSwapRecommendation,
   submitSwapFeedback,
 } from "@/lib/agent/erc8004-agent";
-import type { SwapQuote } from "@/lib/swap/usdc-usdt-swap";
-import type { AgentRecommendation } from "@/lib/agent/erc8004-agent";
+import type { SwapQuote } from "@/types/swap";
+import type { AgentRecommendation } from "@/types/agent";
 import { SWAP_CONFIG, PLATFORM_FEE_PERCENT } from "@/lib/minipay/constants";
+import { TokenBadge } from "@/components/ui/token-badge";
+import { SlippageSelector } from "@/components/ui/slippage-selector";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { cn } from "@/lib/utils";
-
-// ─── Token Badge ──────────────────────────────────────────────────────────────
-
-function TokenBadge({
-  symbol,
-  size = "lg",
-}: {
-  symbol: "USDC" | "USDT";
-  size?: "sm" | "lg";
-}) {
-  const isUSDC = symbol === "USDC";
-  const sz = size === "lg" ? "w-9 h-9 text-sm" : "w-6 h-6 text-[10px]";
-  return (
-    <div
-      className={cn(
-        "rounded-full flex items-center justify-center font-bold text-white shrink-0",
-        sz,
-      )}
-      style={{
-        background: isUSDC
-          ? "linear-gradient(135deg,#2775CA,#1a5fa8)"
-          : "linear-gradient(135deg,#26A17B,#1a7a5a)",
-      }}
-    >
-      {symbol.slice(0, 2)}
-    </div>
-  );
-}
-
-// ─── Slippage Selector ────────────────────────────────────────────────────────
-
-function SlippageSelector({
-  value,
-  onChange,
-  aiRecommended,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  aiRecommended?: number;
-}) {
-  const opts = [10, 50, 100];
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-white/40">Slippage</span>
-      <div className="flex gap-1">
-        {opts.map((bps) => (
-          <button
-            key={bps}
-            onClick={() => onChange(bps)}
-            className={cn(
-              "px-2 py-1 rounded-lg text-xs font-medium transition-all",
-              value === bps
-                ? "bg-brand-blue text-white"
-                : "bg-white/[0.05] text-white/50 hover:bg-white/[0.1] hover:text-white",
-            )}
-          >
-            {bps / 100}%
-            {aiRecommended === bps && (
-              <span className="ml-1 text-[9px] text-yellow-400">AI</span>
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Confirm Modal ────────────────────────────────────────────────────────────
-
-function ConfirmModal({
-  quote,
-  onConfirm,
-  onCancel,
-  isLoading,
-}: {
-  quote: SwapQuote;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isLoading: boolean;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-    >
-      <motion.div
-        initial={{ scale: 0.95, y: 16 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.95, y: 16 }}
-        className="w-full max-w-sm bg-[#0d111c] border border-white/[0.1] rounded-2xl p-6 shadow-2xl"
-      >
-        <h3 className="text-lg font-bold text-white mb-6">Confirm Swap</h3>
-
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
-            <div className="flex items-center gap-2">
-              <TokenBadge symbol={quote.fromToken} size="sm" />
-              <span className="text-white font-semibold">
-                {formatTokenAmount(quote.amountIn)} {quote.fromToken}
-              </span>
-            </div>
-            <ArrowDownUp className="w-4 h-4 text-white/40" />
-            <div className="flex items-center gap-2">
-              <TokenBadge symbol={quote.toToken} size="sm" />
-              <span className="text-brand-green font-semibold">
-                {formatTokenAmount(quote.amountOutNet)} {quote.toToken}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-2 px-1">
-            {[
-              {
-                label: "Rate",
-                value: `1 ${quote.fromToken} = ${quote.rate.toFixed(6)} ${quote.toToken}`,
-              },
-              {
-                label: "Platform Fee (0.3%)",
-                value: `${formatTokenAmount(quote.platformFee)} ${quote.toToken}`,
-              },
-              {
-                label: "Route",
-                value:
-                  quote.route === "direct" ? "Direct" : "USDC → USDm → USDT",
-              },
-              { label: "Slippage", value: `${quote.slippageBps / 100}%` },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex justify-between text-sm">
-                <span className="text-white/40">{label}</span>
-                <span className="text-white/80">{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={isLoading}
-            className="flex-1 py-3 rounded-xl border border-white/[0.1] text-white/60 hover:text-white hover:border-white/20 transition-all text-sm font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Swapping...
-              </>
-            ) : (
-              "Confirm Swap"
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
 
 // ─── Main SwapPanel ───────────────────────────────────────────────────────────
 
@@ -537,6 +368,7 @@ function SwapPanelContent({
       <AnimatePresence>
         {showConfirm && quote && (
           <ConfirmModal
+            isOpen={showConfirm}
             quote={quote}
             onConfirm={handleSwap}
             onCancel={() => setShowConfirm(false)}
