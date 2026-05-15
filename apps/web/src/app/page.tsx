@@ -2,138 +2,19 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import {
-  Zap,
-  Shield,
-  Bot,
-  ChevronDown,
-  ArrowRight,
-  RefreshCw,
-  TrendingUp,
-  Lock,
-  Star,
-  ExternalLink,
-} from "lucide-react";
+import { ChevronDown, ArrowRight, Bot, Star, ExternalLink } from "lucide-react";
 import { SwapInterface } from "@/components/swap/swap-interface";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { STATS, FEATURES, STEPS, FAQS } from "@/data/marketing";
+import { fadeInUp } from "@/lib/animations";
 
-// ─── Variants ─────────────────────────────────────────────────────────────────
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 200, damping: 28 },
-  },
-};
+// ─── Animation Variants ───────────────────────────────────────────────────────
 
 const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
-};
+} as const;
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const STATS = [
-  { value: "< 5s", label: "Settlement Time" },
-  { value: "0.3%", label: "Platform Fee" },
-  { value: "Oracle", label: "Pricing Source" },
-  { value: "ERC-8004", label: "AI Standard" },
-];
-
-const FEATURES = [
-  {
-    icon: <RefreshCw className="w-5 h-5 text-brand-blue" />,
-    title: "Mento Oracle Pricing",
-    desc: "Swap USDC and USDT at oracle-sourced rates — no AMM slippage, no price manipulation.",
-    gradient: "from-brand-blue/20 to-blue-600/5",
-    border: "border-brand-blue/15",
-  },
-  {
-    icon: <Bot className="w-5 h-5 text-purple-400" />,
-    title: "ERC-8004 AI Agent",
-    desc: "An on-chain registered AI agent monitors conditions and recommends optimal slippage in real time.",
-    gradient: "from-purple-500/20 to-violet-600/5",
-    border: "border-purple-500/15",
-  },
-  {
-    icon: <Zap className="w-5 h-5 text-yellow-400" />,
-    title: "Fee Abstraction",
-    desc: "Pay gas in USDC or USDT. No CELO needed. Celo's native fee abstraction handles the rest.",
-    gradient: "from-yellow-500/20 to-amber-600/5",
-    border: "border-yellow-500/15",
-  },
-  {
-    icon: <Shield className="w-5 h-5 text-brand-green" />,
-    title: "Non-Custodial",
-    desc: "Your keys, your tokens. Swaps execute directly from your wallet — we never hold your funds.",
-    gradient: "from-brand-green/20 to-emerald-600/5",
-    border: "border-brand-green/15",
-  },
-  {
-    icon: <TrendingUp className="w-5 h-5 text-cyan-400" />,
-    title: "Circuit Breaker Protection",
-    desc: "Mento's circuit breaker auto-pauses trading during extreme volatility — your swap is always safe.",
-    gradient: "from-cyan-500/20 to-blue-600/5",
-    border: "border-cyan-500/15",
-  },
-  {
-    icon: <Lock className="w-5 h-5 text-rose-400" />,
-    title: "Transparent Fees",
-    desc: "0.3% platform fee shown before every swap. No hidden charges. No surprise deductions.",
-    gradient: "from-rose-500/20 to-pink-600/5",
-    border: "border-rose-500/15",
-  },
-];
-
-const STEPS = [
-  {
-    num: "01",
-    title: "Connect Wallet",
-    desc: "Link any Celo-compatible wallet — Metamask, Valora, or any WalletConnect app.",
-  },
-  {
-    num: "02",
-    title: "Enter Amount",
-    desc: "Type how much USDC or USDT you want to swap. A live oracle quote appears instantly.",
-  },
-  {
-    num: "03",
-    title: "AI Reviews",
-    desc: "The ERC-8004 agent assesses market conditions and recommends the safest slippage setting.",
-  },
-  {
-    num: "04",
-    title: "Confirm & Swap",
-    desc: "Review the fee breakdown and confirm. Your swap settles on Celo in under 5 seconds.",
-  },
-];
-
-const FAQS = [
-  {
-    q: "What tokens can I swap?",
-    a: "Jahpay supports USDC ↔ USDT on Celo Mainnet. Both are native, audited stablecoins — not bridged versions.",
-  },
-  {
-    q: "How does the AI agent work?",
-    a: "The ERC-8004 agent is registered on-chain as an ERC-721 NFT on Celo. It monitors Mento oracle rates and recommends optimal slippage before each swap. After completion, it records feedback on-chain to build its reputation.",
-  },
-  {
-    q: "What is the platform fee?",
-    a: "0.3% on every swap, deducted from the output amount. It is always shown transparently before you confirm.",
-  },
-  {
-    q: "Do I need CELO for gas?",
-    a: "No. Celo's fee abstraction lets you pay gas in USDC or USDT directly.",
-  },
-  {
-    q: "Is this safe?",
-    a: "Swaps are executed through Mento Protocol v3 — a battle-tested, audited DEX native to Celo. Jahpay never holds your funds.",
-  },
-];
-
-// ─── FAQ Item ─────────────────────────────────────────────────────────────────
+// ─── FAQ Item Component ───────────────────────────────────────────────────────
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -205,7 +86,7 @@ export default function Home() {
               className="space-y-8"
             >
               {/* Badge */}
-              <motion.div variants={fadeUp}>
+              <motion.div variants={fadeInUp}>
                 <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/25 bg-purple-500/8 text-xs font-semibold text-purple-400 uppercase tracking-wider">
                   <Bot className="w-3.5 h-3.5" />
                   ERC-8004 AI Agent · Celo Mainnet
@@ -213,7 +94,7 @@ export default function Home() {
               </motion.div>
 
               {/* Headline */}
-              <motion.div variants={fadeUp}>
+              <motion.div variants={fadeInUp}>
                 <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold leading-[1.05] tracking-tight">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-300">
                     Swap USDC
@@ -239,7 +120,7 @@ export default function Home() {
 
               {/* Sub */}
               <motion.p
-                variants={fadeUp}
+                variants={fadeInUp}
                 className="text-lg text-slate-400 leading-relaxed max-w-xl"
               >
                 Oracle-priced swaps with a 0.3% fee. An ERC-8004 AI agent
@@ -249,7 +130,7 @@ export default function Home() {
 
               {/* CTAs */}
               <motion.div
-                variants={fadeUp}
+                variants={fadeInUp}
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <a
@@ -264,7 +145,7 @@ export default function Home() {
 
               {/* Stats */}
               <motion.div
-                variants={fadeUp}
+                variants={fadeInUp}
                 className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/[0.05]"
               >
                 {STATS.map(({ value, label }) => (
@@ -322,20 +203,26 @@ export default function Home() {
             viewport={{ once: true, margin: "-80px" }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
           >
-            {FEATURES.map(({ icon, title, desc, gradient, border }) => (
-              <motion.div
-                key={title}
-                variants={fadeUp}
-                whileHover={{ y: -4 }}
-                className={`group relative rounded-2xl border ${border} bg-gradient-to-br ${gradient} p-6 transition-all duration-300 hover:shadow-xl hover:shadow-black/30`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center mb-4">
-                  {icon}
-                </div>
-                <h3 className="text-base font-bold text-white mb-2">{title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{desc}</p>
-              </motion.div>
-            ))}
+            {FEATURES.map(
+              ({ icon: IconComponent, title, desc, gradient, border }) => (
+                <motion.div
+                  key={title}
+                  variants={fadeInUp}
+                  whileHover={{ y: -4 }}
+                  className={`group relative rounded-2xl border ${border} bg-gradient-to-br ${gradient} p-6 transition-all duration-300 hover:shadow-xl hover:shadow-black/30`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center mb-4">
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2">
+                    {title}
+                  </h3>
+                  <p className="text-sm text-white/50 leading-relaxed">
+                    {desc}
+                  </p>
+                </motion.div>
+              ),
+            )}
           </motion.div>
         </div>
       </section>
