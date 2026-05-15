@@ -1,182 +1,220 @@
-# 🚀 START HERE - MiniPay Integration Complete
+# 🚀 START HERE - Jahpay USDC ↔ USDT Swap Platform
 
-Your jahpay app is now ready to work as both a website and MiniPay Mini App!
+Welcome to Jahpay! A modern Web3 application for oracle-priced USDC ↔ USDT swaps on Celo, powered by Mento Protocol v3 and an ERC-8004 AI agent.
 
 ## 📋 What You Need to Know
 
-### ✅ What Was Done
-- Your app now detects if it's running in MiniPay
-- Website mode: Full wallet connection UI (MetaMask, WalletConnect, etc.)
-- MiniPay mode: Auto-connected wallet, no UI needed
-- Supports stablecoins only (USDm, USDC, USDT)
-- Works on Celo Mainnet and Celo Sepolia testnet
+### ✅ What Jahpay Does
+
+- **Oracle-Priced Swaps**: USDC ↔ USDT at Mento Protocol rates—no AMM slippage
+- **ERC-8004 AI Agent**: On-chain registered agent recommends optimal slippage in real time
+- **Fee Abstraction**: Pay gas in USDC or USDT—no CELO needed
+- **Non-Custodial**: Your keys, your tokens—swaps execute directly from your wallet
+- **Circuit Breaker Protection**: Mento's auto-pause during extreme volatility
+- **Transparent Fees**: 0.3% platform fee shown before every swap
+- **Dual-Mode**: Works as a website and MiniPay Mini App
 
 ### 🎯 How It Works
+
 ```
-Website Mode          MiniPay Mode
-    ↓                     ↓
+Website Mode              MiniPay Mode
+    ↓                         ↓
 Connect Wallet    →   Auto-connected
 Multi-wallet      →   Stablecoins only
-All tokens        →   USDm, USDC, USDT
+USDC ↔ USDT       →   USDC ↔ USDT
 ```
 
 ## 🚀 Quick Start (5 minutes)
 
 ### Step 1: Setup
+
 ```bash
 pnpm install
-cp apps/web/.env.minipay.example apps/web/.env.local
+cp apps/web/.env.example apps/web/.env.local
 # Edit .env.local with your values
 ```
 
-### Step 2: Test Website Mode
+### Step 2: Start Development Server
+
 ```bash
 pnpm dev
 # Visit http://localhost:3000
-# Click "Connect Wallet"
 ```
 
-### Step 3: Test MiniPay Mode
-```bash
-# Terminal 2
-ngrok http 3000
+### Step 3: Test Swap Interface
 
-# In MiniPay:
-# Settings → Developer Settings → Load Test Page
-# Paste ngrok URL
+```bash
+# Click "Connect Wallet"
+# Select your wallet (MetaMask, WalletConnect, etc.)
+# Enter swap amount
+# See AI recommendation
+# Confirm swap
 ```
 
 ## 📚 Documentation Guide
 
 **Start with one of these based on your need:**
 
-| Need | Document | Time |
-|------|----------|------|
-| Get started quickly | `QUICK_START_MINIPAY.md` | 5 min |
-| Understand integration | `MINIPAY_INTEGRATION.md` | 15 min |
-| See architecture | `ARCHITECTURE.md` | 10 min |
-| Test thoroughly | `MINIPAY_TESTING_CHECKLIST.md` | 20 min |
-| Full web app guide | `apps/web/MINIPAY_README.md` | 10 min |
-| See all changes | `MINIPAY_CHANGES_SUMMARY.md` | 10 min |
+| Need                    | Document                       | Time   |
+| ----------------------- | ------------------------------ | ------ |
+| Get started quickly     | `QUICK_START.md`               | 5 min  |
+| Understand architecture | `ARCHITECTURE.md`              | 15 min |
+| MiniPay integration     | `MINIPAY_INTEGRATION.md`       | 10 min |
+| Test thoroughly         | `MINIPAY_TESTING_CHECKLIST.md` | 20 min |
+| See all features        | `README.md`                    | 10 min |
 
 ## 💻 Code Examples
 
-### Detect Environment
+### Get Swap Quote
+
 ```typescript
-import { useMiniPay } from '@/hooks/useMiniPay';
+import { getSwapQuote } from "@/lib/swap/usdc-usdt-swap";
 
-export function MyComponent() {
-  const { isMiniPay, userAddress } = useMiniPay();
-  
-  if (isMiniPay) {
-    return <div>MiniPay Mode: {userAddress}</div>;
-  }
-  return <div>Website Mode</div>;
-}
-```
-
-### Get Stablecoin Balance
-```typescript
-import { getStablecoinBalance } from '@/lib/minipay-utils';
-
-const balance = await getStablecoinBalance(
-  userAddress,
-  'USDm',  // or 'USDC', 'USDT'
-  42220    // chainId
+const quote = await getSwapQuote(
+  "USDC", // fromToken
+  "USDT", // toToken
+  "100", // amountIn
+  42220, // chainId
+  50, // slippageBps (0.5%)
 );
+
+console.log(quote.amountOutNet); // Amount user receives
+console.log(quote.platformFee); // 0.3% fee
 ```
 
-### Send Stablecoin Transfer
+### Build Swap Transaction
+
 ```typescript
-import { sendStablecoinTransfer } from '@/lib/minipay-utils';
+import { buildSwapTransaction } from "@/lib/swap/usdc-usdt-swap";
 
-const txHash = await sendStablecoinTransfer(
-  recipientAddress,
-  '10.5',   // amount
-  'USDm',   // token
-  42220     // chainId
-);
+const tx = await buildSwapTransaction(quote, userAddress, 42220);
+
+// tx.approval - Approval transaction (if needed)
+// tx.swap - Swap transaction
 ```
 
-## 📁 Files Created
+### Get AI Recommendation
 
-### Core Files (4)
-- `apps/web/src/contexts/minipay-context.tsx` - MiniPay detection
-- `apps/web/src/hooks/useMiniPay.ts` - MiniPay hook
-- `apps/web/src/lib/minipay-utils.ts` - Transaction utilities
-- `apps/web/src/components/minipay-aware-component.tsx` - Examples
+```typescript
+import { getSwapRecommendation } from "@/lib/agent/erc8004-agent";
 
-### Documentation (7)
-- `QUICK_START_MINIPAY.md` - 5-minute setup
-- `MINIPAY_INTEGRATION.md` - Full guide
-- `ARCHITECTURE.md` - System design
-- `MINIPAY_TESTING_CHECKLIST.md` - Testing guide
-- `apps/web/MINIPAY_README.md` - Web app guide
-- `MINIPAY_CHANGES_SUMMARY.md` - Changes overview
-- `README_MINIPAY_SETUP.md` - Setup overview
+const recommendation = await getSwapRecommendation(quote);
 
-### Configuration (1)
-- `apps/web/.env.minipay.example` - Environment template
+console.log(recommendation.recommendedSlippageBps); // 50
+console.log(recommendation.marketCondition); // 'optimal'
+console.log(recommendation.confidence); // 85
+```
 
-## 🔧 Files Modified
+## 📁 Project Structure
 
-1. `apps/web/src/components/wallet-provider.tsx` - Removed Alfajores
-2. `apps/web/src/lib/constants.ts` - Stablecoins only
-3. `apps/web/src/components/layout/navbar.tsx` - Conditional UI
-4. `apps/web/src/app/layout.tsx` - Added MiniPayProvider
+```
+jahpay/
+├── apps/
+│   ├── web/                    # Next.js 14 frontend
+│   │   ├── src/
+│   │   │   ├── app/            # App Router pages
+│   │   │   ├── components/     # React components
+│   │   │   │   ├── swap/       # Swap interface
+│   │   │   │   └── layout/     # Layout components
+│   │   │   ├── lib/
+│   │   │   │   ├── swap/       # Mento swap utilities
+│   │   │   │   ├── agent/      # ERC-8004 agent
+│   │   │   │   └── minipay/    # MiniPay utilities
+│   │   │   └── contexts/       # React contexts
+│   │   └── public/             # Static assets
+│   └── contracts/              # Solidity smart contracts
+│       ├── src/
+│       │   ├── RampAggregator.sol
+│       │   └── FeeCollector.sol
+│       └── test/               # Foundry tests
+└── docs/                       # Documentation
+```
 
 ## ✨ Key Features
 
-✅ **Automatic Detection** - Detects MiniPay environment automatically
-✅ **Dual Mode** - Works as website and MiniPay app
-✅ **Stablecoins** - USDm, USDC, USDT support
-✅ **Networks** - Celo Mainnet & Sepolia
-✅ **Utilities** - Balance, gas, transfers, status
-✅ **Examples** - Ready-to-use components
-✅ **Documentation** - Complete guides and checklists
+✅ **Oracle-Priced Swaps** - Mento Protocol v3 integration
+✅ **ERC-8004 AI Agent** - On-chain registered agent with reputation
+✅ **Fee Abstraction** - Pay gas in stablecoins
+✅ **Non-Custodial** - Your keys, your tokens
+✅ **Circuit Breaker** - Mento's volatility protection
+✅ **Transparent Fees** - 0.3% shown before swap
+✅ **Dual-Mode** - Website + MiniPay support
+✅ **Type-Safe** - Full TypeScript support
+
+## 🔧 Available Commands
+
+```bash
+pnpm dev          # Start development server
+pnpm build        # Build production bundle
+pnpm lint         # Lint code
+pnpm type-check   # Run TypeScript type checking
+```
+
+## 🌐 Supported Networks
+
+| Network      | Chain ID | Purpose    |
+| ------------ | -------- | ---------- |
+| Celo Mainnet | 42220    | Production |
+| Celo Sepolia | 11142220 | Testing    |
+
+## 💰 Supported Tokens
+
+| Token | Decimals | Issuer                   |
+| ----- | -------- | ------------------------ |
+| USDC  | 6        | Circle                   |
+| USDT  | 6        | Tether                   |
+| USDm  | 18       | Mento (internal routing) |
 
 ## 🎯 Next Steps
 
 ### Today
+
 1. ✅ Read this file
-2. ✅ Run `QUICK_START_MINIPAY.md`
-3. ✅ Test website mode
-4. ✅ Test MiniPay mode
+2. ✅ Run `pnpm install && pnpm dev`
+3. ✅ Test swap interface
+4. ✅ Connect wallet and try a swap
 
 ### This Week
-1. Run testing checklist
-2. Fix any issues
-3. Deploy to production
-4. Test on mainnet
+
+1. Read `ARCHITECTURE.md`
+2. Explore smart contracts
+3. Review ERC-8004 agent integration
+4. Test on Celo Sepolia
 
 ### This Month
-1. Submit to MiniPay
-2. Get approved
-3. Launch to users
+
+1. Deploy to production
+2. Test on Celo Mainnet
+3. Submit to MiniPay (if needed)
+4. Launch to users
 
 ## 🆘 Troubleshooting
 
-### App not detecting MiniPay?
-→ Check `MINIPAY_INTEGRATION.md` → Troubleshooting
+### Wallet not connecting?
 
-### Transactions failing?
-→ Check `apps/web/MINIPAY_README.md` → Common Issues
+→ Check `ARCHITECTURE.md` → Wallet Integration
 
-### Testing issues?
-→ Check `MINIPAY_TESTING_CHECKLIST.md`
+### Swap quote failing?
+
+→ Check `README.md` → Blockchain Integration
+
+### MiniPay issues?
+
+→ Check `MINIPAY_INTEGRATION.md`
 
 ## 📞 Support
 
-- **MiniPay Docs**: https://docs.minipay.xyz/
 - **Celo Docs**: https://docs.celo.org/
-- **MiniPay Quickstart**: https://docs.celo.org/build-on-celo/build-on-minipay/quickstart
+- **Mento Protocol**: https://mento.org/
+- **ERC-8004**: https://erc8004.org/
+- **MiniPay Docs**: https://docs.minipay.xyz/
 
 ## 🎉 You're Ready!
 
-Your app is fully configured for MiniPay. Start with `QUICK_START_MINIPAY.md` and you'll be testing in 5 minutes!
+Your app is fully configured. Start with `pnpm dev` and you'll be testing in 5 minutes!
 
 ---
 
 **Questions?** Check the relevant documentation file above.
 
-**Ready to start?** → `QUICK_START_MINIPAY.md`
+**Ready to start?** → `pnpm dev`
