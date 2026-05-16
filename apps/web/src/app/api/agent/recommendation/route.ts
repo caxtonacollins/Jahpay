@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { AgentRecommendation } from '@/lib/agent/erc8004-agent';
+import type { AgentRecommendation } from '@/types/agent';
 
 export const runtime = 'edge';
 
