@@ -318,6 +318,32 @@ function SwapPanelContent({
       }
 
       const txHash = await walletClient.sendTransaction(swap.params as any);
+
+      // Save transaction to database
+      try {
+        const response = await fetch("/api/transactions/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userAddress: address,
+            type: "swap",
+            fromToken,
+            toToken,
+            amountIn: fromAmount,
+            amountOut: quote.amountOutNet,
+            platformFee: quote.platformFee,
+            txHash,
+            status: "success",
+          }),
+        });
+
+        if (!response.ok) {
+          console.warn("Failed to save transaction to database");
+        }
+      } catch (dbErr) {
+        console.warn("Error saving transaction:", dbErr);
+      }
+
       await submitSwapFeedback(quote, txHash, true);
       onTransactionSuccess?.(txHash);
       setFromAmount("");

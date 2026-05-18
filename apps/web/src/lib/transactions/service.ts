@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Transaction, TransactionStatus, TransactionType, TransactionFilters, TransactionUpdate, TransactionStats } from './types';
+import { TransactionDb } from './db';
 
 export class TransactionService {
   private static instance: TransactionService;
@@ -25,14 +26,14 @@ export class TransactionService {
 
   private loadFromStorage() {
     if (typeof window === 'undefined') return;
-    
+
     try {
       const data = localStorage.getItem(this.storageKey);
       if (data) {
         const parsed = JSON.parse(data);
         // Only keep transactions from the last 30 days
         const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
-        const validTransactions = parsed.filter((tx: Transaction) => 
+        const validTransactions = parsed.filter((tx: Transaction) =>
           tx.createdAt > thirtyDaysAgo
         );
         this.transactions = new Map(validTransactions.map((tx: Transaction) => [tx.id, tx]));
@@ -44,7 +45,7 @@ export class TransactionService {
 
   private saveToStorage() {
     if (typeof window === 'undefined') return;
-    
+
     try {
       const transactions = Array.from(this.transactions.values());
       localStorage.setItem(this.storageKey, JSON.stringify(transactions));
@@ -61,7 +62,7 @@ export class TransactionService {
   ): Transaction {
     const id = uuidv4();
     const now = Date.now();
-    
+
     const transaction: Transaction = {
       ...quote,
       id,
@@ -113,6 +114,16 @@ export class TransactionService {
 
     this.transactions.set(id, updatedTransaction);
     this.saveToStorage();
+
+    // Sync to database
+    TransactionDb.updateTransaction(id, {
+      status: update.status,
+      metadata: update.metadata,
+      updated_at: new Date(now).toISOString(),
+    }).catch(err => {
+      console.error('Failed to sync transaction update to database:', err);
+    });
+
     return updatedTransaction;
   }
 
@@ -152,11 +163,11 @@ export class TransactionService {
     // Default sort by createdAt desc
     const sortBy = filters.sortBy || 'createdAt';
     const sortOrder = filters.sortOrder || 'desc';
-    
+
     transactions.sort((a, b) => {
       const aValue = sortBy === 'createdAt' ? a.createdAt : a.updatedAt;
       const bValue = sortBy === 'createdAt' ? b.createdAt : b.updatedAt;
-      
+
       if (sortOrder === 'asc') {
         return aValue > bValue ? 1 : -1;
       }
@@ -176,13 +187,13 @@ export class TransactionService {
     const transactions = Array.from(this.transactions.values());
     const now = Date.now();
     const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
-    
+
     const recentTransactions = transactions.filter(tx => tx.createdAt > thirtyDaysAgo);
     const completed = recentTransactions.filter(tx => tx.status === TransactionStatus.COMPLETED);
-    const pending = recentTransactions.filter(tx => 
+    const pending = recentTransactions.filter(tx =>
       [TransactionStatus.PENDING, TransactionStatus.PROCESSING].includes(tx.status)
     );
-    const failed = recentTransactions.filter(tx => 
+    const failed = recentTransactions.filter(tx =>
       [TransactionStatus.FAILED, TransactionStatus.CANCELLED].includes(tx.status)
     );
 
@@ -210,7 +221,7 @@ export class TransactionService {
   }
 
   public async retryTransaction(
-    id: string, 
+    id: string,
     updateFn: (tx: Transaction) => Promise<{ success: boolean; error?: string }>
   ): Promise<{ success: boolean; transaction: Transaction | null; error?: string }> {
     const transaction = this.getTransaction(id);
@@ -236,7 +247,7 @@ export class TransactionService {
 
     // Calculate delay based on retry count
     const delay = this.retryDelays[Math.min(transaction.retryCount, this.retryDelays.length - 1)];
-    
+
     try {
       this.updateTransaction(id, {
         status: TransactionStatus.PROCESSING,
@@ -250,7 +261,7 @@ export class TransactionService {
       await new Promise(resolve => setTimeout(resolve, delay));
 
       const result = await updateFn(transaction);
-      
+
       if (result.success) {
         this.updateTransaction(id, {
           status: TransactionStatus.COMPLETED,
@@ -265,7 +276,7 @@ export class TransactionService {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+
       this.updateTransaction(id, {
         status: TransactionStatus.FAILED,
         error: {
@@ -299,5 +310,46 @@ export class TransactionService {
     }
 
     return deletedCount;
+  }
+
+  /**
+   * Load transactions from database for a specific user
+   */
+  public async loadFromDatabase(userAddress: string) {
+    try {
+      const dbTransactions = await TransactionDb.fetchUserTransactions(userAddress);
+
+      // Convert DB transactions to local format
+      dbTransactions.forEach(dbTx => {
+        const tx: Transaction = {
+          id: dbTx.id,
+          type: dbTx.type as TransactionType,
+          status: dbTx.status as TransactionStatus,
+          fromAmount: dbTx.from_amount,
+          toAmount: dbTx.to_amount,
+          provider: dbTx.metadata?.providerName,
+          rate: dbTx.metadata?.rate,
+          fee: dbTx.platform_fee,
+          minAmount: dbTx.metadata?.minAmount,
+          maxAmount: dbTx.metadata?.maxAmount,
+          estimatedTime: dbTx.metadata?.estimatedTime,
+          metadata: {
+            providerName: dbTx.metadata?.providerName || 'Unknown',
+            timestamp: new Date(dbTx.created_at).getTime(),
+            ...dbTx.metadata,
+          },
+          createdAt: new Date(dbTx.created_at).getTime(),
+          updatedAt: new Date(dbTx.updated_at).getTime(),
+          retryCount: 0,
+          maxRetries: this.maxRetries,
+        };
+
+        this.transactions.set(tx.id, tx);
+      });
+
+      console.log(`[TransactionService] Loaded ${dbTransactions.length} transactions from database`);
+    } catch (error) {
+      console.error('[TransactionService] Failed to load transactions from database:', error);
+    }
   }
 }

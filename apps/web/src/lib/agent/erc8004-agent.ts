@@ -160,7 +160,9 @@ function getFallbackRecommendation(amount: number): AgentRecommendation {
   };
 }
 
-// ─── Post-Swap Feedback ───────────────────────────────────────────────────────
+/**
+ * Post-Swap Feedback ───────────────────────────────────────────────────────────
+ */
 
 /**
  * Submit on-chain feedback after a successful swap.
@@ -174,12 +176,23 @@ export async function submitSwapFeedback(
   const agentId = AGENT_CONFIG.agentId;
   if (!agentId) return; // Not yet registered
 
-  const score = success ? 95 : 20;
-
   try {
-    // In production, this would call the on-chain ReputationRegistry
-    // await reputation.giveFeedback(agentId, score, 0, 'starred', '', endpoint, feedbackUri, hash)
-    console.log(`[ERC-8004] Submitted feedback: score=${score}, tx=${txHash}`);
+    // Try to submit on-chain feedback
+    const { ERC8004Agent } = await import('./erc8004-onchain');
+    const agentIdNum = parseInt(agentId);
+
+    if (!isNaN(agentIdNum)) {
+      const result = await ERC8004Agent.submitFeedback(
+        agentIdNum,
+        quote,
+        txHash,
+        success
+      );
+
+      if (result.success) {
+        console.log(`[ERC-8004] On-chain feedback submitted: score=${success ? 95 : 20}, tx=${txHash}`);
+      }
+    }
   } catch (error) {
     console.error('[ERC-8004] Feedback submission failed:', error);
     // Non-critical — don't throw

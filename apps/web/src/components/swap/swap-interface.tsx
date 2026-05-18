@@ -65,9 +65,9 @@ export function SwapInterface() {
                 <h2 className="text-base font-bold text-white">
                   Swap Stablecoins
                 </h2>
-                <p className="text-xs text-white/40 mt-0.5">
+                {/* <p className="text-xs text-white/40 mt-0.5">
                   Powered by Mento Protocol
-                </p>
+                </p> */}
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-brand-green/10 border border-brand-green/20">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
@@ -98,9 +98,9 @@ export function SwapInterface() {
               <h2 className="text-base font-bold text-white">
                 Swap Stablecoins
               </h2>
-              <p className="text-xs text-white/40 mt-0.5">
+              {/* <p className="text-xs text-white/40 mt-0.5">
                 Powered by Mento Protocol
-              </p>
+              </p> */}
             </div>
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-brand-green/10 border border-brand-green/20">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />

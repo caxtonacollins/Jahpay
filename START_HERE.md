@@ -1,6 +1,6 @@
 # 🚀 START HERE - Jahpay USDC ↔ USDT Swap Platform
 
-Welcome to Jahpay! A modern Web3 application for oracle-priced USDC ↔ USDT swaps on Celo, powered by Mento Protocol v3 and an ERC-8004 AI agent.
+Welcome to Jahpay! A modern Web3 application for oracle-priced USDC ↔ USDT swaps on Celo and an ERC-8004 AI agent.
 
 ## 📋 What You Need to Know
 

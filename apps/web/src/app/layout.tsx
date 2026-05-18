@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Jahpay — USDC ↔ USDT Swap on Celo",
   description:
-    "Swap USDC and USDT instantly on Celo with oracle-priced rates, 0.3% fee, and an ERC-8004 AI agent. Powered by Mento Protocol v3.",
+    "Swap USDC and USDT instantly on Celo with oracle-priced rates, 0.3% fee, and an ERC-8004 AI agent.",
 };
 
 export default function RootLayout({
