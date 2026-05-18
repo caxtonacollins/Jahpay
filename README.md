@@ -66,7 +66,6 @@ jahpay/
 │   │   └── public/             # Static assets
 │   └── contracts/              # Solidity smart contracts
 │       ├── src/
-│       │   ├── RampAggregator.sol    # On/off-ramp aggregator
 │       │   └── FeeCollector.sol      # Platform fee collection
 │       └── test/               # Foundry tests
 └── docs/                       # Documentation

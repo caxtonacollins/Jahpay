@@ -199,14 +199,6 @@ RootLayout
 
 ## Smart Contracts
 
-### RampAggregator.sol
-
-- Manages on/off-ramp transactions
-- Supports multiple providers (Yellow Card, Cashramp, Bitmama)
-- Provider configuration and fee management
-- Off-ramp request tracking
-- Emergency withdrawal functions
-
 ### FeeCollector.sol
 
 - Collects platform fees (0.3%)
