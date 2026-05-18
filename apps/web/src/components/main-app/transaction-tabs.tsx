@@ -2,10 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRightLeft, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TransactionType = "swap" | "onramp" | "offramp";
+export type TransactionType = "swap";
 
 interface TransactionTabsProps {
   activeTab: TransactionType;
@@ -21,16 +21,6 @@ const tabs: Array<{
     id: "swap",
     label: "Swap",
     icon: <ArrowRightLeft className="w-4 h-4" />,
-  },
-  {
-    id: "onramp",
-    label: "Buy Crypto",
-    icon: <TrendingUp className="w-4 h-4" />,
-  },
-  {
-    id: "offramp",
-    label: "Sell Crypto",
-    icon: <TrendingDown className="w-4 h-4" />,
   },
 ];
 
@@ -49,7 +39,7 @@ export function TransactionTabs({
             "text-sm font-medium transition-colors duration-200 z-10",
             activeTab === tab.id
               ? "text-black"
-              : "text-white/50 hover:text-white/80"
+              : "text-white/50 hover:text-white/80",
           )}
         >
           {activeTab === tab.id && (
