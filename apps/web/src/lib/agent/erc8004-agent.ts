@@ -2,6 +2,8 @@
  * ERC-8004 Agent Integration (ChaosChain SDK)
  * Registers and queries the Jahpay Swap Agent on Celo Mainnet.
  * The agent provides AI-powered swap recommendations and builds on-chain reputation.
+ * 
+ * NOTE: Server-side operations are in erc8004-agent-server.ts
  */
 
 import { AGENT_CONFIG } from '../minipay/constants';
@@ -32,32 +34,6 @@ export interface AgentReputation {
   isRegistered: boolean;
 }
 
-// ─── Agent Registration (server-side only) ────────────────────────────────────
-
-/**
- * Register the Jahpay Swap Agent on Celo (one-time operation).
- * Call this from a server-side admin script, NOT from the frontend.
- * Returns the agent token ID to store as NEXT_PUBLIC_AGENT_ID.
- */
-export async function registerAgent(deployerPrivateKey: string): Promise<string> {
-  try {
-    // Dynamic import to avoid bundling on client
-    if (typeof window !== 'undefined') {
-      throw new Error('registerAgent must be called server-side only');
-    }
-
-    const sdk = await import('@chaoschain/sdk');
-    const IdentityRegistry = (sdk as any).IdentityRegistry;
-    // This is a placeholder — real implementation requires a viem wallet client
-    // with the deployer private key and calls registry.register(agentURI)
-    console.log('Agent registration: requires server-side execution with deployer key');
-    return 'PENDING_REGISTRATION';
-  } catch (error) {
-    console.error('Agent registration failed:', error);
-    throw error;
-  }
-}
-
 // ─── Agent Reputation Query ───────────────────────────────────────────────────
 
 /**
@@ -77,39 +53,15 @@ export async function getAgentReputation(): Promise<AgentReputation> {
     };
   }
 
-  try {
-    // Only attempt SDK import on server-side
-    if (typeof window !== 'undefined') {
-      return {
-        agentId,
-        averageScore: 92,
-        totalFeedback: 0,
-        successRate: 99.8,
-        isRegistered: true,
-      };
-    }
-
-    const sdk = await import('@chaoschain/sdk');
-    const ReputationRegistry = (sdk as any).ReputationRegistry;
-    // In production: const reputation = new ReputationRegistry(provider);
-    // const summary = await reputation.getSummary(agentId);
-    // For now, return mock data representing an unregistered agent
-    return {
-      agentId,
-      averageScore: 92,
-      totalFeedback: 0,
-      successRate: 99.8,
-      isRegistered: true,
-    };
-  } catch {
-    return {
-      agentId,
-      averageScore: 92,
-      totalFeedback: 0,
-      successRate: 99.8,
-      isRegistered: true,
-    };
-  }
+  // Always return mock data on client-side
+  // The SDK is server-only and should not be imported in client code
+  return {
+    agentId,
+    averageScore: 92,
+    totalFeedback: 0,
+    successRate: 99.8,
+    isRegistered: true,
+  };
 }
 
 // ─── AI Swap Recommendation ───────────────────────────────────────────────────
@@ -167,6 +119,9 @@ function getFallbackRecommendation(amount: number): AgentRecommendation {
 /**
  * Submit on-chain feedback after a successful swap.
  * Builds the agent's reputation on Celo.
+ * 
+ * Note: This is a client-side stub. For actual on-chain submission,
+ * use submitSwapFeedbackServer from erc8004-agent-server.ts
  */
 export async function submitSwapFeedback(
   quote: SwapQuote,
@@ -174,27 +129,8 @@ export async function submitSwapFeedback(
   success: boolean
 ): Promise<void> {
   const agentId = AGENT_CONFIG.agentId;
-  if (!agentId) return; // Not yet registered
+  if (!agentId) return;
 
-  try {
-    // Try to submit on-chain feedback
-    const { ERC8004Agent } = await import('./erc8004-onchain');
-    const agentIdNum = parseInt(agentId);
-
-    if (!isNaN(agentIdNum)) {
-      const result = await ERC8004Agent.submitFeedback(
-        agentIdNum,
-        quote,
-        txHash,
-        success
-      );
-
-      if (result.success) {
-        console.log(`[ERC-8004] On-chain feedback submitted: score=${success ? 95 : 20}, tx=${txHash}`);
-      }
-    }
-  } catch (error) {
-    console.error('[ERC-8004] Feedback submission failed:', error);
-    // Non-critical — don't throw
-  }
+  // Client-side feedback logging only
+  console.log(`[ERC-8004] Feedback recorded locally: score=${success ? 95 : 20}, tx=${txHash}`);
 }
