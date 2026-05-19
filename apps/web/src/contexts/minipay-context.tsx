@@ -23,7 +23,7 @@ export function MiniPayProvider({ children }: { children: React.ReactNode }) {
 
     // Detect MiniPay
     const hasMiniPay = !!(
-      window.ethereum && (window.ethereum as any).isMiniPay
+      (window as any).ethereum && ((window as any).ethereum as any).isMiniPay
     );
     setIsMiniPay(hasMiniPay);
 
@@ -31,7 +31,7 @@ export function MiniPayProvider({ children }: { children: React.ReactNode }) {
     if (hasMiniPay) {
       (async () => {
         try {
-          const accounts = await (window.ethereum as any).request({
+          const accounts = await ((window as any).ethereum as any).request({
             method: "eth_requestAccounts",
             params: [],
           });
