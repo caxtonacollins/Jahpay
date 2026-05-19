@@ -12,10 +12,10 @@
     "type-check": "turbo type-check"
   },
   "devDependencies": {
-    "@types/node": "^20.8.0",
+    "@types/node": "^25.9.0",
     "dotenv": "^17.2.3",
-    "turbo": "^1.10.16",
-    "typescript": "^5.2.2"
+    "turbo": "^2.0.0",
+    "typescript": "^6.0.3"
   },
   "packageManager": "pnpm@8.10.0",
   "engines": {
