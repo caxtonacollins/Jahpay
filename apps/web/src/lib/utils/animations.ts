@@ -1,15 +1,14 @@
-import { circInOut } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 export const fadeIn = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.3, ease: circInOut }
+    transition: { duration: 0.3, ease: 'easeInOut' as const }
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.2, ease: circInOut }
+    transition: { duration: 0.2, ease: 'easeInOut' as const }
   }
 };
 
@@ -27,12 +26,12 @@ export const slideIn = (direction: 'left' | 'right' | 'up' | 'down' = 'up') => {
       x: 0,
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5, ease: circInOut }
+      transition: { duration: 0.5, ease: 'easeInOut' as const }
     },
     exit: {
       ...directions[direction],
       opacity: 0,
-      transition: { duration: 0.3, ease: circInOut }
+      transition: { duration: 0.3, ease: 'easeInOut' as const }
     }
   };
 };
@@ -54,7 +53,7 @@ export const fadeInUp = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: circInOut,
+      ease: 'easeInOut' as const,
     },
   },
 };
@@ -66,7 +65,7 @@ export const scaleIn = {
     opacity: 1,
     transition: {
       duration: 0.3,
-      ease: circInOut,
+      ease: 'easeInOut' as const,
     },
   },
 };
@@ -77,7 +76,7 @@ export const rotate = {
     rotate: 360,
     transition: {
       duration: 1,
-      ease: 'linear',
+      ease: 'linear' as const,
       repeat: Infinity,
     },
   },
