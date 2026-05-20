@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFilteredTransactions } from "@/contexts/transactions-context";
 import {
@@ -15,7 +15,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/loading";
 import { fadeIn } from "@/lib/utils/animations";
@@ -28,6 +27,7 @@ import {
   Clock,
   XCircle,
   Loader2,
+  Inbox,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -80,134 +80,90 @@ const typeVariants = {
     "bg-rose-500/10 text-rose-500 border-rose-500/20",
 };
 
-const DUMMY_TRANSACTIONS: Transaction[] = [
-  {
-    id: "dummy-1",
-    type: TransactionType.SWAP,
-    status: TransactionStatus.COMPLETED,
-    provider: "Provider A",
-    fromAmount: "100",
-    toAmount: "95.5",
-    rate: 0.955,
-    minAmount: "10",
-    maxAmount: "10000",
-    fee: "0.5",
-    estimatedTime: "5 minutes",
-    metadata: {
-      providerName: "Provider A",
-      fromAddress: "USDC",
-      toAddress: "USDT",
-      feeCurrency: "USDC",
-      timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
-    },
-    createdAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-    updatedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-    retryCount: 0,
-    maxRetries: 3,
-  },
-  {
-    id: "dummy-2",
-    type: TransactionType.DEPOSIT,
-    status: TransactionStatus.COMPLETED,
-    provider: "Provider B",
-    fromAmount: "500",
-    toAmount: "500",
-    rate: 1,
-    minAmount: "100",
-    maxAmount: "50000",
-    fee: "0",
-    estimatedTime: "1-2 hours",
-    metadata: {
-      providerName: "Provider B",
-      fromAddress: "Bank Account",
-      toAddress: "cUSD",
-      feeCurrency: "cUSD",
-      timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
-    },
-    createdAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-    updatedAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-    retryCount: 0,
-    maxRetries: 3,
-  },
-  {
-    id: "dummy-3",
-    type: TransactionType.WITHDRAWAL,
-    status: TransactionStatus.PROCESSING,
-    provider: "Provider C",
-    fromAmount: "250",
-    toAmount: "250",
-    rate: 1,
-    minAmount: "50",
-    maxAmount: "25000",
-    fee: "2.5",
-    estimatedTime: "2-4 hours",
-    metadata: {
-      providerName: "Provider C",
-      fromAddress: "cUSD",
-      toAddress: "Bank Account",
-      feeCurrency: "cUSD",
-      timestamp: Date.now() - 1 * 60 * 60 * 1000,
-    },
-    createdAt: Date.now() - 1 * 60 * 60 * 1000,
-    updatedAt: Date.now() - 1 * 60 * 60 * 1000,
-    retryCount: 0,
-    maxRetries: 3,
-  },
-  {
-    id: "dummy-4",
-    type: TransactionType.SEND,
-    status: TransactionStatus.COMPLETED,
-    provider: "Provider A",
-    fromAmount: "50",
-    toAmount: "50",
-    rate: 1,
-    minAmount: "1",
-    maxAmount: "10000",
-    fee: "0.1",
-    estimatedTime: "2 minutes",
-    metadata: {
-      providerName: "Provider A",
-      fromAddress: "cUSD",
-      toAddress: "cUSD",
-      feeCurrency: "cUSD",
-      timestamp: Date.now() - 7 * 24 * 60 * 60 * 1000,
-    },
-    createdAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
-    updatedAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
-    retryCount: 0,
-    maxRetries: 3,
-  },
-  {
-    id: "dummy-5",
-    type: TransactionType.RECEIVE,
-    status: TransactionStatus.COMPLETED,
-    provider: "Provider B",
-    fromAmount: "100",
-    toAmount: "100",
-    rate: 1,
-    minAmount: "10",
-    maxAmount: "50000",
-    fee: "0",
-    estimatedTime: "Instant",
-    metadata: {
-      providerName: "Provider B",
-      fromAddress: "cUSD",
-      toAddress: "cUSD",
-      feeCurrency: "cUSD",
-      timestamp: Date.now() - 10 * 24 * 60 * 60 * 1000,
-    },
-    createdAt: Date.now() - 10 * 24 * 60 * 60 * 1000,
-    updatedAt: Date.now() - 10 * 24 * 60 * 60 * 1000,
-    retryCount: 0,
-    maxRetries: 3,
-  },
-];
-
 interface TransactionListProps {
   limit?: number;
   showFilters?: boolean;
   showTitle?: boolean;
   className?: string;
+}
+
+function TransactionCard({ tx }: { tx: Transaction }) {
+  return (
+    <Card className="overflow-hidden transition-all hover:shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">
+        <div className="flex items-center space-x-3">
+          <div
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full",
+              typeVariants[tx.type],
+            )}
+          >
+            {typeIcons[tx.type]}
+          </div>
+          <div>
+            <p className="text-sm font-medium capitalize">{tx.type}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatDistanceToNow(new Date(tx.createdAt), { addSuffix: true })}
+            </p>
+          </div>
+        </div>
+        <Badge
+          variant="outline"
+          className={cn(
+            "flex items-center space-x-1.5 border",
+            statusVariants[tx.status],
+          )}
+        >
+          {statusIcons[tx.status]}
+          <span className="capitalize">{tx.status}</span>
+        </Badge>
+      </CardHeader>
+
+      <CardContent className="py-2 px-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">
+              {tx.fromAmount} {tx.metadata.fromAddress || ""}
+            </p>
+            {tx.rate != null && (
+              <p className="text-xs text-muted-foreground">Rate: {tx.rate}</p>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="text-sm font-medium">
+              {tx.toAmount} {tx.metadata.toAddress || ""}
+            </p>
+            {tx.fee && (
+              <p className="text-xs text-muted-foreground">
+                Fee: {tx.fee} {tx.metadata.feeCurrency || ""}
+              </p>
+            )}
+          </div>
+        </div>
+        {tx.metadata.txHash && (
+          <a
+            href={`https://celoscan.io/tx/${tx.metadata.txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-brand-blue/70 hover:text-brand-blue mt-2 inline-block font-mono"
+          >
+            {tx.metadata.txHash.slice(0, 16)}...
+          </a>
+        )}
+      </CardContent>
+
+      {tx.status === TransactionStatus.FAILED && (
+        <CardFooter className="border-t bg-muted/20 p-3">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <p className="text-sm text-destructive">
+              {tx.metadata.error?.message || "Transaction failed"}
+            </p>
+          </div>
+        </CardFooter>
+      )}
+    </Card>
+  );
 }
 
 export function TransactionList({
@@ -221,34 +177,24 @@ export function TransactionList({
   );
   const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
 
+  const listFilters = useMemo(
+    () => ({
+      status: statusFilter === "all" ? undefined : statusFilter,
+      type: typeFilter === "all" ? undefined : typeFilter,
+      limit,
+      sortBy: "createdAt" as const,
+      sortOrder: "desc" as const,
+    }),
+    [statusFilter, typeFilter, limit],
+  );
+
   const {
     transactions = [],
     isLoading,
     error,
-  } = useFilteredTransactions({
-    status: statusFilter === "all" ? undefined : statusFilter,
-    type: typeFilter === "all" ? undefined : typeFilter,
-    limit,
-    sortBy: "createdAt",
-    sortOrder: "desc",
-  });
+  } = useFilteredTransactions(listFilters);
 
-  const handleRetry = async (id: string, tx: Transaction) => {
-    // TODO: Implement retry logic
-    console.log("Retrying transaction:", id, tx);
-    // This is a placeholder - implement your retry logic here
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 1000);
-    });
-  };
-
-  // Use dummy transactions if no real transactions exist
-  const displayTransactions =
-    transactions.length > 0 ? transactions : DUMMY_TRANSACTIONS.slice(0, limit);
-
-  if (isLoading && transactions.length === 0) {
+  if (isLoading) {
     return (
       <div className={cn("space-y-4", className)}>
         {showTitle && (
@@ -264,184 +210,22 @@ export function TransactionList({
   if (error) {
     return (
       <Card className={cn("border-destructive/20", className)}>
-        <CardContent className="pt-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <AlertCircle className="h-12 w-12 text-destructive" />
-            <div>
-              <h4 className="text-lg font-medium text-destructive">
-                We couldn’t load your transactions
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Please refresh and try again.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.reload();
-                }
-              }}
-              className="mt-2"
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Try Again
-            </Button>
-          </div>
+        <CardContent className="pt-6 text-center">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">
+            Could not load transactions. Refresh to try again.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-4"
+            onClick={() => window.location.reload()}
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Try Again
+          </Button>
         </CardContent>
       </Card>
-    );
-  }
-
-  if (transactions.length === 0) {
-    return (
-      <div className={cn("space-y-4", className)}>
-        <div className="flex items-center justify-between">
-          {showTitle && (
-            <h3 className="text-lg font-medium">Recent Transactions</h3>
-          )}
-
-          {showFilters && (
-            <div className="flex items-center space-x-2">
-              <select
-                value={statusFilter}
-                onChange={(e) =>
-                  setStatusFilter(e.target.value as TransactionStatus | "all")
-                }
-                className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                <option value="all">All Status</option>
-                {Object.values(TransactionStatus).map((status) => (
-                  <option key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={typeFilter}
-                onChange={(e) =>
-                  setTypeFilter(e.target.value as TransactionType | "all")
-                }
-                className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                <option value="all">All Types</option>
-                {Object.values(TransactionType).map((type) => (
-                  <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={fadeIn}
-            className="space-y-3"
-          >
-            {displayTransactions.map((tx) => (
-              <motion.div
-                key={tx.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={cn(
-                          "flex h-10 w-10 items-center justify-center rounded-full",
-                          typeVariants[tx.type as keyof typeof typeVariants],
-                        )}
-                      >
-                        {typeIcons[tx.type as keyof typeof typeIcons]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">
-                          {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(tx.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "flex items-center space-x-1.5 border",
-                        statusVariants[
-                          tx.status as keyof typeof statusVariants
-                        ],
-                      )}
-                    >
-                      {statusIcons[tx.status as keyof typeof statusIcons]}
-                      <span>
-                        {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
-                      </span>
-                    </Badge>
-                  </CardHeader>
-
-                  <CardContent className="py-2 px-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium">
-                          {tx.fromAmount} {tx.metadata.fromAddress || "UNKNOWN"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Rate: {tx.rate}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium">
-                          {tx.toAmount} {tx.metadata.toAddress || "UNKNOWN"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Fee: {tx.fee} {tx.metadata.feeCurrency || ""}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-
-                  {tx.status === TransactionStatus.FAILED && (
-                    <CardFooter className="border-t bg-muted/20 p-3">
-                      <div className="flex w-full items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <AlertCircle className="h-4 w-4 text-destructive" />
-                          <p className="text-sm text-destructive">
-                            {tx.metadata.error?.message || "Transaction failed"}
-                          </p>
-                        </div>
-                        {tx.retryCount < tx.maxRetries && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRetry(tx.id, tx)}
-                            className="h-8 text-xs"
-                          >
-                            <RefreshCw className="mr-2 h-3 w-3" />
-                            Retry
-                          </Button>
-                        )}
-                      </div>
-                    </CardFooter>
-                  )}
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </div>
     );
   }
 
@@ -452,34 +236,33 @@ export function TransactionList({
           <h3 className="text-lg font-medium">Recent Transactions</h3>
         )}
 
-        {showFilters && (
+        {showFilters && transactions.length > 0 && (
           <div className="flex items-center space-x-2">
             <select
               value={statusFilter}
               onChange={(e) =>
                 setStatusFilter(e.target.value as TransactionStatus | "all")
               }
-              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
             >
               <option value="all">All Status</option>
               {Object.values(TransactionStatus).map((status) => (
                 <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {status}
                 </option>
               ))}
             </select>
-
             <select
               value={typeFilter}
               onChange={(e) =>
                 setTypeFilter(e.target.value as TransactionType | "all")
               }
-              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
             >
               <option value="all">All Types</option>
               {Object.values(TransactionType).map((type) => (
                 <option key={type} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                  {type}
                 </option>
               ))}
             </select>
@@ -487,108 +270,37 @@ export function TransactionList({
         )}
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={fadeIn}
-          className="space-y-3"
-        >
-          {displayTransactions.map((tx) => (
-            <motion.div
-              key={tx.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="overflow-hidden transition-all hover:shadow-md">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-full",
-                        typeVariants[tx.type as keyof typeof typeVariants],
-                      )}
-                    >
-                      {typeIcons[tx.type as keyof typeof typeIcons]}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">
-                        {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(tx.createdAt), {
-                          addSuffix: true,
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "flex items-center space-x-1.5 border",
-                      statusVariants[tx.status as keyof typeof statusVariants],
-                    )}
-                  >
-                    {statusIcons[tx.status as keyof typeof statusIcons]}
-                    <span>
-                      {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
-                    </span>
-                  </Badge>
-                </CardHeader>
-
-                <CardContent className="py-2 px-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">
-                        {tx.fromAmount} {tx.metadata.fromAddress || "UNKNOWN"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Rate: {tx.rate}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        {tx.toAmount} {tx.metadata.toAddress || "UNKNOWN"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Fee: {tx.fee} {tx.metadata.feeCurrency || ""}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-
-                {tx.status === TransactionStatus.FAILED && (
-                  <CardFooter className="border-t bg-muted/20 p-3">
-                    <div className="flex w-full items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <AlertCircle className="h-4 w-4 text-destructive" />
-                        <p className="text-sm text-destructive">
-                          {tx.metadata.error?.message || "Transaction failed"}
-                        </p>
-                      </div>
-                      {tx.retryCount < tx.maxRetries && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRetry(tx.id, tx)}
-                          className="h-8 text-xs"
-                        >
-                          <RefreshCw className="mr-2 h-3 w-3" />
-                          Retry
-                        </Button>
-                      )}
-                    </div>
-                  </CardFooter>
-                )}
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
+      {transactions.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <Inbox className="h-10 w-10 text-white/20 mb-3" />
+          <p className="text-sm text-white/50">No transactions yet</p>
+          <p className="text-xs text-white/30 mt-1">
+            Complete a swap to see your history here
+          </p>
+        </div>
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={fadeIn}
+            className="space-y-3"
+          >
+            {transactions.map((tx) => (
+              <motion.div
+                key={tx.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <TransactionCard tx={tx} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }
