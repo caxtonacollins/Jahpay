@@ -54,9 +54,17 @@ export const USDM_TOKEN = {
   addressSepolia: '0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9',
 };
 
-// Keep SUPPORTED_TOKENS for Mento SDK compatibility (includes USDm)
+// Keep SUPPORTED_TOKENS for Mento SDK compatibility (includes USDm + CELO for rate API)
 export const SUPPORTED_TOKENS = [
   { ...USDM_TOKEN, logo: '/tokens/usdm.png' },
+  {
+    symbol: 'CELO',
+    name: 'Celo',
+    decimals: 18,
+    address: '0x471EcE3750Da237a93B122c29e4039db560e3F6f',
+    addressSepolia: '0xF194AfDf50Bae0a21eF85469D1521810657A1B53',
+    logo: '/tokens/celo.png',
+  },
   { symbol: 'USDC', name: 'USD Coin', decimals: 6, address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C', addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', logo: '/tokens/usdc.png' },
   { symbol: 'USDT', name: 'Tether USD', decimals: 6, address: '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e', addressSepolia: '0x617f3112bf5ad0E84e882D5142D04ae6C606cc89', logo: '/tokens/usdt.png' },
 ];
