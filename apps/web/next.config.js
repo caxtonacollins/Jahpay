@@ -1,9 +1,11 @@
+const path = require("path");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   // Explicitly set turbopack root to avoid workspace detection issues
   turbopack: {
-    root: '../../',
+    root: path.join(__dirname, "../.."),
     resolveAlias: {
       'framer-motion': 'framer-motion',
       'lucide-react': 'lucide-react',
