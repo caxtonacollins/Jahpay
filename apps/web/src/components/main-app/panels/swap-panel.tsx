@@ -1,41 +1,30 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDownUp,
   Loader2,
   AlertCircle,
-  CheckCircle2,
   Info,
   Zap,
 } from "lucide-react";
-import { useAccount, useWalletClient, usePublicClient } from "wagmi";
-import { celo } from "wagmi/chains";
-import { createWalletClient, custom, formatUnits, parseUnits } from "viem";
 import {
-  getSwapQuote,
-  buildSwapTransaction,
   getSwapTokenInfo,
-  getOppositeToken,
   formatTokenAmount,
 } from "@/lib/swap/usdc-usdt-swap";
-import {
-  getSwapRecommendation,
-  submitSwapFeedback,
-} from "@/lib/agent/erc8004-agent";
-import type { SwapQuote } from "@/lib/swap/usdc-usdt-swap";
 import type { AgentRecommendation } from "@/lib/agent/erc8004-agent";
-import { SWAP_CONFIG, PLATFORM_FEE_PERCENT } from "@/lib/minipay/constants";
+import { PLATFORM_FEE_PERCENT } from "@/lib/minipay/constants";
+import { useSwap } from "@/lib/hooks/use-swap";
+import { SwapConfirmModal } from "@/components/swap/swap-confirm-modal";
 import { cn } from "@/lib/utils";
-
-// ─── Token Badge ──────────────────────────────────────────────────────────────
+import type { SwapTokenSymbol } from "@/lib/swap/usdc-usdt-swap";
 
 function TokenBadge({
   symbol,
   size = "lg",
 }: {
-  symbol: "USDC" | "USDT";
+  symbol: SwapTokenSymbol;
   size?: "sm" | "lg";
 }) {
   const isUSDC = symbol === "USDC";
@@ -56,8 +45,6 @@ function TokenBadge({
     </div>
   );
 }
-
-// ─── Slippage Selector ────────────────────────────────────────────────────────
 
 function SlippageSelector({
   value,
@@ -95,111 +82,19 @@ function SlippageSelector({
   );
 }
 
-// ─── Confirm Modal ────────────────────────────────────────────────────────────
-
-function ConfirmModal({
-  quote,
-  onConfirm,
-  onCancel,
-  isLoading,
-}: {
-  quote: SwapQuote;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isLoading: boolean;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-    >
-      <motion.div
-        initial={{ scale: 0.95, y: 16 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.95, y: 16 }}
-        className="w-full max-w-sm bg-[#0d111c] border border-white/[0.1] rounded-2xl p-6 shadow-2xl"
-      >
-        <h3 className="text-lg font-bold text-white mb-6">Confirm Swap</h3>
-
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
-            <div className="flex items-center gap-2">
-              <TokenBadge symbol={quote.fromToken} size="sm" />
-              <span className="text-white font-semibold">
-                {formatTokenAmount(quote.amountIn)} {quote.fromToken}
-              </span>
-            </div>
-            <ArrowDownUp className="w-4 h-4 text-white/40" />
-            <div className="flex items-center gap-2">
-              <TokenBadge symbol={quote.toToken} size="sm" />
-              <span className="text-brand-green font-semibold">
-                {formatTokenAmount(quote.amountOutNet)} {quote.toToken}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-2 px-1">
-            {[
-              {
-                label: "Rate",
-                value: `1 ${quote.fromToken} = ${quote.rate.toFixed(6)} ${quote.toToken}`,
-              },
-              {
-                label: "Platform Fee (0.3%)",
-                value: `${formatTokenAmount(quote.platformFee)} ${quote.toToken}`,
-              },
-              {
-                label: "Route",
-                value:
-                  quote.route === "direct" ? "Direct" : "USDC → USDm → USDT",
-              },
-              { label: "Slippage", value: `${quote.slippageBps / 100}%` },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex justify-between text-sm">
-                <span className="text-white/40">{label}</span>
-                <span className="text-white/80">{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={isLoading}
-            className="flex-1 py-3 rounded-xl border border-white/[0.1] text-white/60 hover:text-white hover:border-white/20 transition-all text-sm font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Swapping...
-              </>
-            ) : (
-              "Confirm Swap"
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ─── Main SwapPanel ───────────────────────────────────────────────────────────
-
 interface SwapPanelProps {
   onTransactionStart: () => void;
   onTransactionSuccess: (txHash?: string) => void;
   onTransactionError: (error: string) => void;
   isLoading: boolean;
   onRecommendation?: (rec: AgentRecommendation) => void;
+  /** Apply values suggested by the AI chat agent */
+  externalSwapParams?: {
+    amount: string;
+    fromToken: SwapTokenSymbol;
+    toToken: SwapTokenSymbol;
+    slippageBps?: number;
+  } | null;
 }
 
 export function SwapPanel({
@@ -208,6 +103,7 @@ export function SwapPanel({
   onTransactionError,
   isLoading,
   onRecommendation,
+  externalSwapParams,
 }: SwapPanelProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -226,6 +122,7 @@ export function SwapPanel({
       onTransactionError={onTransactionError}
       isLoading={isLoading}
       onRecommendation={onRecommendation}
+      externalSwapParams={externalSwapParams}
     />
   );
 }
@@ -236,183 +133,69 @@ function SwapPanelContent({
   onTransactionError,
   isLoading,
   onRecommendation,
+  externalSwapParams,
 }: SwapPanelProps) {
-  const { address, isConnected } = useAccount();
-  const { data: walletClient } = useWalletClient();
+  const swap = useSwap(onRecommendation);
 
-  const [fromToken, setFromToken] = useState<"USDC" | "USDT">("USDC");
-  const [fromAmount, setFromAmount] = useState("");
-  const [quote, setQuote] = useState<SwapQuote | null>(null);
-  const [isFetchingQuote, setIsFetchingQuote] = useState(false);
-  const [quoteError, setQuoteError] = useState<string | null>(null);
-  const [slippageBps, setSlippageBps] = useState(10);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [isSwapping, setIsSwapping] = useState(false);
-  const [isSwitching, setIsSwitching] = useState(false);
-  const [aiRec, setAiRec] = useState<AgentRecommendation | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const toToken = getOppositeToken(fromToken);
-  const fromInfo = getSwapTokenInfo(fromToken);
-  const toInfo = getSwapTokenInfo(toToken);
-
-  // Fetch quote with debounce
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!fromAmount || parseFloat(fromAmount) <= 0) {
-      setQuote(null);
-      setQuoteError(null);
-      return;
+    if (!externalSwapParams) return;
+    swap.setFromToken(externalSwapParams.fromToken);
+    swap.setFromAmount(externalSwapParams.amount);
+    if (externalSwapParams.slippageBps) {
+      swap.setSlippageBps(externalSwapParams.slippageBps);
     }
+  }, [externalSwapParams]);
 
-    debounceRef.current = setTimeout(async () => {
-      setIsFetchingQuote(true);
-      setQuoteError(null);
-      try {
-        const [q, rec] = await Promise.all([
-          getSwapQuote(fromToken, toToken, fromAmount, slippageBps),
-          getSwapRecommendation(fromAmount, fromToken),
-        ]);
-        setQuote(q);
-        setAiRec(rec);
-        setSlippageBps(rec.recommendedSlippageBps);
-        onRecommendation?.(rec);
-      } catch (err) {
-        setQuoteError(
-          err instanceof Error ? err.message : "Failed to fetch quote",
-        );
-        setQuote(null);
-      } finally {
-        setIsFetchingQuote(false);
-      }
-    }, SWAP_CONFIG.QUOTE_DEBOUNCE_MS);
+  const fromInfo = getSwapTokenInfo(swap.fromToken);
+  const toInfo = getSwapTokenInfo(swap.toToken);
 
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [fromAmount, fromToken, toToken, slippageBps, onRecommendation]);
-
-  const handleSwitch = useCallback(() => {
-    setIsSwitching(true);
-    setFromToken(toToken);
-    setFromAmount(quote ? formatTokenAmount(quote.amountOutNet) : "");
-    setQuote(null);
-    setTimeout(() => setIsSwitching(false), 300);
-  }, [toToken, quote]);
-
-  const handleSwap = useCallback(async () => {
-    if (!quote || !address || !walletClient) return;
-    setIsSwapping(true);
+  const handleSwap = async () => {
     onTransactionStart?.();
     try {
-      const { approval, swap } = await buildSwapTransaction(
-        fromToken,
-        toToken,
-        fromAmount,
-        address,
-        slippageBps,
-      );
-
-      if (approval) {
-        await walletClient.sendTransaction(approval as any);
-      }
-
-      const txHash = await walletClient.sendTransaction(swap.params as any);
-
-      // Save transaction to database
-      try {
-        const response = await fetch("/api/transactions/save", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userAddress: address,
-            type: "swap",
-            fromToken,
-            toToken,
-            amountIn: fromAmount,
-            amountOut: quote.amountOutNet,
-            platformFee: quote.platformFee,
-            txHash,
-            status: "success",
-          }),
-        });
-
-        if (!response.ok) {
-          console.warn("Failed to save transaction to database");
-        }
-      } catch (dbErr) {
-        console.warn("Error saving transaction:", dbErr);
-      }
-
-      await submitSwapFeedback(quote, txHash, true);
-      onTransactionSuccess?.(txHash);
-      setFromAmount("");
-      setQuote(null);
+      const txHash = await swap.executeSwap();
+      if (txHash) onTransactionSuccess?.(txHash);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Swap failed";
-      await submitSwapFeedback(quote, "", false).catch(() => {});
-      onTransactionError?.(msg);
-    } finally {
-      setIsSwapping(false);
-      setShowConfirm(false);
+      onTransactionError?.(
+        err instanceof Error ? err.message : "Swap failed",
+      );
     }
-  }, [
-    quote,
-    address,
-    walletClient,
-    fromToken,
-    toToken,
-    fromAmount,
-    slippageBps,
-    onTransactionStart,
-    onTransactionSuccess,
-    onTransactionError,
-  ]);
-
-  const canSwap =
-    isConnected &&
-    !!quote &&
-    !!fromAmount &&
-    parseFloat(fromAmount) > 0 &&
-    !isFetchingQuote;
+  };
 
   return (
     <>
       <div className="space-y-2">
-        {/* FROM input */}
         <div className="rounded-2xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-brand-blue/40 transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
               You Send
             </span>
             <span className="text-xs text-white/30 font-mono">
-              ≈ ${formatTokenAmount(fromAmount || "0")} USD
+              ≈ ${formatTokenAmount(swap.fromAmount || "0")} USD
             </span>
           </div>
           <div className="flex items-center gap-3">
             <input
               type="number"
-              value={fromAmount}
-              onChange={(e) => setFromAmount(e.target.value)}
+              value={swap.fromAmount}
+              onChange={(e) => swap.setFromAmount(e.target.value)}
               placeholder="0.00"
               min="0"
               className="flex-1 bg-transparent text-3xl font-bold text-white placeholder-white/15 focus:outline-none min-w-0"
             />
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.08] border border-white/[0.1]">
-              <TokenBadge symbol={fromToken} />
+              <TokenBadge symbol={swap.fromToken} />
               <div>
-                <div className="text-sm font-bold text-white">{fromToken}</div>
+                <div className="text-sm font-bold text-white">{swap.fromToken}</div>
                 <div className="text-[10px] text-white/40">{fromInfo.name}</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Switch button */}
         <div className="flex items-center justify-center -my-1 relative z-10">
           <motion.button
-            onClick={handleSwitch}
-            disabled={isSwitching || isSwapping}
+            onClick={swap.handleSwitch}
+            disabled={swap.isSwapping}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9, rotate: 180 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -422,41 +205,39 @@ function SwapPanelContent({
           </motion.button>
         </div>
 
-        {/* TO output */}
         <div className="rounded-2xl p-4 bg-white/[0.03] border border-white/[0.05]">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
               You Receive
             </span>
-            {isFetchingQuote && (
+            {swap.isFetchingQuote && (
               <Loader2 className="w-3 h-3 animate-spin text-white/30" />
             )}
           </div>
           <div className="flex items-center gap-3">
             <div className="flex-1 text-3xl font-bold text-white/80">
-              {isFetchingQuote ? (
+              {swap.isFetchingQuote ? (
                 <span className="text-white/20 animate-pulse">...</span>
-              ) : quote ? (
+              ) : swap.quote ? (
                 <span className="text-brand-green">
-                  {formatTokenAmount(quote.amountOutNet)}
+                  {formatTokenAmount(swap.quote.amountOutNet)}
                 </span>
               ) : (
                 <span className="text-white/15">0.00</span>
               )}
             </div>
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.06] border border-white/[0.07]">
-              <TokenBadge symbol={toToken} />
+              <TokenBadge symbol={swap.toToken} />
               <div>
-                <div className="text-sm font-bold text-white">{toToken}</div>
+                <div className="text-sm font-bold text-white">{swap.toToken}</div>
                 <div className="text-[10px] text-white/40">{toInfo.name}</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Quote details */}
         <AnimatePresence>
-          {quote && !isFetchingQuote && (
+          {swap.quote && !swap.isFetchingQuote && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -467,7 +248,7 @@ function SwapPanelContent({
                 <div className="flex justify-between text-xs">
                   <span className="text-white/35">Rate</span>
                   <span className="text-white/60 font-mono">
-                    1 {fromToken} = {quote.rate.toFixed(6)} {toToken}
+                    1 {swap.fromToken} = {swap.quote.rate.toFixed(6)} {swap.toToken}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -475,32 +256,29 @@ function SwapPanelContent({
                     Platform Fee ({PLATFORM_FEE_PERCENT}%)
                   </span>
                   <span className="text-white/60">
-                    {formatTokenAmount(quote.platformFee)} {toToken}
+                    {formatTokenAmount(swap.quote.platformFee)} {swap.toToken}
                   </span>
                 </div>
-                {quote.route === "via-usdm" && (
+                {swap.quote.route === "via-usdm" && (
                   <div className="flex items-center gap-1.5 text-xs text-yellow-400/70">
                     <Info className="w-3 h-3" />
                     <span>Routing via USDm for best price</span>
                   </div>
                 )}
               </div>
-
-              {/* Slippage */}
               <div className="px-1 pt-1">
                 <SlippageSelector
-                  value={slippageBps}
-                  onChange={setSlippageBps}
-                  aiRecommended={aiRec?.recommendedSlippageBps}
+                  value={swap.slippageBps}
+                  onChange={swap.setSlippageBps}
+                  aiRecommended={swap.aiRec?.recommendedSlippageBps}
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Error */}
         <AnimatePresence>
-          {quoteError && (
+          {swap.quoteError && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -508,49 +286,45 @@ function SwapPanelContent({
               className="flex items-center gap-2 text-xs text-red-400 px-1"
             >
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-              {quoteError}
+              {swap.quoteError}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Swap Button */}
         <motion.button
-          onClick={() => setShowConfirm(true)}
-          disabled={!canSwap || isLoading}
-          whileHover={canSwap ? { scale: 1.01 } : {}}
-          whileTap={canSwap ? { scale: 0.99 } : {}}
+          onClick={() => swap.setShowConfirm(true)}
+          disabled={!swap.canSwap || isLoading}
+          whileHover={swap.canSwap ? { scale: 1.01 } : {}}
+          whileTap={swap.canSwap ? { scale: 0.99 } : {}}
           className={cn(
             "relative w-full h-14 rounded-2xl text-base font-bold transition-all duration-200 overflow-hidden",
-            canSwap
+            swap.canSwap
               ? "bg-gradient-to-r from-brand-blue to-brand-green text-white shadow-lg shadow-brand-blue/20 hover:shadow-brand-blue/40"
               : "bg-white/[0.05] text-white/20 cursor-not-allowed",
           )}
         >
-          {canSwap && (
-            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity" />
-          )}
           <span className="relative z-10 flex items-center justify-center gap-2">
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" /> Processing...
               </>
-            ) : !isConnected ? (
+            ) : !swap.isConnected ? (
               "Connect Wallet to Swap"
-            ) : !fromAmount ? (
+            ) : !swap.fromAmount ? (
               "Enter Amount"
-            ) : isFetchingQuote ? (
+            ) : swap.isFetchingQuote ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" /> Fetching Quote...
               </>
-            ) : canSwap ? (
+            ) : swap.canSwap ? (
               <>
-                {aiRec?.showBadge && (
+                {swap.aiRec?.showBadge && (
                   <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-white/20">
                     <Zap className="w-3 h-3" />
-                    {aiRec.badge}
+                    {swap.aiRec.badge}
                   </span>
                 )}
-                Swap {fromToken} → {toToken}
+                Swap {swap.fromToken} → {swap.toToken}
               </>
             ) : (
               "Swap"
@@ -559,14 +333,13 @@ function SwapPanelContent({
         </motion.button>
       </div>
 
-      {/* Confirm Modal */}
       <AnimatePresence>
-        {showConfirm && quote && (
-          <ConfirmModal
-            quote={quote}
+        {swap.showConfirm && swap.quote && (
+          <SwapConfirmModal
+            quote={swap.quote}
             onConfirm={handleSwap}
-            onCancel={() => setShowConfirm(false)}
-            isLoading={isSwapping}
+            onCancel={() => swap.setShowConfirm(false)}
+            isLoading={swap.isSwapping}
           />
         )}
       </AnimatePresence>
