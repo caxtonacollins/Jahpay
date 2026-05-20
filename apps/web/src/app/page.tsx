@@ -14,7 +14,7 @@ import {
   Star,
   ExternalLink,
 } from "lucide-react";
-import { SwapInterface } from "@/components/swap/swap-interface";
+import { SwapInterface } from "@/components/swap/swap-interface-loader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // ─── Variants ─────────────────────────────────────────────────────────────────
