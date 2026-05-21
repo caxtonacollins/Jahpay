@@ -82,7 +82,8 @@ export const FEE_COLLECTOR_ADDRESS =
 
 // ─── ERC-8004 Agent ───────────────────────────────────────────────────────────
 
-export const AGENT_CONFIG = {
+export const 
+AGENT_CONFIG = {
   name: 'Jahpay Swap Agent',
   description: 'AI-powered USDC↔USDT swap optimizer on Celo',
   /** Set after first registration: NEXT_PUBLIC_AGENT_ID */
