@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMentoQuote, isMentoPairTradable } from '@/lib/mento/mento-swap';
+import { withRateLimit } from '@/lib/api/middleware';
 
 /**
  * GET /api/providers/mento-quotes
@@ -11,7 +12,7 @@ import { getMentoQuote, isMentoPairTradable } from '@/lib/mento/mento-swap';
  * - amount: Amount in human-readable format
  * - chainId: Chain ID (optional, defaults to 42220)
  */
-export async function GET(request: NextRequest) {
+async function handler(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const from = searchParams.get('from');
@@ -62,3 +63,7 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+
+// Apply rate limiting: 60 requests per minute
+export const GET = withRateLimit(handler, { limit: 60, window: 60000 });

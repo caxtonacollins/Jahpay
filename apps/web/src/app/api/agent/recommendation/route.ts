@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { computeRecommendation } from '@/lib/agent/agent-intelligence';
+import { withRateLimit } from '@/lib/api/middleware';
 
 export const runtime = 'nodejs';
 
 /**
  * AI Swap Recommendation API — uses live Mento quotes and tradability.
  */
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
     const { amount, fromToken, chainId } = await req.json();
     const parsedAmount = parseFloat(amount);
@@ -31,3 +32,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 30 requests per minute
+export const POST = withRateLimit(handler, { limit: 30, window: 60000 });

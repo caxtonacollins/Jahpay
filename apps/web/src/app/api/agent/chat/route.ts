@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { processAgentMessage } from '@/lib/agent/agent-intelligence';
 import type { SwapTokenSymbol } from '@/lib/swap/usdc-usdt-swap';
+import { withRateLimit } from '@/lib/api/middleware';
 
 export const runtime = 'nodejs';
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
     const body = await req.json();
     const { message, chainId, fromToken, toToken, amount } = body;
@@ -31,3 +32,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 20 messages per minute
+export const POST = withRateLimit(handler, { limit: 20, window: 60000 });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMarketSnapshot } from '@/lib/agent/agent-intelligence';
+import { withRateLimit } from '@/lib/api/middleware';
 
 export const runtime = 'nodejs';
 
@@ -7,12 +8,12 @@ export const runtime = 'nodejs';
  * Live market rates from Mento Protocol.
  * Complements Mento swaps with transparency for USDC/USDT/CELO pairs.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
     const chainId = parseInt(
       req.nextUrl.searchParams.get('chainId') ||
-        process.env.NEXT_PUBLIC_CHAIN_ID ||
-        '42220',
+      process.env.NEXT_PUBLIC_CHAIN_ID ||
+      '42220',
       10,
     );
 
@@ -36,3 +37,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 100 requests per minute
+export const GET = withRateLimit(handler, { limit: 100, window: 60000 });
