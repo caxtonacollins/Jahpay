@@ -9,11 +9,13 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "clean": "turbo clean",
-    "type-check": "turbo type-check"
+    "type-check": "turbo type-check",
+    "deploy:agent": "tsx scripts/deploy-agent.ts"
   },
   "devDependencies": {
     "@types/node": "^25.9.0",
     "dotenv": "^17.2.3",
+    "tsx": "^4.7.0",
     "turbo": "^2.0.0",
     "typescript": "^6.0.3"
   },
