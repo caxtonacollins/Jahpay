@@ -269,7 +269,7 @@ export default function Home() {
               </motion.div>
 
               {/* Stats */}
-              <motion.div
+              {/* <motion.div
                 variants={fadeUp}
                 className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/[0.05]"
               >
@@ -281,7 +281,7 @@ export default function Home() {
                     <div className="text-xs text-white/35 mt-0.5">{label}</div>
                   </div>
                 ))}
-              </motion.div>
+              </motion.div> */}
             </motion.div>
 
             {/* Right — live swap widget */}
