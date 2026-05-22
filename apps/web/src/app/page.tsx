@@ -252,12 +252,12 @@ export default function Home() {
                 variants={fadeUp}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <a
+                {/* <a
                   href="#swap"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-base hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
                 >
                   Start Swapping <ArrowRight className="w-4 h-4" />
-                </a>
+                </a> */}
                 <a
                   href="https://docs.celo.org/build-on-celo/build-with-ai/8004"
                   target="_blank"
