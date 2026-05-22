@@ -27,7 +27,8 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   const chainId = useChainId();
   const { createTransaction } = useTransactions();
 
-  const [fromToken, setFromToken] = useState<SwapTokenSymbol>("USDC");
+  const [fromToken, setFromTokenState] = useState<SwapTokenSymbol>("USDC");
+  const [toToken, setToTokenState] = useState<SwapTokenSymbol>("USDT");
   const [fromAmount, setFromAmount] = useState("");
   const [quote, setQuote] = useState<SwapQuote | null>(null);
   const [isFetchingQuote, setIsFetchingQuote] = useState(false);
@@ -40,7 +41,24 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   const [isCheckingBalance, setIsCheckingBalance] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const toToken = getOppositeToken(fromToken);
+  // Smart token setters that prevent same token selection
+  const setFromToken = useCallback((token: SwapTokenSymbol) => {
+    if (token === toToken) {
+      // Swap the tokens if user selects the same token
+      setToTokenState(fromToken);
+    }
+    setFromTokenState(token);
+    setQuote(null);
+  }, [fromToken, toToken]);
+
+  const setToToken = useCallback((token: SwapTokenSymbol) => {
+    if (token === fromToken) {
+      // Swap the tokens if user selects the same token
+      setFromTokenState(toToken);
+    }
+    setToTokenState(token);
+    setQuote(null);
+  }, [fromToken, toToken]);
 
   // Fetch balance when address or fromToken changes
   useEffect(() => {
@@ -117,10 +135,12 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation, balance]);
 
   const handleSwitch = useCallback(() => {
-    setFromToken(toToken);
+    const tempToken = fromToken;
+    setFromTokenState(toToken);
+    setToTokenState(tempToken);
     setFromAmount(quote ? formatTokenAmount(quote.amountOutNet) : "");
     setQuote(null);
-  }, [toToken, quote]);
+  }, [fromToken, toToken, quote]);
 
   const executeSwap = useCallback(async () => {
     if (!quote || !address || !walletClient) return null;
@@ -253,6 +273,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     fromAmount,
     setFromAmount,
     toToken,
+    setToToken,
     quote,
     isFetchingQuote,
     quoteError,
