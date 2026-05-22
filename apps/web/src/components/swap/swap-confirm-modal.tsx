@@ -2,28 +2,37 @@
 
 import { motion } from "framer-motion";
 import { ArrowDownUp, Loader2 } from "lucide-react";
-import type { SwapQuote } from "@/lib/swap/usdc-usdt-swap";
+import type { SwapQuote, SwapTokenSymbol } from "@/lib/swap/usdc-usdt-swap";
 import { formatTokenAmount } from "@/lib/swap/usdc-usdt-swap";
 
 function TokenBadge({
   symbol,
   size = "lg",
 }: {
-  symbol: "USDC" | "USDT";
+  symbol: SwapTokenSymbol;
   size?: "sm" | "lg";
 }) {
-  const isUSDC = symbol === "USDC";
   const sz = size === "lg" ? "w-9 h-9 text-sm" : "w-6 h-6 text-[10px]";
+
+  const getTokenStyle = (sym: SwapTokenSymbol) => {
+    switch (sym) {
+      case "USDC":
+        return { bg: "linear-gradient(135deg,#2775CA,#1a5fa8)", text: "US" };
+      case "USDT":
+        return { bg: "linear-gradient(135deg,#26A17B,#1a7a5a)", text: "UT" };
+      case "CELO":
+        return { bg: "linear-gradient(135deg,#FCFF52,#35D07F)", text: "CE" };
+    }
+  };
+
+  const style = getTokenStyle(symbol);
+
   return (
     <div
       className={`${sz} rounded-full flex items-center justify-center font-bold text-white shrink-0`}
-      style={{
-        background: isUSDC
-          ? "linear-gradient(135deg,#2775CA,#1a5fa8)"
-          : "linear-gradient(135deg,#26A17B,#1a7a5a)",
-      }}
+      style={{ background: style.bg }}
     >
-      {symbol.slice(0, 2)}
+      {style.text}
     </div>
   );
 }
