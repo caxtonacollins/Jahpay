@@ -61,6 +61,8 @@ export function Navbar() {
             width={120}
             height={20}
             className="rounded-lg"
+            style={{ height: "auto" }}
+            priority
           />
         </Link>
 
@@ -90,6 +92,7 @@ export function Navbar() {
                     width={200}
                     height={20}
                     className="rounded-lg"
+                    style={{ height: "auto" }}
                     priority
                   />
                 </div>

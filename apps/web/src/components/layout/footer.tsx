@@ -15,7 +15,7 @@ export function Footer() {
               width={150}
               height={40}
               className="rounded-lg"
-              priority
+              style={{ height: "auto" }}
             />
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               Oracle-priced USDC ↔ USDT swaps on Celo powered by Mento Protocol.
