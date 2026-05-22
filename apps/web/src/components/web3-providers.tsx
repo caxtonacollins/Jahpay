@@ -5,7 +5,7 @@
  * Keeps WalletConnect / indexedDB off the server.
  */
 
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
   darkTheme,
@@ -42,29 +42,26 @@ const customDarkTheme = darkTheme({
   overlayBlur: "small",
 });
 
-function createWagmiConfig() {
-  return getDefaultConfig({
-    appName: "jahpay",
-    projectId:
-      process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
-    chains: [celo, celoAlfajores, celoSepolia],
-    transports: {
-      [celo.id]: http(),
-      [celoAlfajores.id]: http(),
-      [celoSepolia.id]: http(),
-    },
-    ssr: true,
-  });
-}
+const config = getDefaultConfig({
+  appName: "jahpay",
+  projectId:
+    process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ||
+    "5e89c4eefe79b7c5cfd8c43f6826e9da",
+  chains: [celo, celoAlfajores, celoSepolia],
+  transports: {
+    [celo.id]: http(),
+    [celoAlfajores.id]: http(),
+    [celoSepolia.id]: http(),
+  },
+  ssr: true,
+});
 
 export function Web3Providers({ children }: { children: ReactNode }) {
-  const [config] = useState(createWagmiConfig);
-
   return (
     <WagmiProvider config={config}>
-      <AuthProvider>
-        <RainbowKitProvider theme={customDarkTheme}>{children}</RainbowKitProvider>
-      </AuthProvider>
+      <RainbowKitProvider theme={customDarkTheme}>
+        <AuthProvider>{children}</AuthProvider>
+      </RainbowKitProvider>
     </WagmiProvider>
   );
 }

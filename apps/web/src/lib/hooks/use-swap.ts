@@ -18,6 +18,8 @@ import {
   TransactionType,
 } from "@/lib/transactions/types";
 import { useTransactions } from "@/contexts/transactions-context";
+import { getStablecoinBalance } from "@/lib/minipay/utils";
+import { categorizeError, retryWithBackoff, logError } from "@/lib/errors/error-handler";
 
 export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   const { address, isConnected } = useAccount();
@@ -34,9 +36,34 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [aiRec, setAiRec] = useState<AgentRecommendation | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
+  const [isCheckingBalance, setIsCheckingBalance] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toToken = getOppositeToken(fromToken);
+
+  // Fetch balance when address or fromToken changes
+  useEffect(() => {
+    if (!address || !isConnected) {
+      setBalance(null);
+      return;
+    }
+
+    const fetchBalance = async () => {
+      setIsCheckingBalance(true);
+      try {
+        const bal = await getStablecoinBalance(address, fromToken, chainId);
+        setBalance(bal);
+      } catch (error) {
+        console.error("Failed to fetch balance:", error);
+        setBalance(null);
+      } finally {
+        setIsCheckingBalance(false);
+      }
+    };
+
+    fetchBalance();
+  }, [address, fromToken, chainId, isConnected]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -50,18 +77,34 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
       setIsFetchingQuote(true);
       setQuoteError(null);
       try {
-        const [q, rec] = await Promise.all([
-          getSwapQuote(fromToken, toToken, fromAmount, slippageBps, chainId),
-          getSwapRecommendation(fromAmount, fromToken, chainId),
-        ]);
+        // Check balance before fetching quote
+        if (balance && parseFloat(fromAmount) > parseFloat(balance)) {
+          setQuoteError(
+            `Insufficient ${fromToken} balance. You have ${parseFloat(balance).toFixed(2)} ${fromToken}`
+          );
+          setQuote(null);
+          setIsFetchingQuote(false);
+          return;
+        }
+
+        // Use retry logic for quote fetching
+        const [q, rec] = await retryWithBackoff(
+          async () => Promise.all([
+            getSwapQuote(fromToken, toToken, fromAmount, slippageBps, chainId),
+            getSwapRecommendation(fromAmount, fromToken, chainId),
+          ]),
+          2, // Max 2 retries
+          1000 // 1 second base delay
+        );
+
         setQuote(q);
         setAiRec(rec);
         setSlippageBps(rec.recommendedSlippageBps);
         onRecommendation?.(rec);
       } catch (err) {
-        setQuoteError(
-          err instanceof Error ? err.message : "Failed to fetch quote",
-        );
+        const categorized = categorizeError(err);
+        logError('Quote Fetch', err, { fromToken, toToken, fromAmount });
+        setQuoteError(categorized.userMessage);
         setQuote(null);
       } finally {
         setIsFetchingQuote(false);
@@ -71,7 +114,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation]);
+  }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation, balance]);
 
   const handleSwitch = useCallback(() => {
     setFromToken(toToken);
@@ -81,6 +124,14 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
 
   const executeSwap = useCallback(async () => {
     if (!quote || !address || !walletClient) return null;
+
+    // Final balance check before execution
+    if (balance && parseFloat(fromAmount) > parseFloat(balance)) {
+      throw new Error(
+        `Insufficient ${fromToken} balance. You have ${parseFloat(balance).toFixed(2)} ${fromToken}`
+      );
+    }
+
     setIsSwapping(true);
     try {
       const { approval, swap } = await buildSwapTransaction(
@@ -155,18 +206,22 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quote, txHash, success: true }),
-      }).catch(() => {});
+      }).catch(() => { });
 
       setFromAmount("");
       setQuote(null);
       return txHash;
     } catch (err) {
+      const categorized = categorizeError(err);
+      logError('Swap Execution', err, { fromToken, toToken, fromAmount, quote });
+
       await fetch("/api/agent/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quote, txHash: "", success: false }),
-      }).catch(() => {});
-      throw err;
+      }).catch(() => { });
+
+      throw new Error(categorized.userMessage);
     } finally {
       setIsSwapping(false);
       setShowConfirm(false);
@@ -181,6 +236,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     slippageBps,
     chainId,
     createTransaction,
+    balance,
   ]);
 
   const canSwap =
@@ -188,7 +244,8 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     !!quote &&
     !!fromAmount &&
     parseFloat(fromAmount) > 0 &&
-    !isFetchingQuote;
+    !isFetchingQuote &&
+    (!balance || parseFloat(fromAmount) <= parseFloat(balance));
 
   return {
     fromToken,
@@ -210,5 +267,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     canSwap,
     isConnected,
     chainId,
+    balance,
+    isCheckingBalance,
   };
 }

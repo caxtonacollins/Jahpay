@@ -123,3 +123,72 @@ export function getRateLimitRemaining(key: string, limit: number = 10): number {
   }
   return Math.max(0, limit - record.count);
 }
+
+/**
+ * Rate limiting middleware wrapper
+ * Applies rate limiting to API routes
+ */
+export function withRateLimit(
+  handler: (req: NextRequest) => Promise<Response>,
+  options: {
+    limit?: number;
+    window?: number;
+    keyGenerator?: (req: NextRequest) => string;
+  } = {}
+) {
+  const {
+    limit = 100,
+    window = 60000,
+    keyGenerator = (req) => {
+      // Use IP address or wallet address as key
+      const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      const wallet = req.headers.get('X-Wallet-Address');
+      return wallet || ip;
+    },
+  } = options;
+
+  return async (req: NextRequest) => {
+    const key = keyGenerator(req);
+    const allowed = checkRateLimit(key, limit, window);
+
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': '0',
+            'Retry-After': Math.ceil(window / 1000).toString(),
+          },
+        }
+      );
+    }
+
+    const remaining = getRateLimitRemaining(key, limit);
+    const response = await handler(req);
+
+    // Add rate limit headers to response
+    const headers = new Headers(response.headers);
+    headers.set('X-RateLimit-Limit', limit.toString());
+    headers.set('X-RateLimit-Remaining', remaining.toString());
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  };
+}
+
+/**
+ * Cleanup old rate limit records periodically
+ */
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of requestCounts.entries()) {
+    if (now > record.reset) {
+      requestCounts.delete(key);
+    }
+  }
+}, 60000); // Cleanup every minute

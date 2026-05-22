@@ -165,43 +165,6 @@ pnpm type-check   # Run TypeScript type checking
 | USDT  | 6        | Tether                   |
 | USDm  | 18       | Mento (internal routing) |
 
-## 🎯 Next Steps
-
-### Today
-
-1. ✅ Read this file
-2. ✅ Run `pnpm install && pnpm dev`
-3. ✅ Test swap interface
-4. ✅ Connect wallet and try a swap
-
-### This Week
-
-1. Read `ARCHITECTURE.md`
-2. Explore smart contracts
-3. Review ERC-8004 agent integration
-4. Test on Celo Sepolia
-
-### This Month
-
-1. Deploy to production
-2. Test on Celo Mainnet
-3. Submit to MiniPay (if needed)
-4. Launch to users
-
-## 🆘 Troubleshooting
-
-### Wallet not connecting?
-
-→ Check `ARCHITECTURE.md` → Wallet Integration
-
-### Swap quote failing?
-
-→ Check `README.md` → Blockchain Integration
-
-### MiniPay issues?
-
-→ Check `MINIPAY_INTEGRATION.md`
-
 ## 📞 Support
 
 - **Celo Docs**: https://docs.celo.org/

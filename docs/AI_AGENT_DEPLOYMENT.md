@@ -4,14 +4,14 @@ The Jahpay Swap Agent uses **live Mento Protocol data** for quotes, slippage, an
 
 ## Architecture
 
-| Layer | Path | Role |
-|-------|------|------|
-| Intelligence | `apps/web/src/lib/agent/agent-intelligence.ts` | Mento quotes, intent detection, chat |
-| Chat API | `apps/web/src/app/api/agent/chat/route.ts` | User ↔ agent messages |
-| Recommendations | `apps/web/src/app/api/agent/recommendation/route.ts` | Slippage from live oracle |
-| Reputation | `apps/web/src/app/api/agent/reputation/route.ts` | On-chain ERC-8004 scores |
-| Manifest | `apps/web/src/app/api/agent/manifest/route.ts` | ERC-8004 agent URI |
-| On-chain | `apps/web/src/lib/agent/erc8004-onchain.ts` | Register + feedback |
+| Layer           | Path                                                 | Role                                 |
+| --------------- | ---------------------------------------------------- | ------------------------------------ |
+| Intelligence    | `apps/web/src/lib/agent/agent-intelligence.ts`       | Mento quotes, intent detection, chat |
+| Chat API        | `apps/web/src/app/api/agent/chat/route.ts`           | User ↔ agent messages                |
+| Recommendations | `apps/web/src/app/api/agent/recommendation/route.ts` | Slippage from live oracle            |
+| Reputation      | `apps/web/src/app/api/agent/reputation/route.ts`     | On-chain ERC-8004 scores             |
+| Manifest        | `apps/web/src/app/api/agent/manifest/route.ts`       | ERC-8004 agent URI                   |
+| On-chain        | `apps/web/src/lib/agent/erc8004-onchain.ts`          | Register + feedback                  |
 
 ## Environment Variables
 
@@ -34,7 +34,7 @@ NEXT_PUBLIC_FEE_COLLECTOR_ADDRESS=
 
 # Optional persistence
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
 ## Testnet Deployment (Celo Sepolia)
@@ -61,9 +61,9 @@ When ERC-8004 registries are deployed on Sepolia:
 2. Run registration (example script pattern):
 
 ```typescript
-import { ERC8004Agent } from './apps/web/src/lib/agent/erc8004-onchain';
+import { ERC8004Agent } from "./apps/web/src/lib/agent/erc8004-onchain";
 
-const uri = 'https://your-app.com/api/agent/manifest';
+const uri = "https://jahpay.vercel.app/api/agent/manifest";
 const result = await ERC8004Agent.registerAgent(
   process.env.AGENT_DEPLOYER_PRIVATE_KEY as `0x${string}`,
   uri,
@@ -104,11 +104,11 @@ curl https://localhost:3000/api/agent/reputation
 
 Users interact via the **Chat** tab on the AI Agent panel:
 
-- Live rates: *"What's the rate for 500 USDC?"*
-- Quotes: *"Quote 1000 USDT to USDC"*
-- Slippage: *"Recommend slippage for 5000 USDC"*
-- Status: *"Is USDC/USDT tradable?"*
-- Providers: *"What DEXes are on Celo?"*
+- Live rates: _"What's the rate for 500 USDC?"_
+- Quotes: _"Quote 1000 USDT to USDC"_
+- Slippage: _"Recommend slippage for 5000 USDC"_
+- Status: _"Is USDC/USDT tradable?"_
+- Providers: _"What DEXes are on Celo?"_
 
 **Prepare swap** actions populate the swap form automatically.
 
@@ -118,9 +118,9 @@ Requires `THIRDWEB_SECRET_KEY` and `NEXT_PUBLIC_THIRDWEB_CLIENT_ID`. Users pay $
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| Quotes fail on Sepolia | Ensure wallet is on Celo Sepolia, not Alfajores |
+| Issue                  | Fix                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| Quotes fail on Sepolia | Ensure wallet is on Celo Sepolia, not Alfajores                                      |
 | Agent reputation empty | Normal until on-chain feedback; complete swaps with `AGENT_DEPLOYER_PRIVATE_KEY` set |
-| Premium unlock fails | Check thirdweb env vars and fee collector address |
-| No transaction history | Complete a swap; data persists in localStorage + Supabase if configured |
+| Premium unlock fails   | Check thirdweb env vars and fee collector address                                    |
+| No transaction history | Complete a swap; data persists in localStorage + Supabase if configured              |

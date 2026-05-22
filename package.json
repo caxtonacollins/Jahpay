@@ -8,8 +8,8 @@
     "start": "turbo build && turbo dev",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "clean": "turbo clean",
-    "type-check": "turbo type-check"
+    "type-check": "turbo type-check",
+    "clean": "turbo clean"
   },
   "devDependencies": {
     "@types/node": "^25.9.0",

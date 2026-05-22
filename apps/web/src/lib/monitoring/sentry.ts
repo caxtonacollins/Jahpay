@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/nextjs";
-import { Replay } from "@sentry/replay";
 
 /**
  * Initialize Sentry for error tracking and monitoring
@@ -12,7 +11,7 @@ export function initializeSentry() {
       tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
       debug: process.env.NODE_ENV !== "production",
       integrations: [
-        new Replay({
+        Sentry.replayIntegration({
           maskAllText: true,
           blockAllMedia: true,
         }),
