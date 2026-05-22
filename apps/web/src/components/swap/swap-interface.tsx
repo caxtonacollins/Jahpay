@@ -53,7 +53,10 @@ export function SwapInterface() {
     setMounted(true);
   }, []);
 
-  const handleStart = useCallback(() => setSwapState({ status: "loading" }), []);
+  const handleStart = useCallback(
+    () => setSwapState({ status: "loading" }),
+    [],
+  );
 
   const handleSuccess = useCallback((txHash?: string) => {
     setSwapState({
@@ -103,12 +106,12 @@ export function SwapInterface() {
         <GlassCard className="p-5 md:p-6" glow hover={false}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-base font-bold text-white">
-                Swap Stablecoins
-              </h2>
+              <h2 className="text-base font-bold text-white">Swap Tokens</h2>
             </div>
             <div className="flex items-center gap-2">
-              <TransactionHistoryIconButton onClick={() => setHistoryOpen(true)} />
+              <TransactionHistoryIconButton
+                onClick={() => setHistoryOpen(true)}
+              />
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-brand-green/10 border border-brand-green/20">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
                 <span className="text-[11px] font-medium text-brand-green">
@@ -158,7 +161,9 @@ export function SwapInterface() {
               >
                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-red-400">Swap failed</p>
+                  <p className="text-sm font-medium text-red-400">
+                    Swap failed
+                  </p>
                   <p className="text-xs text-red-400/60 mt-0.5">
                     {swapState.message}
                   </p>
