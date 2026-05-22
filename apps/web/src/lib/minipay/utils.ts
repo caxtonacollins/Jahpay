@@ -18,6 +18,7 @@ export function getTokenAddress(symbol: string, chainId: number): string {
 
 /**
  * Get stablecoin balance for an address
+ * Also supports native CELO balance
  */
 export async function getStablecoinBalance(
     address: string,
@@ -29,6 +30,20 @@ export async function getStablecoinBalance(
         transport: http(),
     });
 
+    // Handle native CELO balance
+    if (tokenSymbol === 'CELO') {
+        try {
+            const balance = await publicClient.getBalance({
+                address: address as `0x${string}`,
+            });
+            return formatEther(balance);
+        } catch (error) {
+            console.error('Failed to get CELO balance:', error);
+            throw error;
+        }
+    }
+
+    // Handle ERC20 token balance
     const tokenAddress = getTokenAddress(tokenSymbol, chainId);
     const token = SUPPORTED_TOKENS.find(t => t.symbol === tokenSymbol);
     if (!token) throw new Error(`Token ${tokenSymbol} not supported`);
