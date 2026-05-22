@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, custom, http, formatEther, fromHex, encodeFunctionData, parseUnits } from 'viem';
+import { createPublicClient, createWalletClient, custom, http, formatEther, formatUnits, fromHex, encodeFunctionData, parseUnits } from 'viem';
 import { celo } from 'viem/chains';
 import { MINIPAY_CONFIG, SUPPORTED_TOKENS } from './constants';
 import { buildMentoSwapTransaction, getMentoQuote, isMentoPairTradable } from '../mento/mento-swap';
@@ -49,7 +49,7 @@ export async function getStablecoinBalance(
             args: [address as `0x${string}`],
         });
 
-        return formatEther(BigInt(balance.toString()));
+        return formatUnits(BigInt(balance.toString()), token.decimals);
     } catch (error) {
         console.error(`Failed to get ${tokenSymbol} balance:`, error);
         throw error;

@@ -20,6 +20,7 @@ export async function GET() {
   const agentIdNum = parseInt(agentId, 10);
   if (!isNaN(agentIdNum)) {
     const onChain = await ERC8004Agent.getReputation(agentIdNum);
+    // Only return on-chain data if it exists and has feedback
     if (onChain && onChain.totalFeedback > 0) {
       return NextResponse.json({
         agentId,
@@ -32,6 +33,7 @@ export async function GET() {
     }
   }
 
+  // Return pending state without attempting contract call if agent doesn't exist yet
   return NextResponse.json({
     agentId,
     averageScore: null,

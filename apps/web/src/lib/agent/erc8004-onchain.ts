@@ -181,6 +181,11 @@ export class ERC8004Agent {
                 successRate: Number(successRate),
             };
         } catch (error) {
+            // Silently return null if agent doesn't exist yet or contract reverts
+            // This is expected for new agents without feedback
+            if (error instanceof Error && error.message.includes('execution reverted')) {
+                return null;
+            }
             console.error('[ERC8004] Failed to get reputation:', error);
             return null;
         }
