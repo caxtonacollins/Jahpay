@@ -18,7 +18,7 @@ export function Footer() {
               style={{ height: "auto" }}
             />
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              Oracle-priced USDC ↔ USDT swaps on Celo powered by Mento Protocol.
+              Oracle-priced Celo ↔ USDC ↔ USDT swaps on Celo powered by Mento Protocol.
             </p>
             <div className="flex items-center space-x-4 pt-2">
               <a
