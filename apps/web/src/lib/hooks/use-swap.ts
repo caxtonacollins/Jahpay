@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useAccount, useWalletClient, useChainId } from "wagmi";
+import { useAccount, useWalletClient, useChainId, usePublicClient } from "wagmi";
 import {
   getSwapQuote,
   buildSwapTransaction,
-  getOppositeToken,
   formatTokenAmount,
+  isCeloPair,
   type SwapQuote,
   type SwapTokenSymbol,
 } from "@/lib/swap/usdc-usdt-swap";
@@ -25,6 +25,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
   const { createTransaction } = useTransactions();
 
   const [fromToken, setFromTokenState] = useState<SwapTokenSymbol>("USDC");
@@ -117,7 +118,14 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
 
         setQuote(q);
         setAiRec(rec);
-        setSlippageBps(rec.recommendedSlippageBps);
+        const shouldAutoApplySlippage =
+          !aiRec || slippageBps === aiRec.recommendedSlippageBps;
+        if (
+          shouldAutoApplySlippage &&
+          slippageBps !== rec.recommendedSlippageBps
+        ) {
+          setSlippageBps(rec.recommendedSlippageBps);
+        }
         onRecommendation?.(rec);
       } catch (err) {
         const categorized = categorizeError(err);
@@ -132,7 +140,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation, balance]);
+  }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation, balance, aiRec]);
 
   const handleSwitch = useCallback(() => {
     const tempToken = fromToken;
@@ -171,20 +179,22 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
         swap.params as Parameters<typeof walletClient.sendTransaction>[0],
       );
 
+      const providerName = isCeloPair(fromToken, toToken) ? "Uniswap V3" : "Mento Protocol";
+
       createTransaction(
         TransactionType.SWAP,
         {
           type: TransactionType.SWAP,
           fromAmount,
           toAmount: quote.amountOutNet,
-          provider: "Mento Protocol",
+          provider: providerName,
           rate: quote.rate,
           fee: quote.platformFee,
           minAmount: "0",
           maxAmount: "0",
           estimatedTime: "Instant",
           metadata: {
-            providerName: "Mento Protocol",
+            providerName,
             fromAddress: fromToken,
             toAddress: toToken,
             feeCurrency: toToken,
@@ -193,7 +203,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
           },
         },
         {
-          providerName: "Mento Protocol",
+          providerName,
           fromAddress: fromToken,
           toAddress: toToken,
           feeCurrency: toToken,
