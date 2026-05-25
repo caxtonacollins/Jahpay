@@ -164,25 +164,9 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function Home() {
   return (
-    <main className="flex-1 overflow-x-hidden">
-      {/* ── Background ──────────────────────────────────────────────── */}
-      <div className="fixed inset-0 -z-10 bg-[#060b14]">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: "url('/grid.svg')",
-            backgroundSize: "100px 100px",
-            backgroundRepeat: "repeat",
-          }}
-        />
+    <main className="flex-1 overflow-x-hidden jahpay-bg jahpay-grid relative">
+      {/* ── Animated Overlay Gradients ────────────────────────────── */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
         <motion.div
           animate={{ opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
@@ -210,13 +194,6 @@ export default function Home() {
               animate="show"
               className="space-y-8"
             >
-              <motion.div variants={fadeUp}>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/25 bg-purple-500/8 text-xs font-semibold text-purple-400 uppercase tracking-wider">
-                  <Bot className="w-3.5 h-3.5" />
-                  ERC-8004 AI Agent · Celo Mainnet
-                </span>
-              </motion.div>
-
               <motion.div variants={fadeUp}>
                 <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold leading-[1.05] tracking-tight">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-300">
@@ -256,9 +233,10 @@ export default function Home() {
               >
                 <Link
                   href="/app"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-base hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-base hover:opacity-90 hover:-translate-y-1 transition-all shadow-[0_0_30px_rgba(39,117,202,0.3)] hover:shadow-[0_0_40px_rgba(39,117,202,0.5)] relative overflow-hidden group"
                 >
-                  Go to App <ArrowRight className="w-4 h-4" />
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative z-10 flex items-center gap-2">Go to App <ArrowRight className="w-4 h-4" /></span>
                 </Link>
                 <a
                   href="https://docs.celo.org/build-on-celo/build-with-ai/8004"
@@ -653,9 +631,10 @@ export default function Home() {
             <div className="flex justify-center gap-4 flex-wrap">
               <a
                 href="app"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold hover:opacity-90 hover:-translate-y-1 transition-all shadow-[0_0_30px_rgba(39,117,202,0.3)] hover:shadow-[0_0_40px_rgba(39,117,202,0.5)] relative overflow-hidden group"
               >
-                Launch Swap <ArrowRight className="w-4 h-4" />
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative z-10 flex items-center gap-2">Launch Swap <ArrowRight className="w-4 h-4" /></span>
               </a>
               <a
                 href="https://celoscan.io/token/0xcebA9300f2b948710d2653dD7B07f33A8B32118C"
