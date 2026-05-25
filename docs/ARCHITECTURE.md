@@ -239,8 +239,8 @@ RootLayout
 | Token | Decimals | Issuer | Mainnet Address                            | Sepolia Address                            |
 | ----- | -------- | ------ | ------------------------------------------ | ------------------------------------------ |
 | USDC  | 6        | Circle | 0xcebA9300f2b948710d2653dD7B07f33A8B32118C | 0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7 |
-| USDT  | 6        | Tether | 0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e | 0x617f3112bf5ad0E84e882D5142D04ae6C606cc89 |
-| USDm  | 18       | Mento  | 0x765DE816845861e75A25fCA122bb6898B8B1282a | 0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9 |
+| USDT  | 6        | Tether | 0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e | 0x617f3112bF5ad0E84E882D5142d04aE6C606cc89 |
+| USDm  | 18       | Mento  | 0x765DE816845861e75A25fCA122bb6898B8B1282a | 0x10c892A6ec43a53E45D0B916b4b7D383B1b4F9f9 |
 
 ## Security Considerations
 
@@ -466,7 +466,7 @@ apps/web/
 │ USDm (Celo Dollar)                                   │
 │ - Decimals: 18                                       │
 │ - Mainnet: 0x765DE816845861e75A25fCA122bb6898B8B1282a │
-│ - Sepolia: 0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9 │
+│ - Sepolia: 0x10c892A6ec43a53E45d0b916b4b7D383B1b4F9f9 │
 │ - Fee currency (MiniPay)                             │
 └──────────────────────────────────────────────────────┘
 
@@ -480,8 +480,8 @@ apps/web/
 ┌──────────────────────────────────────────────────────┐
 │ USDT (Tether USD)                                    │
 │ - Decimals: 6                                        │
-│ - Mainnet: 0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e │
-│ - Sepolia: 0x617f3112bf5ad0E84e882D5142D04ae6C606cc89 │
+│ - Mainnet: 0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e │
+│ - Sepolia: 0x617f3112bF5ad0E84E882D5142d04aE6C606cc89 │
 └──────────────────────────────────────────────────────┘
 ```
 

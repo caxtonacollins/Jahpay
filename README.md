@@ -10,7 +10,7 @@
   [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 </div>
 
-Jahpay is a modern Web3 application enabling seamless USDC ↔ USDT stablecoin swaps on the Celo blockchain. Built with Next.js and TypeScript, it operates as both a standard website and a MiniPay Mini App, featuring oracle-priced rates, an ERC-8004 AI agent for intelligent recommendations, and transparent 0.3% platform fees.
+Jahpay is a modern Web3 application enabling seamless Celo ↔ USDC ↔ USDT stablecoin swaps on the Celo blockchain. Built with Next.js and TypeScript, it operates as both a standard website and a MiniPay Mini App, featuring oracle-priced rates, an ERC-8004 AI agent for intelligent recommendations, and transparent 0.3% platform fees.
 
 ## Features
 
