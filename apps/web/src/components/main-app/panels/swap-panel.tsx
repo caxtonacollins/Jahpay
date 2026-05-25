@@ -298,12 +298,12 @@ function SwapPanelContent({
     <>
       <div className="space-y-0 relative">
         {/* Top Input Container */}
-        <div className="rounded-t-3xl pt-4 px-4 pb-6 bg-white/[0.04] border border-white/[0.07] border-b-0 focus-within:border-brand-blue/40 transition-all duration-200">
+        <div className="rounded-t-3xl pt-4 px-4 pb-6 bg-white/[0.04] border border-white/[0.08] border-b-0 focus-within:border-brand-blue/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_-5px_20px_rgba(39,117,202,0.1)] transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
+            <span className="text-xs font-medium text-white/50 uppercase tracking-wider">
               You Send
             </span>
-            <span className="text-xs text-white/30 font-mono">
+            <span className="text-xs text-white/40 font-mono">
               {swap.balance && (
                 <>
                   Bal: {parseFloat(swap.balance).toFixed(2)} {swap.fromToken}
@@ -318,7 +318,7 @@ function SwapPanelContent({
               onChange={(e) => swap.setFromAmount(e.target.value)}
               placeholder="0.00"
               min="0"
-              className="flex-1 bg-transparent text-3xl font-bold text-white placeholder-white/15 focus:outline-none min-w-0"
+              className="flex-1 bg-transparent text-4xl font-bold text-white placeholder-white/10 focus:outline-none min-w-0 transition-colors"
             />
             <TokenSelectorButton
               symbol={swap.fromToken}
@@ -334,35 +334,35 @@ function SwapPanelContent({
           <motion.button
             onClick={swap.handleSwitch}
             disabled={swap.isSwapping}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.1, y: -1 }}
             whileTap={{ scale: 0.9, rotate: 180 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            className="w-10 h-10 rounded-xl bg-[#0d111c] border-2 border-white/[0.1] hover:border-brand-blue/50 text-white/50 hover:text-brand-blue flex items-center justify-center shadow-lg transition-colors"
+            className="w-11 h-11 rounded-2xl bg-[#0d111c] border-2 border-white/[0.08] hover:border-brand-blue/60 text-white/60 hover:text-brand-blue flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(39,117,202,0.3)] transition-all duration-300"
           >
             <ArrowDownUp className="w-4 h-4" />
           </motion.button>
         </div>
 
         {/* Bottom Input Container */}
-        <div className="rounded-b-3xl pt-6 px-4 pb-4 bg-white/[0.03] border border-white/[0.05] border-t-0">
+        <div className="rounded-b-3xl pt-6 px-4 pb-4 bg-white/[0.02] border border-white/[0.08] border-t-0">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
+            <span className="text-xs font-medium text-white/50 uppercase tracking-wider">
               You Receive
             </span>
             {swap.isFetchingQuote && (
-              <Loader2 className="w-3 h-3 animate-spin text-white/30" />
+              <Loader2 className="w-3 h-3 animate-spin text-brand-blue" />
             )}
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex-1 text-3xl font-bold text-white/80">
+            <div className="flex-1 text-4xl font-bold text-white/80">
               {swap.isFetchingQuote ? (
                 <span className="text-white/20 animate-pulse">...</span>
               ) : swap.quote ? (
-                <span className="text-brand-green">
+                <span className="text-brand-green drop-shadow-[0_0_10px_rgba(38,161,123,0.2)]">
                   {formatTokenAmount(swap.quote.amountOutNet)}
                 </span>
               ) : (
-                <span className="text-white/15">0.00</span>
+                <span className="text-white/10">0.00</span>
               )}
             </div>
             <TokenSelectorButton
@@ -439,19 +439,22 @@ function SwapPanelContent({
         <motion.button
           onClick={() => swap.setShowConfirm(true)}
           disabled={!swap.canSwap || isLoading}
-          whileHover={swap.canSwap ? { scale: 1.01 } : {}}
-          whileTap={swap.canSwap ? { scale: 0.99 } : {}}
+          whileHover={swap.canSwap ? { scale: 1.02 } : {}}
+          whileTap={swap.canSwap ? { scale: 0.98 } : {}}
           className={cn(
-            "relative w-full h-14 rounded-2xl text-base font-bold transition-all duration-200 overflow-hidden",
+            "relative w-full h-14 rounded-2xl text-base font-bold transition-all duration-300 overflow-hidden mt-2",
             swap.canSwap
-              ? "bg-gradient-to-r from-brand-blue to-brand-green text-white shadow-lg shadow-brand-blue/20 hover:shadow-brand-blue/40"
-              : "bg-white/[0.05] text-white/20 cursor-not-allowed",
+              ? "bg-gradient-to-r from-brand-blue to-brand-green text-white shadow-[0_0_30px_rgba(39,117,202,0.3)] hover:shadow-[0_0_40px_rgba(39,117,202,0.5)]"
+              : "bg-white/[0.05] text-white/30 cursor-not-allowed border border-white/[0.05]",
           )}
         >
+          {swap.canSwap && (
+            <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+          )}
           <span className="relative z-10 flex items-center justify-center gap-2">
             {isLoading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                <Loader2 className="w-5 h-5 animate-spin" /> Processing...
               </>
             ) : !swap.isConnected ? (
               "Connect Wallet to Swap"
@@ -459,12 +462,12 @@ function SwapPanelContent({
               "Enter Amount"
             ) : swap.isFetchingQuote ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Fetching Quote...
+                <Loader2 className="w-5 h-5 animate-spin" /> Fetching Quote...
               </>
             ) : swap.canSwap ? (
               <>
                 {swap.aiRec?.showBadge && (
-                  <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-white/20">
+                  <span className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-white/25 backdrop-blur-sm shadow-sm">
                     <Zap className="w-3 h-3" />
                     {swap.aiRec.badge}
                   </span>
