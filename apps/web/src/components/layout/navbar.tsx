@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, ExternalLink } from "lucide-react";
+import { Menu, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
+  const isAppPage = pathname.startsWith("/app");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -97,6 +98,17 @@ export function Navbar() {
                   />
                 </div>
                 <nav className="flex flex-col gap-4 mt-6 pt-6 border-t border-gray-800" />
+                <nav className="flex flex-col gap-3">
+                  {!isAppPage && (
+                    <Link
+                      href="/app"
+                      className="inline-flex items-center justify-between rounded-xl border border-brand-blue/35 bg-brand-blue/10 px-4 py-3 text-sm font-semibold text-white hover:border-brand-blue/55 hover:bg-brand-blue/15 transition-colors"
+                    >
+                      Go to App
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                  )}
+                </nav>
                 <div className="mt-auto pt-6">
                   <WalletConnectButton />
                 </div>
@@ -107,6 +119,14 @@ export function Navbar() {
 
         {/* Desktop navigation */}
         <div className="flex items-center gap-4">
+          {!isAppPage && (
+            <Button variant="outline" asChild className="hidden md:inline-flex">
+              <Link href="/app" className="gap-2">
+                Go to App
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          )}
           <WalletConnectButton />
         </div>
       </div>
