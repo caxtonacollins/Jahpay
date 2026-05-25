@@ -123,7 +123,7 @@ function AIAgentPanelInner({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
       className={cn(
-        "rounded-2xl border border-white/[0.06] bg-[#080d18]/80 backdrop-blur-md overflow-hidden",
+        "rounded-3xl border border-white/[0.08] bg-[#080d18]/80 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300 hover:border-white/[0.15] hover:shadow-[0_10px_40px_rgba(168,85,247,0.15)] mt-4",
         className,
       )}
     >
@@ -140,9 +140,9 @@ function AIAgentPanelInner({
 
         <div className="flex-1 text-left min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-white">Jahpay AI Agent</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/20">
-              Live
+            <span className="text-sm font-bold text-white tracking-wide">Jahpay AI Agent</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold shadow-[0_0_10px_rgba(168,85,247,0.15)]">
+              LIVE
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
