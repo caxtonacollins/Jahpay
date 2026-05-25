@@ -14,6 +14,7 @@ import {
   getSwapTokenInfo,
   formatTokenAmount,
   isValidSwapPair,
+  isCeloPair,
 } from "@/lib/swap/usdc-usdt-swap";
 import type { AgentRecommendation } from "@/lib/agent/erc8004-agent";
 import { PLATFORM_FEE_PERCENT, SWAP_TOKENS } from "@/lib/minipay/constants";
@@ -266,7 +267,11 @@ function SwapPanelContent({
               You Send
             </span>
             <span className="text-xs text-white/30 font-mono">
-              ≈ ${formatTokenAmount(swap.fromAmount || "0")} USD
+              {swap.fromToken === 'CELO'
+                ? (swap.quote
+                    ? `≈ $${formatTokenAmount(String(parseFloat(swap.fromAmount || '0') * swap.quote.rate))} USD`
+                    : '')
+                : `≈ $${formatTokenAmount(swap.fromAmount || '0')} USD`}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -352,7 +357,12 @@ function SwapPanelContent({
                     {formatTokenAmount(swap.quote.platformFee)} {swap.toToken}
                   </span>
                 </div>
-                {swap.quote.route === "via-usdm" && (
+                {swap.quote.route === 'uniswap-v3' ? (
+                  <div className="flex items-center gap-1.5 text-xs text-brand-blue/70">
+                    <Zap className="w-3 h-3" />
+                    <span>Uniswap V3 on Celo</span>
+                  </div>
+                ) : swap.quote.route === "via-usdm" && (
                   <div className="flex items-center gap-1.5 text-xs text-yellow-400/70">
                     <Info className="w-3 h-3" />
                     <span>Routing via USDm for best price</span>
