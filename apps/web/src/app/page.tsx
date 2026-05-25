@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -14,8 +15,6 @@ import {
   Star,
   ExternalLink,
 } from "lucide-react";
-import { SwapInterface } from "@/components/swap/swap-interface-loader";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
@@ -196,15 +195,13 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center pt-24 pb-20">
         <div className="container px-4 mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left copy */}
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 items-center">
             <motion.div
               variants={stagger}
               initial="hidden"
               animate="show"
               className="space-y-8"
             >
-              {/* Badge */}
               <motion.div variants={fadeUp}>
                 <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/25 bg-purple-500/8 text-xs font-semibold text-purple-400 uppercase tracking-wider">
                   <Bot className="w-3.5 h-3.5" />
@@ -212,52 +209,49 @@ export default function Home() {
                 </span>
               </motion.div>
 
-              {/* Headline */}
               <motion.div variants={fadeUp}>
                 <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold leading-[1.05] tracking-tight">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-300">
-                    Swap USDC
+                    Smart swaps for
                   </span>
                   <br />
                   <span className="relative inline-block">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-blue via-cyan-400 to-brand-green">
-                      ↔ USDT
+                      USDC, USDT & CELO
                     </span>
                     <motion.span
                       className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-brand-blue to-brand-green"
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
-                      transition={{ delay: 0.8, duration: 0.6 }}
+                      transition={{ delay: 0.7, duration: 0.6 }}
                     />
                   </span>
                   <br />
                   <span className="text-white/80 text-4xl md:text-5xl xl:text-6xl font-semibold">
-                    Instantly on Celo.
+                    built for Celo.
                   </span>
                 </h1>
               </motion.div>
 
-              {/* Sub */}
               <motion.p
                 variants={fadeUp}
                 className="text-lg text-slate-400 leading-relaxed max-w-xl"
               >
-                Oracle-priced swaps with a 0.3% fee. An ERC-8004 AI agent
-                analyses market conditions and recommends optimal settings
-                before every trade. Powered by Mento Protocol v3.
+                Oracle-aware routing, transparent pricing, and an on-chain AI
+                agent that recommends safer execution settings before every
+                swap.
               </motion.p>
 
-              {/* CTAs */}
               <motion.div
                 variants={fadeUp}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                {/* <a
-                  href="#swap"
+                <Link
+                  href="/app"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-base hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
                 >
-                  Start Swapping <ArrowRight className="w-4 h-4" />
-                </a> */}
+                  Go to App <ArrowRight className="w-4 h-4" />
+                </Link>
                 <a
                   href="https://docs.celo.org/build-on-celo/build-with-ai/8004"
                   target="_blank"
@@ -268,8 +262,7 @@ export default function Home() {
                 </a>
               </motion.div>
 
-              {/* Stats */}
-              {/* <motion.div
+              <motion.div
                 variants={fadeUp}
                 className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/[0.05]"
               >
@@ -281,19 +274,92 @@ export default function Home() {
                     <div className="text-xs text-white/35 mt-0.5">{label}</div>
                   </div>
                 ))}
-              </motion.div> */}
+              </motion.div>
             </motion.div>
 
-            {/* Right — live swap widget */}
             <motion.div
-              id="swap"
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 36 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, type: "spring", stiffness: 150 }}
+              transition={{ delay: 0.25, type: "spring", stiffness: 150 }}
               className="relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/15 to-purple-500/15 rounded-3xl blur-3xl -z-10" />
-              <SwapInterface />
+              <div className="rounded-3xl border border-white/[0.12] bg-[#0b1222]/85 backdrop-blur-xl p-6 sm:p-7">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-white/40">
+                      Jahpay App
+                    </p>
+                    <h3 className="text-xl font-bold text-white mt-1">
+                      Dedicated swap experience
+                    </h3>
+                  </div>
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/15 border border-brand-green/30 text-xs font-semibold text-brand-green">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
+                    Live
+                  </span>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3 mt-6">
+                  {[
+                    {
+                      title: "Oracle-backed rates",
+                      value: "Mento + Uniswap",
+                    },
+                    {
+                      title: "Execution guidance",
+                      value: "ERC-8004 AI Agent",
+                    },
+                    {
+                      title: "Platform fee",
+                      value: "0.3% displayed upfront",
+                    },
+                    {
+                      title: "Settlement",
+                      value: "Celo Mainnet",
+                    },
+                  ].map(({ title, value }) => (
+                    <div
+                      key={title}
+                      className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4"
+                    >
+                      <p className="text-[11px] uppercase tracking-wide text-white/35">
+                        {title}
+                      </p>
+                      <p className="text-sm font-semibold text-white mt-1">
+                        {value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-brand-blue/20 bg-brand-blue/[0.08] p-4">
+                  <p className="text-xs uppercase tracking-wider text-brand-blue/80">
+                    Sample quote preview
+                  </p>
+                  <div className="flex items-end justify-between mt-2">
+                    <div>
+                      <p className="text-white text-lg font-bold">0.50 CELO</p>
+                      <p className="text-white/45 text-xs">You send</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-white/35 mb-1" />
+                    <div className="text-right">
+                      <p className="text-brand-green text-lg font-bold">
+                        ~0.04 USDC
+                      </p>
+                      <p className="text-white/45 text-xs">You receive</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/app"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green px-5 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity"
+                >
+                  Go to App
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </motion.div>
           </div>
         </div>
