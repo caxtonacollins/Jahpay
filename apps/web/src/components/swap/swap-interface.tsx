@@ -108,19 +108,19 @@ export function SwapInterface() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 200, damping: 25 }}
       >
-        <GlassCard className="p-5 md:p-6" glow hover={false}>
+        <GlassCard className="p-5 md:p-6" glow hover={true} gradient={true}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-base font-bold text-white">Swap Tokens</h2>
+              <h2 className="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">Swap Tokens</h2>
             </div>
             <div className="flex items-center gap-2">
               <TransactionHistoryIconButton
                 onClick={() => setHistoryOpen(true)}
               />
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-brand-green/10 border border-brand-green/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
-                <span className="text-[11px] font-medium text-brand-green">
-                  Live
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-brand-green/10 border border-brand-green/30 shadow-[0_0_10px_rgba(38,161,123,0.15)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-green shadow-[0_0_5px_rgba(38,161,123,0.8)] animate-pulse" />
+                <span className="text-[11px] font-bold text-brand-green tracking-wide">
+                  LIVE
                 </span>
               </div>
             </div>
