@@ -186,7 +186,7 @@ export function SwapInterface() {
             externalSwapParams={chatSwapParams}
           />
 
-          <div className="grid grid-cols-2 gap-2 mt-5 pt-5 border-t border-white/[0.05]">
+          {/* <div className="grid grid-cols-2 gap-2 mt-5 pt-5 border-t border-white/[0.05]">
             {[
               {
                 icon: <Shield className="w-3.5 h-3.5 text-brand-green" />,
@@ -210,7 +210,7 @@ export function SwapInterface() {
                 <span>{text}</span>
               </div>
             ))}
-          </div>
+          </div> */}
         </GlassCard>
       </motion.div>
 
