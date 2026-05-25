@@ -30,7 +30,7 @@ export const SWAP_TOKENS = [
     address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C',      // Celo Mainnet
     addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', // Celo Sepolia
     color: '#2775CA',
-    logo: '/tokens/usdc.png',
+    logo: '/usd-coin-usdc-logo.svg',
     issuer: 'Circle',
   },
   {
@@ -40,7 +40,7 @@ export const SWAP_TOKENS = [
     address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e',      // Celo Mainnet
     addressSepolia: '0x617f3112bF5ad0E84E882D5142D0aE6C606cc89', // Celo Sepolia
     color: '#26A17B',
-    logo: '/tokens/usdt.png',
+    logo: '/tether-usdt-logo.svg',
     issuer: 'Tether',
   },
   {
@@ -50,7 +50,7 @@ export const SWAP_TOKENS = [
     address: '0x471EcE3750Da237f93B8E339c536989b8978a438',      // Celo Mainnet
     addressSepolia: '0xF194AFDF50bAE0a21EF85469d1521810657a1b53', // Celo Sepolia
     color: '#FCFF52',
-    logo: '/tokens/celo.png',
+    logo: '/celo-logo.svg',
     issuer: 'Celo',
   },
 ] as const;
@@ -66,17 +66,17 @@ export const USDM_TOKEN = {
 
 // Keep SUPPORTED_TOKENS for Mento SDK compatibility (includes USDm + CELO for rate API)
 export const SUPPORTED_TOKENS = [
-  { ...USDM_TOKEN, logo: '/tokens/usdm.png' },
+  { ...USDM_TOKEN, logo: '/usd-coin-usdc-logo.svg' },
   {
     symbol: 'CELO',
     name: 'Celo',
     decimals: 18,
     address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
     addressSepolia: '0xF194AFDF50bAE0a21EF85469d1521810657a1b53',
-    logo: '/tokens/celo.png',
+    logo: '/celo-logo.svg',
   },
-  { symbol: 'USDC', name: 'USD Coin', decimals: 6, address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C', addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', logo: '/tokens/usdc.png' },
-  { symbol: 'USDT', name: 'Tether USD', decimals: 6, address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e', addressSepolia: '0x617f3112bF5ad0E84E882D5142D0aE6C606cc89', logo: '/tokens/usdt.png' },
+  { symbol: 'USDC', name: 'USD Coin', decimals: 6, address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C', addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', logo: '/usd-coin-usdc-logo.svg' },
+  { symbol: 'USDT', name: 'Tether USD', decimals: 6, address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e', addressSepolia: '0x617f3112bF5ad0E84E882D5142D0aE6C606cc89', logo: '/tether-usdt-logo.svg' },
 ];
 
 // ─── Platform Fee ────────────────────────────────────────────────────────────

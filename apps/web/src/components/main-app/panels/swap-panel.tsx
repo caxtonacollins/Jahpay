@@ -296,8 +296,9 @@ function SwapPanelContent({
 
   return (
     <>
-      <div className="space-y-2">
-        <div className="rounded-2xl p-4 bg-white/[0.04] border border-white/[0.07] focus-within:border-brand-blue/40 transition-all duration-200">
+      <div className="space-y-0 relative">
+        {/* Top Input Container */}
+        <div className="rounded-t-3xl pt-4 px-4 pb-6 bg-white/[0.04] border border-white/[0.07] border-b-0 focus-within:border-brand-blue/40 transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
               You Send
@@ -328,7 +329,8 @@ function SwapPanelContent({
           </div>
         </div>
 
-        <div className="flex items-center justify-center -my-1 relative z-10">
+        {/* Swap Button - Positioned to overlap both containers */}
+        <div className="flex items-center justify-center relative z-20 -my-5">
           <motion.button
             onClick={swap.handleSwitch}
             disabled={swap.isSwapping}
@@ -341,7 +343,8 @@ function SwapPanelContent({
           </motion.button>
         </div>
 
-        <div className="rounded-2xl p-4 bg-white/[0.03] border border-white/[0.05]">
+        {/* Bottom Input Container */}
+        <div className="rounded-b-3xl pt-6 px-4 pb-4 bg-white/[0.03] border border-white/[0.05] border-t-0">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
               You Receive

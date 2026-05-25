@@ -36,7 +36,7 @@ const stagger = {
 
 const STATS = [
   { value: "< 5s", label: "Settlement Time" },
-  { value: "0.3%", label: "Platform Fee" },
+  // { value: "0.3%", label: "Platform Fee" },
   { value: "Oracle", label: "Pricing Source" },
   { value: "ERC-8004", label: "AI Standard" },
 ];
@@ -44,8 +44,8 @@ const STATS = [
 const FEATURES = [
   {
     icon: <RefreshCw className="w-5 h-5 text-brand-blue" />,
-    title: "Mento Oracle Pricing",
-    desc: "Swap USDC and USDT at oracle-sourced rates — no AMM slippage, no price manipulation.",
+    title: "Mento & Uniswap Pricing",
+    desc: "Swap USDC and USDT at oracle-sourced rates from Mento and Uniswap — no AMM slippage, no price manipulation.",
     gradient: "from-brand-blue/20 to-blue-600/5",
     border: "border-brand-blue/15",
   },
@@ -173,6 +173,14 @@ export default function Home() {
             backgroundImage:
               "radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: "url('/grid.svg')",
+            backgroundSize: "100px 100px",
+            backgroundRepeat: "repeat",
           }}
         />
         <motion.div
@@ -303,16 +311,8 @@ export default function Home() {
                 <div className="grid sm:grid-cols-2 gap-3 mt-6">
                   {[
                     {
-                      title: "Oracle-backed rates",
-                      value: "Mento + Uniswap",
-                    },
-                    {
                       title: "Execution guidance",
                       value: "ERC-8004 AI Agent",
-                    },
-                    {
-                      title: "Platform fee",
-                      value: "0.3% displayed upfront",
                     },
                     {
                       title: "Settlement",
@@ -339,13 +339,13 @@ export default function Home() {
                   </p>
                   <div className="flex items-end justify-between mt-2">
                     <div>
-                      <p className="text-white text-lg font-bold">0.50 CELO</p>
+                      <p className="text-white text-lg font-bold">100 USDC</p>
                       <p className="text-white/45 text-xs">You send</p>
                     </div>
                     <ArrowRight className="w-4 h-4 text-white/35 mb-1" />
                     <div className="text-right">
                       <p className="text-brand-green text-lg font-bold">
-                        ~0.04 USDC
+                        ~99.70 USDT
                       </p>
                       <p className="text-white/45 text-xs">You receive</p>
                     </div>
@@ -652,7 +652,7 @@ export default function Home() {
             </p>
             <div className="flex justify-center gap-4 flex-wrap">
               <a
-                href="#swap"
+                href="app"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20"
               >
                 Launch Swap <ArrowRight className="w-4 h-4" />

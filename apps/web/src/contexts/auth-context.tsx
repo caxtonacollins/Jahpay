@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
-import { getNonce, verifySignature } from '@/lib/auth/helpers';
-import { useUser } from '@/lib/hooks/useUser';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAccount, useDisconnect } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { getNonce, verifySignature } from "@/lib/auth/helpers";
 
 type User = {
   id: string;
@@ -18,7 +17,9 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (signMessageAsync: (message: string) => Promise<string>) => Promise<void>;
+  login: (
+    signMessageAsync: (message: string) => Promise<string>,
+  ) => Promise<void>;
   logout: () => void;
 };
 
@@ -33,55 +34,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  // Fetch user profile when wallet is connected
-  const { data: userProfile, isLoading: isProfileLoading } = useUser(address);
-
-  useEffect(() => {
-    if (userProfile) {
-      setUser(userProfile as unknown as User);
-    } else if (isDisconnected) {
-      setUser(null);
-    }
-  }, [userProfile, isDisconnected]);
-
-  const login = async (signMessageAsync: (message: string) => Promise<string>) => {
+  const login = async (
+    signMessageAsync: (message: string) => Promise<string>,
+  ) => {
     if (!address) {
-      throw new Error('No wallet connected');
+      throw new Error("No wallet connected");
     }
 
     try {
       setIsLoading(true);
-      
+
       // Get nonce from server
       const { nonce, message } = await getNonce(address);
-      
+
       // Sign the message
       const signature = await signMessageAsync(message);
-      
+
       // Verify the signature
-      const { token, user: userData } = await verifySignature(address, signature, message);
-      
+      const { token, user: userData } = await verifySignature(
+        address,
+        signature,
+        message,
+      );
+
       // Store the token
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('walletAddress', address);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("walletAddress", address);
       }
-      
+
       setUser(userData);
-      queryClient.invalidateQueries({ queryKey: ['user-profile', address] });
-      
+      queryClient.invalidateQueries({ queryKey: ["user-profile", address] });
+
       toast({
-        title: 'Successfully connected',
-        description: 'Your wallet has been connected successfully.',
+        title: "Successfully connected",
+        description: "Your wallet has been connected successfully.",
       });
-      
+
       router.refresh();
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to connect wallet',
-        type: 'error',
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to connect wallet",
+        type: "error",
       });
       // Disconnect wallet on error
       disconnect();
@@ -93,19 +90,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     disconnect();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('walletAddress');
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("walletAddress");
     }
     setUser(null);
     queryClient.clear();
-    router.push('/');
+    router.push("/");
   };
 
   const value = {
     user,
     isAuthenticated: !!user,
-    isLoading: isLoading || isProfileLoading,
+    isLoading,
     login,
     logout,
   };
@@ -116,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

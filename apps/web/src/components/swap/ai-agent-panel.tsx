@@ -148,7 +148,7 @@ function AIAgentPanelInner({
           <div className="flex items-center gap-1.5 mt-0.5">
             <span className={cn("w-1.5 h-1.5 rounded-full", cfg.dot)} />
             <span className={cn("text-[11px] font-medium", cfg.color)}>
-              {cfg.label} · Mento oracle
+              {cfg.label} ·
             </span>
             {reputation?.averageScore != null && (
               <span className="ml-1 text-[10px] text-white/30 flex items-center gap-0.5">
