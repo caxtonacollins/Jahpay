@@ -62,15 +62,18 @@ export function SwapConfirmModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
     >
       <motion.div
-        initial={{ scale: 0.95, y: 16 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.95, y: 16 }}
-        className="w-full max-w-sm bg-[#0d111c] border border-white/[0.1] rounded-2xl p-6 shadow-2xl"
+        initial={{ scale: 0.95, y: 16, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, y: 16, opacity: 0 }}
+        className="w-full max-w-sm relative z-10 rounded-3xl bg-[#0d111c]/80 backdrop-blur-2xl border border-white/[0.08] p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden"
       >
-        <h3 className="text-lg font-bold text-white mb-6">Confirm Swap</h3>
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.15] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/[0.03] to-transparent pointer-events-none rounded-3xl" />
+        
+        <h3 className="text-xl font-bold text-white mb-6 relative z-10 text-center">Confirm Swap</h3>
 
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+        <div className="space-y-4 mb-8 relative z-10">
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
             <div className="flex items-center gap-2">
               <TokenBadge symbol={quote.fromToken} size="sm" />
               <div>
@@ -88,7 +91,7 @@ export function SwapConfirmModal({
             <div className="flex items-center gap-2">
               <TokenBadge symbol={quote.toToken} size="sm" />
               <div>
-                <span className="text-brand-green font-semibold block">
+                <span className="text-brand-green font-bold text-lg block drop-shadow-[0_0_8px_rgba(38,161,123,0.3)]">
                   {formatTokenAmount(quote.amountOutNet)} {quote.toToken}
                 </span>
                 {toBalance && (
@@ -100,7 +103,7 @@ export function SwapConfirmModal({
             </div>
           </div>
 
-          <div className="space-y-2 px-1">
+          <div className="space-y-3 px-2 pt-2 border-t border-white/[0.05]">
             {[
               {
                 label: "Rate",
@@ -129,19 +132,20 @@ export function SwapConfirmModal({
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 relative z-10">
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 py-3 rounded-xl border border-white/[0.1] text-white/60 hover:text-white hover:border-white/20 transition-all text-sm font-medium"
+            className="flex-1 py-3.5 rounded-2xl border border-white/[0.1] text-white/60 hover:text-white hover:bg-white/[0.05] transition-all text-sm font-semibold"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-green text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(39,117,202,0.4)] transition-all disabled:opacity-50 flex items-center justify-center gap-2 relative overflow-hidden"
           >
+            <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity" />
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" /> Swapping...
