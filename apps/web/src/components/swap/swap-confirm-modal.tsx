@@ -95,7 +95,11 @@ export function SwapConfirmModal({
               {
                 label: "Route",
                 value:
-                  quote.route === "direct" ? "Direct" : "USDC → USDm → USDT",
+                  quote.route === "uniswap-v3"
+                    ? "Uniswap V3"
+                    : quote.route === "direct"
+                      ? "Direct (Mento)"
+                      : "via USDm (Mento)",
               },
               { label: "Slippage", value: `${quote.slippageBps / 100}%` },
             ].map(({ label, value }) => (

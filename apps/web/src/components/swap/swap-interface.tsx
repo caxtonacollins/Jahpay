@@ -20,6 +20,7 @@ import {
 } from "./transaction-history-sheet";
 import type { AgentRecommendation } from "@/lib/agent/erc8004-agent";
 import type { SwapTokenSymbol } from "@/lib/swap/usdc-usdt-swap";
+import { isCeloPair } from "@/lib/swap/usdc-usdt-swap";
 
 type SwapStatus = "idle" | "loading" | "success" | "error";
 
@@ -48,6 +49,8 @@ export function SwapInterface() {
     toToken: SwapTokenSymbol;
     slippageBps?: number;
   } | null>(null);
+  const [currentFromToken, setCurrentFromToken] = useState<SwapTokenSymbol>('USDC');
+  const [currentToToken, setCurrentToToken] = useState<SwapTokenSymbol>('USDT');
 
   useEffect(() => {
     setMounted(true);
@@ -80,6 +83,8 @@ export function SwapInterface() {
       slippageBps?: number;
     }) => {
       setChatSwapParams(payload);
+      setCurrentFromToken(payload.fromToken);
+      setCurrentToToken(payload.toToken);
     },
     [],
   );
@@ -187,10 +192,15 @@ export function SwapInterface() {
                 icon: <Shield className="w-3.5 h-3.5 text-brand-green" />,
                 text: "Non-Custodial",
               },
-              {
-                icon: <Zap className="w-3.5 h-3.5 text-brand-blue" />,
-                text: "Mento Oracle",
-              },
+              isCeloPair(currentFromToken, currentToToken)
+                ? {
+                    icon: <Zap className="w-3.5 h-3.5 text-brand-blue" />,
+                    text: "Uniswap V3",
+                  }
+                : {
+                    icon: <Zap className="w-3.5 h-3.5 text-brand-blue" />,
+                    text: "Mento Oracle",
+                  },
             ].map(({ icon, text }) => (
               <div
                 key={text}
@@ -206,8 +216,8 @@ export function SwapInterface() {
 
       <AIAgentPanel
         recommendation={agentRec}
-        fromToken="USDC"
-        toToken="USDT"
+        fromToken={currentFromToken}
+        toToken={currentToToken}
         onPrepareSwap={handlePrepareSwap}
       />
 
