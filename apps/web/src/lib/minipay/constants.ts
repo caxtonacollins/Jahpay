@@ -37,8 +37,8 @@ export const SWAP_TOKENS = [
     symbol: 'USDT',
     name: 'Tether USD',
     decimals: 6,
-    address: '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e',      // Celo Mainnet
-    addressSepolia: '0x617f3112bf5ad0E84e882D5142D04ae6C606cc89', // Celo Sepolia
+    address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e',      // Celo Mainnet
+    addressSepolia: '0x617f3112bF5ad0E84E882D5142D0aE6C606cc89', // Celo Sepolia
     color: '#26A17B',
     logo: '/tokens/usdt.png',
     issuer: 'Tether',
@@ -47,8 +47,8 @@ export const SWAP_TOKENS = [
     symbol: 'CELO',
     name: 'Celo',
     decimals: 18,
-    address: '0x471EcE3750Da237a93B122c29e4039db560e3F6f',      // Celo Mainnet (wrapped CELO for Mento)
-    addressSepolia: '0xF194AfDf50Bae0a21eF85469D1521810657A1B53', // Celo Sepolia
+    address: '0x471EcE3750Da237f93B8E339c536989b8978a438',      // Celo Mainnet
+    addressSepolia: '0xF194AFDF50bAE0a21EF85469d1521810657a1b53', // Celo Sepolia
     color: '#FCFF52',
     logo: '/tokens/celo.png',
     issuer: 'Celo',
@@ -61,7 +61,7 @@ export const USDM_TOKEN = {
   name: 'Mento USD',
   decimals: 18,
   address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
-  addressSepolia: '0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9',
+  addressSepolia: '0x10c892A6ec43a53E45d0B916b4b7D383B1b4F9f9',
 };
 
 // Keep SUPPORTED_TOKENS for Mento SDK compatibility (includes USDm + CELO for rate API)
@@ -71,12 +71,12 @@ export const SUPPORTED_TOKENS = [
     symbol: 'CELO',
     name: 'Celo',
     decimals: 18,
-    address: '0x471EcE3750Da237a93B122c29e4039db560e3F6f',
-    addressSepolia: '0xF194AfDf50Bae0a21eF85469D1521810657A1B53',
+    address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
+    addressSepolia: '0xF194AFDF50bAE0a21EF85469d1521810657a1b53',
     logo: '/tokens/celo.png',
   },
   { symbol: 'USDC', name: 'USD Coin', decimals: 6, address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C', addressSepolia: '0x2A3684e9Dc20B857375EA04235F2F7edBe818FA7', logo: '/tokens/usdc.png' },
-  { symbol: 'USDT', name: 'Tether USD', decimals: 6, address: '0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e', addressSepolia: '0x617f3112bf5ad0E84e882D5142D04ae6C606cc89', logo: '/tokens/usdt.png' },
+  { symbol: 'USDT', name: 'Tether USD', decimals: 6, address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e', addressSepolia: '0x617f3112bF5ad0E84E882D5142D0aE6C606cc89', logo: '/tokens/usdt.png' },
 ];
 
 // ─── Platform Fee ────────────────────────────────────────────────────────────
@@ -99,21 +99,27 @@ export const
     /** Set after first registration: NEXT_PUBLIC_AGENT_ID */
     agentId: process.env.NEXT_PUBLIC_AGENT_ID || null,
     manifestUrl: '/api/agent/manifest',
-    chainId: 42220,
+    chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID || 42220),
   };
 
 // ERC-8004 contract addresses on Celo Mainnet (from docs.celo.org)
 export const ERC8004_CONTRACTS = {
-  identityRegistry: '0x...',   // fill after checking live chain deployments
-  reputationRegistry: '0x...',
-  validationRegistry: '0x...',
+  identityRegistry:
+    process.env.NEXT_PUBLIC_ERC8004_IDENTITY_REGISTRY ||
+    '0x0000000000000000000000000000000000000000',
+  reputationRegistry:
+    process.env.NEXT_PUBLIC_ERC8004_REPUTATION_REGISTRY ||
+    '0x0000000000000000000000000000000000000000',
+  validationRegistry:
+    process.env.NEXT_PUBLIC_ERC8004_VALIDATION_REGISTRY ||
+    '0x0000000000000000000000000000000000000000',
 };
 
 // ─── MiniPay / Fee Abstraction ────────────────────────────────────────────────
 
 export const MINIPAY_CONFIG = {
   SUPPORTED_FEE_CURRENCY: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // USDm mainnet
-  SUPPORTED_FEE_CURRENCY_SEPOLIA: '0x10c892A6EC43a53E45D0B916B4b7D383B1b4f9f9',
+  SUPPORTED_FEE_CURRENCY_SEPOLIA: '0x10c892A6ec43a53E45d0b916b4b7D383B1b4F9f9',
   USE_LEGACY_TRANSACTIONS: true,
   MOBILE_FIRST: true,
 };
@@ -128,6 +134,18 @@ export const SWAP_CONFIG = {
   MAX_AMOUNT_USD: 100_000,
   QUOTE_DEBOUNCE_MS: 500,
 };
+
+// ─── Uniswap V3 (for CELO ↔ USDC/USDT swaps) ────────────────────────────────
+
+export const UNISWAP_V3_CONTRACTS = {
+  /** SwapRouter02 on Celo Mainnet */
+  SWAP_ROUTER: '0x5615CDAb10dc425a742d643d949a7F474C01abc4' as const,
+  /** Quoter V2 on Celo Mainnet */
+  QUOTER_V2: '0x82825d0554fA07f7FC52Ab63c961F330fdEFa8E8' as const,
+};
+
+/** Standard Uniswap V3 pool fee tier for major pairs (0.3%) */
+export const UNISWAP_POOL_FEE = 3000;
 
 export const TRANSACTION_STATUS = {
   PENDING: 'pending',
