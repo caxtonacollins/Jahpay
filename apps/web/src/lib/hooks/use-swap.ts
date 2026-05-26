@@ -119,9 +119,9 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
         setQuote(q);
         setAiRec(rec);
         const shouldAutoApplySlippage =
-          !aiRec || slippageBps === aiRec.recommendedSlippageBps;
+          slippageBps === rec.recommendedSlippageBps;
         if (
-          shouldAutoApplySlippage &&
+          !shouldAutoApplySlippage &&
           slippageBps !== rec.recommendedSlippageBps
         ) {
           setSlippageBps(rec.recommendedSlippageBps);
@@ -140,7 +140,7 @@ export function useSwap(onRecommendation?: (rec: AgentRecommendation) => void) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [fromAmount, fromToken, toToken, slippageBps, chainId, onRecommendation, balance, aiRec]);
+  }, [fromAmount, fromToken, toToken, slippageBps, chainId, balance]);
 
   const handleSwitch = useCallback(() => {
     const tempToken = fromToken;
